@@ -45,7 +45,7 @@ ETHGlobal は、AI ツールをどこでどう使ったかを申告するよう�
 | しくみの説明ページ | `app/how-it-works/`, `lib/i18n/how-it-works/` | コード、回路、コントラクト、README の図をもとに下書きし、コードと突き合わせて事実確認した。その後、図を主役にして技術的な記述は「かんたん / 技術者向け」の切り替えで出し、よくある質問を付けた構成に作り直した。アプリを基礎から説明し、技術者でなくても読めるページがほしいというチームの依頼 |
 | das-busters.vercel.app への移行 | Vercel のドメイン、Google Cloud と Privy の設定、GitHub のリポジトリ名、`docs/setup.md` | ドメインの追加と転送は Claude Code が Vercel CLI で、Google Cloud と Privy の設定は Claude in Chrome で、リポジトリの改名は GitHub CLI で行った。新しい名前はチームが決めた |
 | スマホでの証明 | `lib/deviceProver.ts`、`lib/statement.ts`、`app/wallet/share/ShareScreen.tsx`、`lib/modes.ts` | 生成。回路のルールをブラウザでも読めるモジュールに移し、ブラウザの中で snarkjs を動かし、サーバーを表示付きの予備にした。新しいコードなしで戻せるように `PROVE_ON` も足した |
-| コントラクトのソース検証 | Sourcify、`docs/setup.md` | forge で標準 JSON 入力を書き出し、forge 自身のアップロードが失敗したあと Sourcify v2 の API に送って、exact match を確かめたのは Claude Code。Etherscan の検証には、まだチームの API キーが要る |
+| コントラクトのソース検証 | Sourcify、`docs/setup.md` | forge で標準 JSON 入力を書き出し、forge 自身のアップロードが失敗したあと Sourcify v2 の API に送って、exact match を確かめたのは Claude Code。Etherscan での検証は不要とチームが判断した |
 | アプリの見直しと修正 | `app/page.tsx`、`app/counter/`、`app/wallet/`、`app/mingle/`、`lib/chain.ts`、`lib/i18n/` | Claude Code がアプリをコードと突き合わせ、コードより多くを言っていた文言（World ID の一意性、Mingle が受け取るもの）を書き直した。ハブの手順に番号を付け、スマホなしで進むリンクを読みやすくし、nullifier 使用済みのときに証明書を消さずにやり直せるようにした |
 | README と説明ページの作り直し | `README.md`、`README.ja.md`、`docs/demo.md`、`docs/setup.md`、`app/how-it-works/`、`lib/i18n/how-it-works/` | Claude Code がドキュメントをコードと公開情報（自治体のページ、ユーブライド、IBJ、デジタル庁、警察庁、World のドキュメント）に照らして確かめ、README を問題、本物と代役、限界、テストを軸に書き直した。すべてを十分に説明し、AI が書いたような浅さを減らすこと、区役所の署名鍵がデモ用サーバーにあるのはデモのためだけだと書き、実運用での構成も示すことは、チームの依頼 |
 | 組み込みの振り返り | `FEEDBACK.md`、`FEEDBACK.ja.md` | git の履歴、コードのコメント、セットアップのメモから下書き |

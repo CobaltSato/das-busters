@@ -198,7 +198,6 @@ const referenceJa: ReferenceCopy = {
       "証明書と結びついた World ID の確認と、同じ World ID の重複の拒否",
       "本物の区役所の鍵と、本物の戸籍の照会",
       "区役所と Mingle で別々のサーバーと鍵（「全体の構成」を参照）",
-      "Etherscan でもソースを公開する（Sourcify と Blockscout は検証済み）",
     ],
     stackTitle: "技術スタック",
     stack: [
@@ -242,7 +241,7 @@ const referenceJa: ReferenceCopy = {
       verifierSourcify: { label: "Sourcify の検証コントラクトのソース", note: "デプロイ済みのコントラクトとソースが完全に一致。" },
       registry: {
         label: "Etherscan の SingleProofRegistry",
-        note: "Etherscan でのソース検証が済むまで、イベントは16進のまま表示されます。",
+        note: "ここではイベントが16進のまま表示されます。Blockscout では読める形で出ます。",
       },
       registryDeploy: { label: "レジストリのデプロイ", note: "レジストリを作ったトランザクション。" },
       verifierDeploy: { label: "検証コントラクトのデプロイ", note: "検証コントラクトを作ったトランザクション。" },
@@ -287,7 +286,7 @@ const referenceJa: ReferenceCopy = {
     recipe: [
       "PC でハブを開き「発行窓口」を押します。スマホで QR コードを読み、証明書を保存します。Google アカウントはどれでも使えます。",
       "スマホで Mingle を開き、「本人確認と証明」から「DAS Busters で確認」へ進んで共有します。",
-      "バッジが出たら「Sepolia に記録済み」を押すと、トランザクションが開きます。読める形で見るには、下のリンクから Blockscout（誰でも使えるブロックチェーンの閲覧サイト）でレジストリを開きます。record の呼び出しとイベントが読める形で出ます。Etherscan はソース検証が済むまで、同じ内容を16進のまま表示します。",
+      "バッジが出たら「Sepolia に記録済み」を押すと、トランザクションが開きます。読める形で見るには、下のリンクから Blockscout（誰でも使えるブロックチェーンの閲覧サイト）でレジストリを開きます。record の呼び出しとイベントが読める形で出ます。Etherscan では同じ内容が16進のまま表示されます。",
       "イベントに入っている数は3つだけです。nullifier と、どのアプリのどのリクエストかを表す2つのハッシュです{{（SingleStatusVerified の nullifierHash、scopeHash、requestHash）}}。氏名も生年月日もありません。",
       "戻るボタンで「共有する情報を選ぶ」に戻り、もう一度共有します。同じ証明書なら nullifier も同じなので、コントラクトが拒否して Mingle にエラーが出ます。",
     ],

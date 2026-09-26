@@ -33,7 +33,7 @@ export const DEMO_LINKS = {
 
 // Both contracts are source-verified (exact match) on Sourcify and
 // Blockscout, so Blockscout shows each record call and event decoded.
-// Etherscan is not verified yet and shows the same data as raw hex.
+// Etherscan shows the same data as raw hex.
 export const CHAIN_LINKS = {
   registryBlockscout: `${BLOCKSCOUT}/address/${deployment.registry}?tab=logs`,
   verifierBlockscout: `${BLOCKSCOUT}/address/${deployment.verifier}`,

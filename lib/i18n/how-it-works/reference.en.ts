@@ -202,7 +202,6 @@ const referenceEn = {
       "A World ID check tied to the certificate, with repeat World IDs refused",
       "A real city office key and a real family-register lookup",
       "Separate servers and keys for the city office and Mingle (see Architecture)",
-      "Publishing the contract source on Etherscan too (Sourcify and Blockscout are done)",
     ],
     stackTitle: "Stack",
     stack: [
@@ -246,7 +245,7 @@ const referenceEn = {
       verifierSourcify: { label: "Verifier source on Sourcify", note: "Exact match between the deployed contract and its source." },
       registry: {
         label: "SingleProofRegistry on Etherscan",
-        note: "Events show as raw hex here until Etherscan source verification is done.",
+        note: "Events show as raw hex here. Blockscout shows them decoded.",
       },
       registryDeploy: { label: "Registry deployment", note: "The transaction that created the registry." },
       verifierDeploy: { label: "Verifier deployment", note: "The transaction that created the verifier." },
@@ -291,7 +290,7 @@ const referenceEn = {
     recipe: [
       "Laptop: open the hub and click Issuing counter. Phone: scan the QR code and save the certificate. Any Google account works.",
       "Phone: open Mingle, tap Identity & verification, then Verify with DAS Busters, and share.",
-      "When the badge appears, tap Recorded on Sepolia to open the transaction. For a readable view, open the registry on Blockscout, a public blockchain explorer (link below): it shows each record call and its event decoded. Etherscan shows the same data as raw hex until its source verification is done.",
+      "When the badge appears, tap Recorded on Sepolia to open the transaction. For a readable view, open the registry on Blockscout, a public blockchain explorer (link below): it shows each record call and its event decoded. Etherscan shows the same data as raw hex.",
       "The event holds three numbers: the nullifier, and which app asked and which request, both hashed{{ (SingleStatusVerified: nullifierHash, scopeHash, requestHash)}}. No name, no birth date.",
       "Go back to Choose what to share and share again. Same certificate, same nullifier, so the contract refuses it and Mingle shows an error.",
     ],

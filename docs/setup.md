@@ -14,7 +14,7 @@ Where the live demo runs and which outside settings it depends on. No secrets ar
 
 | Service | What it does here | Settings that matter |
 |---|---|---|
-| Vercel (team `qdrop-adventures`, project `das-busters`) | Hosting | Domains: `das-busters.vercel.app` serves production; `single-proof.vercel.app` redirects to it (308). Production env needs every key in `.env.example` except `WORLD_PORTAL_API_KEY` and `ETHERSCAN_API_KEY` (scripts only). `PROVE_ON` and `NEXT_PUBLIC_DEMO_BASE_URL` are optional. |
+| Vercel (team `qdrop-adventures`, project `das-busters`) | Hosting | Domains: `das-busters.vercel.app` serves production; `single-proof.vercel.app` redirects to it (308). Production env needs every key in `.env.example` except `WORLD_PORTAL_API_KEY` (scripts only). `PROVE_ON` and `NEXT_PUBLIC_DEMO_BASE_URL` are optional. |
 | Google Cloud (project `single-proof-demo`, OAuth client `das-busters-web`) | The Google account behind Privy sign-in | Consent screen: app name DAS Busters, External, In production. Home page `https://das-busters.vercel.app`, privacy policy `/privacy`. Authorised domains include `das-busters.vercel.app` and `privy.io`. JavaScript origins include `https://das-busters.vercel.app` and `http://localhost:3000`. Redirect URI `https://auth.privy.io/api/v1/oauth/callback`. Scopes are only openid, email and profile, and there is no logo, so Google needs no verification. |
 | Privy (app `DAS Busters`, development mode) | Google sign-in and the embedded wallet | Login method: Google only, with the Google Cloud client above as custom credentials. Allowed origins: `http://localhost:3000`, `https://das-busters.vercel.app`, `https://single-proof.vercel.app`. Privy shows the app name to users in its modals and emails. |
 | World ID Developer Portal (app `DAS Busters`, action `das-busters-human`) | The optional human check | The RP signer is registered by its address only. No domain settings. Staging needs a 24-hour window; see below. |
@@ -82,14 +82,4 @@ Then `POST https://sourcify.dev/server/v2/verify/11155111/<address>` with a JSON
 
 - Do not edit any `.sol` file before verifying: even a comment changes the metadata hash, and the exact match fails.
 - Blockscout shows both contracts as verified without a separate submission, and decodes the registry's calls and events.
-- Etherscan is not verified yet. It needs `ETHERSCAN_API_KEY` (in `.env.local` only):
-
-```sh
-cd contracts
-forge verify-contract 0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8 \
-  src/Groth16Verifier.sol:Groth16Verifier --chain sepolia --etherscan-api-key "$ETHERSCAN_API_KEY" --watch
-forge verify-contract 0xDc813EC37A689e9927A9AA35203EdACC4822c217 \
-  src/SingleProofRegistry.sol:SingleProofRegistry --chain sepolia --etherscan-api-key "$ETHERSCAN_API_KEY" --watch \
-  --constructor-args $(cast abi-encode 'constructor(address,uint256,uint256)' \
-    0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8 $(jq -r .Ax ../lib/zk/issuer-public.json) $(jq -r .Ay ../lib/zk/issuer-public.json))
-```
+- We did not verify on Etherscan, so Etherscan shows the same data as raw hex.

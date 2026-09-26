@@ -98,7 +98,7 @@ Use this instead of step 5 to show that the human check is optional.
 ### 10. On the Sepolia explorer
 
 - **Do**: tap **Recorded on Sepolia, block … ↗**. It opens the transaction on Etherscan. Then change `sepolia.etherscan.io` in the address bar to `eth-sepolia.blockscout.com` (the path `/tx/…` stays the same).
-- **They see**: Etherscan shows the call as `0x93f984ee` and the log as raw topics, because Etherscan verification is still pending. Blockscout, where the source is verified, shows a `record` call to SingleProofRegistry and one `SingleStatusVerified` event with `nullifierHash`, `scopeHash` and `requestHash`.
+- **They see**: Etherscan shows the call as `0x93f984ee` and the log as raw topics. Blockscout, where the source is verified, shows a `record` call to SingleProofRegistry and one `SingleStatusVerified` event with `nullifierHash`, `scopeHash` and `requestHash`.
 - **Say**: "The chain stores one nullifier. No name, no birth date."
 - **If asked**: the transaction input carries the proof and its public signals. The Tokyo code and the birth-year range appear there only when Ken chose to share them. To compare the nullifier with Mingle's, show the topic in decimal.
 

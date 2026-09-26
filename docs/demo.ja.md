@@ -98,7 +98,7 @@ flowchart LR
 ### 10. Sepolia のエクスプローラーで見る
 
 - **操作**：**Sepolia に記録済み（ブロック …） ↗** を押す。Etherscan でトランザクションが開きます。続けてアドレスバーの `sepolia.etherscan.io` を `eth-sepolia.blockscout.com` に書き換えます（`/tx/…` のパスはそのまま）。
-- **見えるもの**：Etherscan での検証がまだなので、Etherscan では呼び出しが `0x93f984ee`、ログが生の topic のまま表示されます。ソースを検証済みの Blockscout では、SingleProofRegistry の `record` の呼び出しと、`nullifierHash`、`scopeHash`、`requestHash` の入った `SingleStatusVerified` イベントが1つ見えます。
+- **見えるもの**：Etherscan では呼び出しが `0x93f984ee`、ログが生の topic のまま表示されます。ソースを検証済みの Blockscout では、SingleProofRegistry の `record` の呼び出しと、`nullifierHash`、`scopeHash`、`requestHash` の入った `SingleStatusVerified` イベントが1つ見えます。
 - **話すこと**：「チェーンに残るのは nullifier 1つです。氏名も生年月日もありません。」
 - **質問されたら**：トランザクションの入力には、証明と公開シグナルが入っています。東京の住所コードと生まれ年の範囲がそこに出るのは、健さんが共有を選んだときだけです。Mingle に出ている番号と見比べるときは、topic を10進数で表示してください。
 

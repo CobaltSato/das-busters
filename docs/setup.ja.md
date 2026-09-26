@@ -14,7 +14,7 @@
 
 | サービス | ここでの役割 | 大事な設定 |
 |---|---|---|
-| Vercel（チーム `qdrop-adventures`、プロジェクト `das-busters`） | ホスティング | ドメイン: `das-busters.vercel.app` が本番。`single-proof.vercel.app` はそこへ転送（308）。Production の env には `.env.example` のキーがすべて要ります。例外は `WORLD_PORTAL_API_KEY` と `ETHERSCAN_API_KEY`（どちらもスクリプト専用）です。`PROVE_ON` と `NEXT_PUBLIC_DEMO_BASE_URL` は任意です。 |
+| Vercel（チーム `qdrop-adventures`、プロジェクト `das-busters`） | ホスティング | ドメイン: `das-busters.vercel.app` が本番。`single-proof.vercel.app` はそこへ転送（308）。Production の env には `.env.example` のキーがすべて要ります。例外は `WORLD_PORTAL_API_KEY`（スクリプト専用）です。`PROVE_ON` と `NEXT_PUBLIC_DEMO_BASE_URL` は任意です。 |
 | Google Cloud（プロジェクト `single-proof-demo`、OAuth クライアント `das-busters-web`） | Privy のログインの裏にある Google アカウント | 同意画面: アプリ名 DAS Busters、External、In production。ホームページは `https://das-busters.vercel.app`、プライバシーポリシーは `/privacy`。承認済みドメインに `das-busters.vercel.app` と `privy.io`。JavaScript 生成元に `https://das-busters.vercel.app` と `http://localhost:3000`。リダイレクト URI は `https://auth.privy.io/api/v1/oauth/callback`。スコープは openid、email、profile だけで、ロゴも上げていないので、Google の審査は要りません。 |
 | Privy（アプリ `DAS Busters`、開発モード） | Google ログインと埋め込みウォレット | ログイン方法は Google だけで、上の Google Cloud のクライアントをカスタム認証情報に使っています。Allowed origins は `http://localhost:3000`、`https://das-busters.vercel.app`、`https://single-proof.vercel.app`。アプリ名は Privy のモーダルやメールで利用者に表示されます。 |
 | World ID Developer Portal（アプリ `DAS Busters`、action `das-busters-human`） | 任意の人間確認 | RP の署名鍵はアドレスだけを登録しています。ドメインの設定はありません。staging には 24 時間の窓が要ります（下を参照）。 |
@@ -82,14 +82,4 @@ forge verify-contract 0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8 \
 
 - 検証の前に `.sol` のファイルを書き換えないでください。コメント1行でもメタデータのハッシュが変わり、exact match になりません。
 - Blockscout には別に提出しなくても、両方のコントラクトが検証済みとして表示されます。レジストリの呼び出しとイベントもデコードされます。
-- Etherscan ではまだ検証していません。`ETHERSCAN_API_KEY`（`.env.local` にだけ置く）があれば、次のコマンドで検証できます。
-
-```sh
-cd contracts
-forge verify-contract 0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8 \
-  src/Groth16Verifier.sol:Groth16Verifier --chain sepolia --etherscan-api-key "$ETHERSCAN_API_KEY" --watch
-forge verify-contract 0xDc813EC37A689e9927A9AA35203EdACC4822c217 \
-  src/SingleProofRegistry.sol:SingleProofRegistry --chain sepolia --etherscan-api-key "$ETHERSCAN_API_KEY" --watch \
-  --constructor-args $(cast abi-encode 'constructor(address,uint256,uint256)' \
-    0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8 $(jq -r .Ax ../lib/zk/issuer-public.json) $(jq -r .Ay ../lib/zk/issuer-public.json))
-```
+- Etherscan では検証していないので、Etherscan では同じ内容が16進数のまま表示されます。
