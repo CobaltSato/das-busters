@@ -66,6 +66,7 @@ export const SOURCE_LINKS = {
 // Docs have an English and a Japanese version.
 export const DOC_LINKS = {
   readme: { en: `${REPO}/blob/main/README.md`, ja: `${REPO}/blob/main/README.ja.md` },
+  technical: { en: `${REPO}/blob/main/docs/technical.md`, ja: `${REPO}/blob/main/docs/technical.ja.md` },
   demo: { en: `${REPO}/blob/main/docs/demo.md`, ja: `${REPO}/blob/main/docs/demo.ja.md` },
   aiUsage: { en: `${REPO}/blob/main/AI_USAGE.md`, ja: `${REPO}/blob/main/AI_USAGE.ja.md` },
 } as const;
