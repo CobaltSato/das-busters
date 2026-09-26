@@ -1,6 +1,6 @@
 # AGENTS.md
 
-DAS Busters（リポジトリ名 single-proof）。ETHGlobal Tokyo 2026 の提出物で、締切は 9/27(日) 09:00 JST。計画の全体は `docs/plan.md` にある。
+DAS Busters（リポジトリ名 das-busters。2026-09-26 に single-proof から改名）。ETHGlobal Tokyo 2026 の提出物で、締切は 9/27(日) 09:00 JST。計画の全体は `docs/plan.md` にある。
 
 ## 何を作っているか
 

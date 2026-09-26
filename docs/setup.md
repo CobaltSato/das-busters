@@ -8,7 +8,7 @@ Where the live demo runs and which outside settings it depends on. No secrets ar
 
 - Production: https://das-busters.vercel.app
 - The old URL, https://single-proof.vercel.app, redirects there with a 308 and keeps the path and query. We moved on 26 September 2026.
-- Every push to `main` on GitHub (`CobaltSato/single-proof`) deploys to production.
+- Every push to `main` on GitHub (`CobaltSato/das-busters`, renamed from `single-proof` on 26 September 2026; the old address redirects) deploys to production.
 
 ## Services
 

@@ -5,7 +5,7 @@ import deployment from "@/lib/chain/deployment-11155111.json";
 
 export const SITE_HOST = "das-busters.vercel.app";
 
-const REPO = "https://github.com/CobaltSato/single-proof";
+const REPO = "https://github.com/CobaltSato/das-busters";
 const ETHERSCAN = "https://sepolia.etherscan.io";
 
 // From contracts/broadcast/Deploy.s.sol/11155111/run-latest.json.

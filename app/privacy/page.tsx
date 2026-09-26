@@ -4,7 +4,7 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { getMessages } from "@/lib/i18n/server";
 
 const PRIVY_POLICY = "https://www.privy.io/privacy-policy";
-const ISSUES = "https://github.com/CobaltSato/single-proof/issues";
+const ISSUES = "https://github.com/CobaltSato/das-busters/issues";
 
 // Linked from Google's OAuth consent screen, which needs a public policy URL
 // before the sign-in can be opened to any Google account.

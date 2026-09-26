@@ -23,7 +23,7 @@ const CHAIN_SHOWN = {
 // contract address, or the file path in the repository.
 function shownUrl(href: string): string {
   if (href.startsWith("/")) return `${SITE_HOST}${href === "/" ? "" : href}`;
-  return href.replace(/^https:\/\//, "").replace("github.com/CobaltSato/single-proof/blob/main/", "github · ");
+  return href.replace(/^https:\/\//, "").replace("github.com/CobaltSato/das-busters/blob/main/", "github · ");
 }
 
 function cards<K extends string>(

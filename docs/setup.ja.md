@@ -8,7 +8,7 @@
 
 - 本番: https://das-busters.vercel.app
 - 旧 URL の https://single-proof.vercel.app は、パスとクエリを保ったまま 308 で本番に転送します。2026年9月26日に移しました。
-- GitHub（`CobaltSato/single-proof`）の `main` に push すると、本番にデプロイされます。
+- GitHub（`CobaltSato/das-busters`。2026年9月26日に `single-proof` から改名し、旧アドレスは転送されます）の `main` に push すると、本番にデプロイされます。
 
 ## サービス
 
