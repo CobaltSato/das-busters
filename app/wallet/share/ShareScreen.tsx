@@ -8,19 +8,28 @@ import { useI18n } from "@/components/I18nProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ModeBadges } from "@/components/ModeBadges";
 import { Switch } from "@/components/Switch";
-import { errorMessage, postJson } from "@/lib/api";
+import { ApiError, errorMessage, postJson } from "@/lib/api";
 import { prefetchCircuit, proveOnDevice } from "@/lib/deviceProver";
 import { ProofError } from "@/lib/errors";
 import { lookup } from "@/lib/i18n";
 import type { Disclosure } from "@/lib/credential";
 import type { Modes, ProvingLocation } from "@/lib/modes";
 import type { Presentation, PresentationRequest, VerificationResult } from "@/lib/presentation";
-import { humanStore, sharesStore, walletStore, type HumanRecord, type WalletRecord } from "@/lib/storage";
+import {
+  humanStore,
+  mingleStore,
+  sharesStore,
+  walletStore,
+  type HumanRecord,
+  type WalletRecord,
+} from "@/lib/storage";
 import { humanLabel } from "../_components/humanLabel";
 import { Problem } from "../_components/Problem";
 
 type Props = { requestToken: string; request: PresentationRequest; modes: Modes; proveOn: ProvingLocation };
 type Step = "idle" | "proving" | "proving-device" | "proving-server" | "verifying";
+
+const MINGLE_VERIFICATION = "/mingle?screen=verification";
 
 export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   const { t } = useI18n();
@@ -32,7 +41,9 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   const [disclose, setDisclose] = useState<Disclosure>({ residence: false, ageRange: false });
   const [includeHuman, setIncludeHuman] = useState(true);
   const [step, setStep] = useState<Step>("idle");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ message: string; code?: string } | null>(null);
+  // Set when this phone could not finish and the server made the proof.
+  const [fellBack, setFellBack] = useState(false);
 
   useEffect(() => {
     setWallet(walletStore.get());
@@ -90,6 +101,7 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
     } catch (e) {
       if (e instanceof ProofError) throw e;
       console.warn("Proving on this device failed; using the server", e);
+      setFellBack(true);
       setStep("proving-server");
       return { presentation: await proveOnServer(), provedOn: "server" };
     }
@@ -98,6 +110,7 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   async function share() {
     if (!wallet) return;
     setError(null);
+    setFellBack(false);
     try {
       const { presentation, provedOn } = await makeProof();
       setStep("verifying");
@@ -118,10 +131,21 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
       });
       router.push(`/mingle?result=${encodeURIComponent(resultToken)}`);
     } catch (e) {
-      setError(errorMessage(e, t));
+      setError({ message: errorMessage(e, t), code: e instanceof ApiError ? e.code : undefined });
       setStep("idle");
     }
   }
+
+  // The registry already holds this certificate's number for Mingle's
+  // current scope. Clearing only Mingle's record gives it a new scope, so the
+  // certificate stays and the next proof gets a new number.
+  function startMingleOver() {
+    mingleStore.clear();
+    router.push(MINGLE_VERIFICATION);
+  }
+
+  const { minBirthYear, maxBirthYear } = ageRange;
+  const serverProves = proveOn === "server" || fellBack;
 
   const stepLabel: Record<Step, string> = {
     idle: copy.submit,
@@ -177,7 +201,7 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
         <div className="disclosure">
           <div>
             <strong>{copy.ageRange(range)}</strong>
-            <small>{copy.ageSub}</small>
+            <small>{copy.ageSub(minBirthYear, maxBirthYear)}</small>
           </div>
           <Switch
             checked={disclose.ageRange}
@@ -214,15 +238,21 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
       )}
 
       <p className="fine-print share-privacy">
-        {copy.privacy} {proveOn === "device" && copy.provedHere}
+        {copy.privacy} {serverProves ? copy.provedOnServer : copy.provedHere}
       </p>
 
       <div className="phone-actions">
-        {error && <p className="error-banner">{error}</p>}
+        {error && <p className="error-banner">{error.message}</p>}
         <button type="button" className="btn btn-primary" onClick={share} disabled={busy || !wallet}>
           {busy && <span className="spinner" />}
           {stepLabel[step]}
         </button>
+        {step === "verifying" && modes.chain === "sepolia" && <p className="fine-print">{copy.waitingBlock}</p>}
+        {error?.code === "nullifier-used" && (
+          <button type="button" className="btn btn-outline" onClick={startMingleOver}>
+            {copy.startMingleOver}
+          </button>
+        )}
         <Link className="btn btn-text" href="/mingle">
           {t.common.cancel}
         </Link>
