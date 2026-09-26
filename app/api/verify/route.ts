@@ -3,6 +3,7 @@ import { recordOnChain } from "@/lib/chain";
 import { errorResponse } from "@/lib/http";
 import type { HumanCheck, HumanEnvironment, VerificationResult } from "@/lib/presentation";
 import { ProofError } from "@/lib/errors";
+import { getModes } from "@/lib/modes";
 import { verifyProof } from "@/lib/prover";
 import { VerifyBody } from "@/lib/schemas";
 import { signToken, TokenError } from "@/lib/token";
@@ -24,13 +25,14 @@ export async function POST(request: Request) {
     if (!(await verifyProof(body.presentation))) {
       throw new ProofError("The proof did not verify", "proof-failed");
     }
-    const humanEnvironment = await confirmHuman(body.humanCheck, body.humanToken);
+    const humanCheck = acceptedHumanCheck(body.humanCheck);
+    const humanEnvironment = await confirmHuman(humanCheck, body.humanToken);
     const onChain = await recordOnChain(body.presentation);
     const result: VerificationResult = {
       nonce: presentationRequest.nonce,
       verifiedAt: new Date().toISOString(),
       disclosed,
-      humanCheck: body.humanCheck,
+      humanCheck,
       humanEnvironment,
       nullifierHash: body.presentation.publicSignals.nullifierHash,
       prover: body.presentation.prover,
@@ -43,6 +45,14 @@ export async function POST(request: Request) {
   } catch (error) {
     return errorResponse(error);
   }
+}
+
+// The simulated check carries no evidence, so Mingle takes it only while this
+// server itself runs the simulated human check. Otherwise it is dropped, not
+// refused, so an old record in the wallet cannot fail a share on stage.
+function acceptedHumanCheck(check: HumanCheck | null): HumanCheck | null {
+  if (check === "simulated" && getModes().worldId !== "simulated") return null;
+  return check;
 }
 
 // A World ID check counts only with the token /api/world-id/verify signed.
