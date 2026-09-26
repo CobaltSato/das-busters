@@ -27,9 +27,9 @@ About the skills:
 |---|---|---|
 | Project setup | `package.json`, `tsconfig.json`, `next.config.ts`, `vercel.json` | Generated; we reviewed |
 | Demo hub and placeholder routes | `app/` | Generated from our screen designs |
-| API and mock prover | `app/api/`, `lib/` | Generated to our data-flow design; we reviewed the checks |
-| Screens | `app/counter/`, `app/wallet/`, `app/mingle/`, `components/` | Rebuilt from our Figma designs; we checked them on phones |
-| Smoke test | `scripts/smoke.ts` | Generated; the refusal cases were our list |
+| API and mock prover | `app/api/`, `lib/` | Generated from the data flow in the plan |
+| Screens | `app/counter/`, `app/wallet/`, `app/mingle/`, `components/` | Generated from our Figma designs |
+| Smoke test | `scripts/smoke.ts` | Generated, including the refusal cases |
 | Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md` | Drafted; we edited |
 
 ## What the team did
