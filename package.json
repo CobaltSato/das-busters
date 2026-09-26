@@ -13,6 +13,7 @@
     "smoke": "tsx scripts/smoke.ts"
   },
   "dependencies": {
+    "@zk-kit/eddsa-poseidon": "1.1.0",
     "jose": "6.2.12",
     "next": "15.5.26",
     "poseidon-lite": "0.3.0",
@@ -20,6 +21,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "0.0.1",
+    "snarkjs": "0.7.6",
     "zod": "4.6.5"
   },
   "devDependencies": {
@@ -27,10 +29,13 @@
     "@types/qrcode": "1.5.6",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "circom2": "0.2.23",
+    "circomlib": "2.0.5",
     "tsx": "4.23.15",
     "typescript": "5.9.3"
   },
   "overrides": {
-    "postcss": "8.5.28"
+    "postcss": "8.5.28",
+    "underscore": "1.13.8"
   }
 }
