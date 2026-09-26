@@ -411,15 +411,31 @@
   line-height: 1.7;
 }
 
+/* "Why it's needed" and "How DAS Busters uses it": a small label on its
+   own line, then one or two sentences. */
+.hiw-term .hiw-term-why,
 .hiw-term .hiw-term-inapp {
   color: var(--muted);
   font-size: 14.5px;
   line-height: 1.65;
 }
 
-.hiw-term-inapp span {
+.hiw-term-label {
+  display: block;
+  margin-bottom: 2px;
   color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.hiw-term .hiw-term-link {
+  font-size: 14px;
   font-weight: 600;
+}
+
+.hiw-term-link a {
+  color: var(--blue);
 }
 
 .hiw-formula {

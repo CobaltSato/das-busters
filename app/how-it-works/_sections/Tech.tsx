@@ -1,5 +1,5 @@
 import type { ReferenceCopy } from "@/lib/i18n/how-it-works/reference.en";
-import type { Modes } from "@/lib/modes";
+import type { Modes, ProvingLocation } from "@/lib/modes";
 import { LevelSwitch } from "../_components/Level";
 import { Rich } from "../_components/Rich";
 import { Section } from "../_components/Section";
@@ -130,7 +130,7 @@ function ModesTable({ copy, modes }: { copy: Copy["modes"]; modes: Modes }) {
 }
 
 // Plain view: the numbers and a way to switch. Engineer view: everything.
-export function Tech({ copy, modes }: { copy: Copy; modes: Modes }) {
+export function Tech({ copy, modes, proveOn }: { copy: Copy; modes: Modes; proveOn: ProvingLocation }) {
   const { certificate, holderKey, circuit, proving, verification } = copy;
   return (
     <Section id="tech" title={copy.title} lede={copy.lede} wide>
@@ -189,6 +189,9 @@ export function Tech({ copy, modes }: { copy: Copy; modes: Modes }) {
         <Block title={copy.modes.title}>
           <p>{copy.modes.lede}</p>
           <ModesTable copy={copy.modes} modes={modes} />
+          <p className="hiw-note">
+            <Rich text={copy.modes.proveOn[proveOn]} />
+          </p>
         </Block>
       </div>
     </Section>

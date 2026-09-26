@@ -1,8 +1,9 @@
-import type { Modes } from "@/lib/modes";
+import type { Modes, ProvingLocation } from "@/lib/modes";
 
 // English copy for the second half of /how-it-works: the technical deep
 // dive, what was built, where to check it, and the FAQ.
 // Every number here must match the code; reference.ja.ts must match the shape.
+// `code`, **bold** and {{Engineer-only text}} are rendered by _components/Rich.
 
 type ModeText<K extends keyof Modes> = Record<Modes[K], string>;
 
@@ -11,11 +12,11 @@ const referenceEn = {
     title: "Under the hood",
     lede: "Every figure here comes from the code in the repository.",
     numbers: [
-      { value: "9,921", label: "Constraints in the circuit" },
+      { value: "9,921", label: "Rules the proof checks (circuit constraints)" },
       { value: "10", label: "Public numbers Mingle sees" },
-      { value: "1", label: "Numbers stored on-chain per proof" },
-      { value: "0", label: "Names or birth dates on-chain" },
-      { value: "1–4 s", label: "Time to make a proof" },
+      { value: "1", label: "Numbers stored on the blockchain per sign-up" },
+      { value: "0", label: "Names or birth dates on the blockchain" },
+      { value: "7.7 MB", label: "Circuit files the phone downloads to make a proof" },
       { value: "about 12 s", label: "Time to record on Sepolia" },
     ],
     plainOnly: "The circuit, the contract checks, tokens and modes are in Engineer view.",
@@ -70,9 +71,10 @@ const referenceEn = {
     proving: {
       title: "Proving",
       body: [
-        "Made on the server in `/api/prove` with snarkjs Groth16 on BN254: 1–4 s on Vercel. Files: `single_proof.wasm` (2.7 MB) and `single_proof.zkey` (5.0 MB).",
-        "Server-side by choice, on mentor advice, so the demo runs on any phone. The prover sees the certificate and the secret for one request and keeps nothing; the app never claims the data stays on the device. Proving on the phone is the next step.",
-        "Trusted setup: one local contribution to each phase (powers of tau at 2^14, then the circuit key), because the public files were unreachable at the event. Fine for a demo, not for production.",
+        "Made on the phone by default: snarkjs Groth16 on BN254 runs in the browser with the same files the server uses, `single_proof.wasm` (2.7 MB) and `single_proof.zkey` (5.0 MB). The share screen starts downloading them when it opens. On a laptop in Chrome the proof itself took under a second once the files were cached; phones are not measured yet.",
+        "If the phone can't finish, for example on an old browser or with too little memory, the share screen sends that one proof to `/api/prove` and the button says so. The server keeps nothing. A broken rule (not single, wrong holder, edited certificate) is an answer, not a device problem, so it is never retried on the server. `PROVE_ON=server` moves all proving to the server without new code, and the mock prover always runs on the server.",
+        "Mingle's verifier can't tell where a proof was made and doesn't need to: it checks every proof the same way. The wallet's share history records `provedOn: device | server` for each share.",
+        "Trusted setup: the Hermez powers-of-tau mirrors returned 403 at the event, so both phases (powers of tau at 2^14, then the circuit key) have one local contribution. Fine for a demo, not for production. The PSE Perpetual Powers of Tau files are reachable, and moving to them is the next step.",
       ],
     },
     verification: {
@@ -126,7 +128,7 @@ const referenceEn = {
           stops: "Mingle accepting an answer it did not ask for, since the nonce must match",
         },
       ],
-      note: "All three are HS256 JWTs signed by the same server, because one server plays every role in the demo. Separate parties would each sign with their own key.",
+      note: "All three are HS256 JWTs signed with one shared TOKEN_SECRET, because one server plays every role in the demo. Separate parties would each sign with their own key; Architecture shows the intended split.",
     },
     modes: {
       title: "Mock and real modes",
@@ -158,6 +160,10 @@ const referenceEn = {
           real: "World ID through IDKit, checked by World's Developer Portal. Staging uses the World ID Simulator and falls back to simulated when its window closes",
         },
       },
+      proveOn: {
+        device: "Where the proof is made is a separate switch. This deployment makes it **on the phone**, with the server as a fallback; `PROVE_ON=server` would move it to the server.",
+        server: "Where the proof is made is a separate switch. This deployment makes every proof **on the server**, because `PROVE_ON=server` is set or the prover is the mock.",
+      } satisfies Record<ProvingLocation, string>,
       now: {
         auth: { mock: "Mock", privy: "Real" } satisfies ModeText<"auth">,
         prover: { mock: "Mock", groth16: "Real" } satisfies ModeText<"prover">,
@@ -175,11 +181,11 @@ const referenceEn = {
       "Issuing counter with a QR code that refreshes every three minutes",
       "DAS Busters wallet: receive, save, choose what to share, history",
       "Mingle, a sample dating app that asks for proof and shows badges",
-      "Circom circuit and a server-side Groth16 prover",
-      "EdDSA-Poseidon issuer with a published public key",
-      "SingleProofRegistry and Groth16Verifier on Ethereum Sepolia, tested in Foundry with a real proof",
-      "Google sign-in through Privy, with the holder key from the embedded wallet",
-      "World ID human check through IDKit, checked by World's Developer Portal",
+      "Proofs made on the phone, with our server as a fallback {{(circom circuit, snarkjs Groth16)}}",
+      "A city office that signs certificates, with its public key published {{(EdDSA-Poseidon)}}",
+      "Two contracts on Sepolia that check each proof and keep the used numbers, tested with a real proof and source-verified on Sourcify and Blockscout {{(SingleProofRegistry, Groth16Verifier, Foundry)}}",
+      "Google sign-in through Privy, with the secret key made from the wallet's signature",
+      "World ID human check, confirmed by World's servers {{(IDKit, Developer Portal)}}",
       "English and Japanese screens",
     ],
     worldIdTitle: "Human check in this deployment",
@@ -190,11 +196,13 @@ const referenceEn = {
     } satisfies Record<Modes["worldId"], string>,
     nextTitle: "Not built yet",
     next: [
-      "Proving on the phone, so the certificate never leaves it",
-      "Expiry and revocation: the issue date is signed but not checked yet",
-      "A multi-party trusted setup ceremony",
+      "Checking how recent the certificate is. Agencies accept only certificates issued in the last three months; the issue date is signed but not checked yet",
+      "Revocation: the city office publishing withdrawn certificates",
+      "Running the proof system's one-time setup with many independent people {{(a multi-party trusted setup, starting from the PSE Perpetual Powers of Tau)}}",
+      "A World ID check tied to the certificate, with repeat World IDs refused",
       "A real city office key and a real family-register lookup",
-      "Separate keys for the city office, the prover and Mingle",
+      "Separate servers and keys for the city office and Mingle (see Architecture)",
+      "Publishing the contract source on Etherscan too (Sourcify and Blockscout are done)",
     ],
     stackTitle: "Stack",
     stack: [
@@ -226,8 +234,20 @@ const referenceEn = {
     },
     chainTitle: "On-chain (Ethereum Sepolia)",
     chain: {
-      registry: { label: "SingleProofRegistry", note: "Open Events to see every SingleStatusVerified record." },
-      verifier: { label: "Groth16Verifier", note: "Generated by snarkjs from the circuit's verification key." },
+      registryBlockscout: {
+        label: "SingleProofRegistry on Blockscout",
+        note: "Source verified. Logs shows every SingleStatusVerified record, decoded.",
+      },
+      verifierBlockscout: {
+        label: "Groth16Verifier on Blockscout",
+        note: "Source verified. Generated by snarkjs from the circuit's verification key.",
+      },
+      registrySourcify: { label: "Registry source on Sourcify", note: "Exact match between the deployed contract and its source." },
+      verifierSourcify: { label: "Verifier source on Sourcify", note: "Exact match between the deployed contract and its source." },
+      registry: {
+        label: "SingleProofRegistry on Etherscan",
+        note: "Events show as raw hex here until Etherscan source verification is done.",
+      },
       registryDeploy: { label: "Registry deployment", note: "The transaction that created the registry." },
       verifierDeploy: { label: "Verifier deployment", note: "The transaction that created the verifier." },
     },
@@ -240,6 +260,27 @@ const referenceEn = {
       verificationKey: { label: "Verification key", note: "What the verifier checks proofs against." },
       issuerKey: { label: "City office public key", note: "The only issuer the verifier trusts." },
     },
+    backgroundTitle: "Background: the real certificate and the problem",
+    background: {
+      koto: {
+        label: "Koto City: 独身証明書",
+        note: "The certificate lists name, birth date, registered domicile (本籍) and that the person does not breach Civil Code Art. 732 (no bigamy). 300 yen.",
+      },
+      youbride: {
+        label: "youbride help: single-status certificate",
+        note: "Issued within the last three months, photographed in full with nothing hidden.",
+      },
+      ibj: { label: "IBJ: documents for joining", note: "The 独身証明書 must be an original issued within three months." },
+      digitalAgency: {
+        label: "Digital Agency: single-status check with the My Number Card",
+        note: "How Tapple checks single status through the My Number Card. Quotes a Tapple survey (May 2024, 5,429 users): 83.8% of men and 97.4% of women want some proof that the other person is single.",
+      },
+      tapple: { label: "Tapple: かんたん独身証明", note: "CyberAgent's release for the My Number Card check, available since 30 April 2025." },
+      npa: {
+        label: "National Police Agency: 2025 figures",
+        note: "Romance scams that start on social media: 5,645 cases, ¥54.64 billion. A matching app was the first contact in 1,846 cases (32.7%), more than any other channel.",
+      },
+    },
     docsTitle: "Docs",
     docs: {
       readme: { label: "README", note: "Overview, diagrams, contracts, what we made before the event." },
@@ -248,11 +289,11 @@ const referenceEn = {
     },
     recipeTitle: "A three-minute check",
     recipe: [
-      "Laptop: open the hub, click Issuing counter. Phone: scan the QR code and save the certificate. Any Google account works.",
+      "Laptop: open the hub and click Issuing counter. Phone: scan the QR code and save the certificate. Any Google account works.",
       "Phone: open Mingle, tap Identity & verification, then Verify with DAS Busters, and share.",
-      "When the badge appears, tap Recorded on Sepolia. Etherscan shows a record call to SingleProofRegistry.",
-      "Open the transaction's Logs: one SingleStatusVerified event with nullifierHash, scopeHash and requestHash. No name, no birth date.",
-      "Press Back to Choose what to share and share again. Same certificate, same nullifier, so the registry refuses it and Mingle shows an error.",
+      "When the badge appears, tap Recorded on Sepolia to open the transaction. For a readable view, open the registry on Blockscout (link below): it shows each record call and its event decoded. Etherscan shows the same data as raw hex until its source verification is done.",
+      "The event holds three numbers: the nullifier, the scope hash and the request hash {{(SingleStatusVerified: nullifierHash, scopeHash, requestHash)}}. No name, no birth date.",
+      "Go back to Choose what to share and share again. Same certificate, same nullifier, so the contract refuses it and Mingle shows an error.",
     ],
   },
 
@@ -263,16 +304,17 @@ const referenceEn = {
     figs: {
       onchain: {
         label: "What the blockchain keeps for one sign-up",
-        stored: ["Anonymous number (nullifier)", "Scope hash", "Request hash"],
+        stored: ["Anonymous number (nullifier)", "Which app asked (hashed)", "Which request (hashed)"],
         never: ["Name", "Birth date", "Address", "Certificate"],
       },
       server: {
-        label: "The certificate goes to our server for one request. Only the proof goes to Mingle.",
+        label: "Your phone makes the proof and sends only the proof to Mingle. Our server steps in only if the phone can't finish, and saves nothing.",
         phone: "Your phone",
+        makes: "makes the proof",
         server: "Our server",
-        keeps: "saves nothing",
+        keeps: "backup only · saves nothing",
         mingle: "Mingle",
-        send: "certificate + key",
+        send: "only if the phone can't",
         back: "proof",
         onward: "proof only",
       },
@@ -313,14 +355,20 @@ const referenceEn = {
           {
             id: "server",
             q: "Does my certificate leave my phone?",
-            a: "Yes, briefly. Today our server makes the proof. The phone sends the certificate and its key for that one request, and the server saves nothing. Mingle never receives the certificate.",
-            d: "/api/prove runs snarkjs in 1–4 s, so the demo works on any phone. The app never claims the data stays on the device. Making the proof on the phone is the next step.",
+            a: "Not normally. Your phone makes the proof itself, and only the proof goes to Mingle. If your phone can't finish, our server makes that one proof, the screen tells you, and the server saves nothing.",
+            d: "The phone runs the proof in the browser with the same circuit files as the server. The fallback is for device problems such as an old browser or too little memory. A certificate that breaks a rule is refused on the phone and never sent. The wallet's history records where each proof was made. A deployment can also be set to make every proof on the server {{(PROVE_ON=server)}}; this page then says so at the top.",
           },
           {
             id: "photo",
             q: "Why not just send a photo of the certificate?",
             a: "A photo shows everything on it and is easy to edit. A proof shows one fact, and an edited certificate can't produce one.",
             d: "The circuit checks the city office's signature, so an edited certificate fails. “Where your data lives” above shows what each party ends up with.",
+          },
+          {
+            id: "japan",
+            q: "Japan already checks single status with the My Number Card. Why build this?",
+            a: "Tapple's check reads the name, address and gender on your My Number Card and gets your marital status from the family register, so the app ends up holding your verified identity next to your marital status. DAS Busters gives the app one checked fact and a number that differs per app.",
+            d: "Tapple has offered it (かんたん独身証明) since 30 April 2025, through Mynaportal, and the Digital Agency wrote about it on 17 October 2025. Both are linked under Check it. The issuer could be Mynaportal instead of our demo city office, and the proof side would stay the same.",
           },
           {
             id: "tracking",
@@ -349,7 +397,7 @@ const referenceEn = {
             id: "accounts",
             q: "Could one person open several Mingle accounts?",
             a: "Not with the same certificate. It produces the same anonymous number every time, and the contract refuses a number it already has.",
-            d: "Try it: go Back and share again, and the registry refuses it with NullifierAlreadyUsed. Limits: this check lives on-chain, so it needs the Sepolia mode. The scope comes from an epoch that Mingle's browser keeps, so the demo's Reset makes a new number; a real Mingle would keep one fixed scope. A different Google account makes a different key, so one account per person also needs the city office to issue one certificate per person. A unique-human check such as World ID is meant to close that gap.",
+            d: "Try it: go Back and share again, and the registry refuses it with NullifierAlreadyUsed. Limits: this check lives on-chain, so it needs the Sepolia mode. The scope comes from an epoch that Mingle's browser keeps, so the demo's Reset makes a new number; a real Mingle would keep one fixed scope. A different Google account makes a different key, so one account per person also needs the city office to issue one certificate per person. World ID could help once its check is tied to the certificate and repeat World IDs are refused; this demo does neither yet.",
           },
           {
             id: "replay",
@@ -371,20 +419,20 @@ const referenceEn = {
           {
             id: "married",
             q: "What if I marry after getting the certificate?",
-            a: "Today the proof doesn't check how old the certificate is. That is the first thing to add.",
-            d: "The issue date is already signed into the certificate, so adding a public “issued after” date to the circuit is a small change. Revocation would need the city office to publish a revocation list.",
+            a: "Today the proof doesn't check when the certificate was issued. Marriage agencies and apps such as youbride accept only certificates issued in the last three months, so this is the next thing to add.",
+            d: "The issue date is already signed into the certificate. Mingle could send an “issued on or after” date as a public input, and the circuit would compare the two. That needs a new circuit key and a redeploy of both contracts, so it is not part of this demo. Revocation would also need the city office to publish withdrawn certificates.",
           },
           {
             id: "setup",
             q: "Is the proof system's setup safe for real use?",
             a: "Not yet. Groth16 needs a one-time setup, and we ran ours alone on one machine. A real launch needs a ceremony with many independent people.",
-            d: "The setup creates secret randomness, and whoever knows all of it could forge proofs. With many independent contributors, one honest contributor is enough. Ours had one local contribution to each phase because the public setup files were unreachable at the event.",
+            d: "The setup creates secret randomness, and whoever knows all of it could forge proofs. With many independent contributors, one honest contributor is enough. At the event the public Hermez setup files returned 403, so each phase of ours has one local contribution. The PSE Perpetual Powers of Tau files are reachable, and moving to them is the next step.",
           },
           {
             id: "key",
             q: "What if the city office's signing key leaks?",
-            a: "The private key lives only in the server's environment; the repository holds only the public key. A leak would mean deploying a new registry with a new key.",
-            d: "The registry's issuer key is immutable, which keeps it simple to audit. Production would need key rotation, for example an issuer registry the city office controls.",
+            a: "In this demo the private key sits in the demo server's environment, only so the whole demo runs from one site. The repository holds only the public key. A leak would mean deploying a new registry with a new key.",
+            d: "The registry's issuer key is immutable, which keeps it simple to audit. A real city office would keep its key in its own hardware security module and publish the public key in a list of trusted issuers that can be updated. Architecture shows the intended split.",
           },
           {
             id: "worldid",
@@ -396,7 +444,7 @@ const referenceEn = {
             } satisfies Record<Modes["worldId"], string>,
             d: {
               simulated:
-                "The camera opens for five seconds and no World ID proof is made. The World ID integration is built: it runs on World ID staging when its keys are set and the staging window is open. World ID adds “a unique human is behind this account”, which a certificate alone cannot prove.",
+                "The camera opens for five seconds and no World ID proof is made. The World ID integration is built: it runs on World ID staging when its keys are set and the staging window is open. World ID adds “a person approved this request”, which a certificate alone cannot show.",
               "idkit-staging":
                 "Our server signs each IDKit request and forwards the result to World's Developer Portal. Mingle counts the check only with the signed token our server issues after that. Limits: that token travels next to the ZK proof, not inside it, lasts seven days and is not yet tied to the certificate, and the World ID nullifier is not yet checked for repeats.",
               idkit:
@@ -407,7 +455,7 @@ const referenceEn = {
             id: "gov",
             q: "Is this real government data?",
             a: "No. Ken Sato is fictional, and our server plays the city office with a demo key.",
-            d: "The paper certificate is real: Japanese city offices issue 独身証明書 and marriage agencies ask for it. A real launch would need the city office to issue the digital version and hold the signing key.",
+            d: "The paper certificate is real: the city office of your registered domicile issues 独身証明書 for 200–350 yen, and marriage agencies ask for it. A real launch would need the city office, or Mynaportal, to issue a digital version and hold the signing key.",
           },
         ],
       },
@@ -423,8 +471,8 @@ const referenceEn = {
           {
             id: "speed",
             q: "How long does it take?",
-            a: "About 1–4 seconds to make the proof, and about 12 seconds to record it on Sepolia.",
-            d: "The server waits up to 45 s for the receipt. After that, Mingle shows the badge with a note that the transaction is not confirmed yet, and keeps checking for about two minutes.",
+            a: "Your phone first downloads 7.7 MB of circuit files, then makes the proof. Recording it on Sepolia takes about 12 seconds.",
+            d: "On a laptop in Chrome the proof itself took under a second once the files were cached. We have not measured phones yet. The server waits up to 45 s for the Sepolia receipt. After that, Mingle shows the badge with a note that the transaction is not confirmed yet, and keeps checking for about two minutes.",
           },
           {
             id: "sepolia",

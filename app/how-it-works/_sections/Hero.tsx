@@ -1,17 +1,23 @@
 import { Fragment } from "react";
 import { ModeBadges } from "@/components/ModeBadges";
 import type { StoryCopy } from "@/lib/i18n/how-it-works/story.en";
-import type { Modes } from "@/lib/modes";
+import type { Modes, ProvingLocation } from "@/lib/modes";
 import { Envelope } from "../_diagrams/Envelope";
 import { PitchStrip } from "../_diagrams/PitchStrip";
 
-type HeroProps = { copy: StoryCopy["hero"]; strip: StoryCopy["why"]["diagram"]; modes: Modes };
+type HeroProps = {
+  copy: StoryCopy["hero"];
+  strip: StoryCopy["why"]["diagram"];
+  modes: Modes;
+  proveOn: ProvingLocation;
+};
 
 // The thesis, the pitch in three frames, and what this deployment actually
 // runs, so nothing below reads as live when it is a mock.
-export function Hero({ copy, strip, modes }: HeroProps) {
+export function Hero({ copy, strip, modes, proveOn }: HeroProps) {
   const notices = [
     modes.prover !== "groth16" ? copy.notice.mockProver : null,
+    modes.prover === "groth16" && proveOn === "server" ? copy.notice.serverProver : null,
     modes.chain !== "sepolia" ? copy.notice.offChain : null,
   ].filter((notice): notice is string => notice !== null);
 
