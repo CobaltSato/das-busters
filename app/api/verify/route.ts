@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     const presentationRequest = await readRequest(body.request);
     const disclosed = checkAgainstRequest(body.presentation.publicSignals, presentationRequest);
     if (!(await verifyProof(body.presentation))) {
-      throw new ProofError("The proof did not verify");
+      throw new ProofError("The proof did not verify", "proof-failed");
     }
     const onChain = await recordOnChain(body.presentation);
     const result: VerificationResult = {

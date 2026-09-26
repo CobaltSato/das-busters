@@ -30,17 +30,6 @@ export type Disclosure = {
 
 export const TOKYO = 13;
 
-const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-export function formatDate(iso: string): string {
-  return DATE_FORMAT.format(new Date(`${iso}T00:00:00Z`));
-}
-
 export function birthYear(iso: string): number {
   return Number(iso.slice(0, 4));
 }

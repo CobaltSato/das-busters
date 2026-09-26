@@ -1,18 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { QrCode } from "@/components/QrCode";
 import { errorMessage, postJson } from "@/lib/api";
 
 type Offer = { offer: string; expiresAt: number };
-
-const ISSUED_FORMAT = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
 
 function baseUrl(): string {
   return process.env.NEXT_PUBLIC_DEMO_BASE_URL?.replace(/\/$/, "") ?? window.location.origin;
@@ -23,7 +17,18 @@ function formatRemaining(ms: number): string {
   return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}`;
 }
 
+function formatIssued(locale: string, when: number): string {
+  return new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(when);
+}
+
 export function CounterScreen() {
+  const { locale, t } = useI18n();
   const [offer, setOffer] = useState<Offer | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [now, setNow] = useState<number | null>(null);
@@ -33,9 +38,9 @@ export function CounterScreen() {
       setOffer(await postJson<Offer>("/api/offer", {}));
       setError(null);
     } catch (e) {
-      setError(errorMessage(e));
+      setError(errorMessage(e, t));
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     refresh();
@@ -50,7 +55,9 @@ export function CounterScreen() {
     if (remaining !== null && remaining <= 0) refresh();
   }, [remaining, refresh]);
 
-  const receiveUrl = offer ? `${baseUrl()}/wallet/receive?offer=${offer.offer}` : null;
+  // The phone opens in the counter's language.
+  const receiveUrl = offer ? `${baseUrl()}/wallet/receive?offer=${offer.offer}&lang=${locale}` : null;
+  const c = t.counter;
 
   return (
     <main className="counter">
@@ -60,57 +67,60 @@ export function CounterScreen() {
             S
           </span>
           <div>
-            <strong>Shibuya City</strong>
-            <span>Family Registration and Resident Services</span>
+            <strong>{c.office}</strong>
+            <span>{c.department}</span>
           </div>
         </div>
-        <div className="counter-number">
-          <span>Service counter</span>
-          <strong>03</strong>
+        <div className="counter-header-side">
+          <LanguageToggle />
+          <div className="counter-number">
+            <span>{c.serviceCounter}</span>
+            <strong>03</strong>
+          </div>
         </div>
       </header>
 
       <section className="counter-content">
         <div className="counter-copy">
           <h1>
-            Receive your
+            {c.title[0]}
             <br />
-            Single Status Certificate
+            {c.title[1]}
           </h1>
           <p>
-            Scan the QR code
+            {c.scan[0]}
             <br />
-            with your phone’s camera.
+            {c.scan[1]}
           </p>
         </div>
 
         <div className="qr-panel">
           <div className="qr-panel-heading">
-            <span>Certificate pickup QR code</span>
-            <span className="demo-chip">Demo</span>
+            <span>{c.qrHeading}</span>
+            <span className="demo-chip">{c.demo}</span>
           </div>
           {receiveUrl ? (
-            <QrCode value={receiveUrl} label="QR code for receiving a Single Status Certificate" />
+            <QrCode value={receiveUrl} label={c.qrLabel} />
           ) : (
             <div className="qr-code qr-placeholder" aria-busy={!error} />
           )}
           {error && <p className="qr-error">{error}</p>}
           <div className="qr-expiry">
-            <span>Valid for 3 minutes</span>
+            <span>{c.validFor}</span>
             <strong>{remaining === null ? "3:00" : formatRemaining(remaining)}</strong>
           </div>
-          <p>The QR code refreshes automatically when it expires.</p>
+          <p>{c.refreshes}</p>
         </div>
       </section>
 
       <footer className="counter-footer">
-        <span>{now ? `Issued: ${ISSUED_FORMAT.format(now)}` : " "}</span>
-        <span>DAS Busters Digital Certificate Issuance System</span>
+        <span>{now ? c.issued(formatIssued(t.dateLocale, now)) : " "}</span>
+        <span>{c.system}</span>
       </footer>
 
       {receiveUrl && (
         <a className="counter-preview-link" href={receiveUrl}>
-          Open the phone flow on this device
+          {c.preview}
         </a>
       )}
     </main>

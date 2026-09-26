@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
+import { useI18n } from "@/components/I18nProvider";
 import { ModeBadges } from "@/components/ModeBadges";
 import { Switch } from "@/components/Switch";
 import { errorMessage, postJson } from "@/lib/api";
+import { lookup } from "@/lib/i18n";
 import type { Disclosure } from "@/lib/credential";
 import type { Modes } from "@/lib/modes";
 import type { Presentation, PresentationRequest, VerificationResult } from "@/lib/presentation";
@@ -17,6 +19,8 @@ type Props = { requestToken: string; request: PresentationRequest; modes: Modes 
 type Step = "idle" | "proving" | "verifying";
 
 export function ShareScreen({ requestToken, request, modes }: Props) {
+  const { t } = useI18n();
+  const copy = t.wallet.share;
   const router = useRouter();
   const [loaded, setLoaded] = useState(false);
   const [wallet, setWallet] = useState<WalletRecord | null>(null);
@@ -35,15 +39,17 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
   if (loaded && !wallet) {
     return (
       <Problem
-        title="No certificate on this phone"
-        body="Receive your Single Status Certificate at the city office counter first, then come back to Mingle."
-        action={{ href: "/counter", label: "Open the counter screen" }}
+        title={t.wallet.problems.noCertificate}
+        body={t.wallet.problems.noCertificateBody}
+        action={{ href: "/counter", label: t.common.openCounter }}
       />
     );
   }
 
   const here = `/wallet/share?req=${encodeURIComponent(requestToken)}`;
   const { residence, ageRange } = request.asks;
+  const place = lookup(t.places, residence.label);
+  const range = t.ageRange(ageRange.label);
   const busy = step !== "idle";
 
   async function share() {
@@ -65,7 +71,7 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
       sharesStore.add({ verifier: request.verifierName, sharedAt: result.verifiedAt, disclosed: result.disclosed });
       router.push(`/mingle?result=${encodeURIComponent(resultToken)}`);
     } catch (e) {
-      setError(errorMessage(e));
+      setError(errorMessage(e, t));
       setStep("idle");
     }
   }
@@ -73,7 +79,7 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
   return (
     <main className="phone">
       <div className="phone-top">
-        <Link className="phone-back" href="/mingle" aria-label="Back to Mingle">
+        <Link className="phone-back" href="/mingle" aria-label={t.common.backToMingle}>
           ‹
         </Link>
         <BrandLockup small />
@@ -81,47 +87,47 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
       </div>
 
       <section className="share-intro">
-        <h1>Choose what to share</h1>
-        <p>Only the selected information will be shared.</p>
+        <h1>{copy.title}</h1>
+        <p>{copy.lede}</p>
       </section>
 
       <div className="share-with">
-        <span>Share with</span>
+        <span>{copy.shareWith}</span>
         <strong>{request.verifierName}</strong>
       </div>
 
       <div className="disclosures">
         <div className="disclosure">
           <div>
-            <strong>Single status</strong>
-            <small>Verified by a Single Status Certificate</small>
+            <strong>{copy.single}</strong>
+            <small>{copy.singleSub}</small>
           </div>
           <span className="disclosure-required">
-            Required
-            <Switch checked disabled label="Single status (required)" onChange={() => undefined} />
+            {copy.required}
+            <Switch checked disabled label={copy.singleRequired} onChange={() => undefined} />
           </span>
         </div>
         <div className="disclosure">
           <div>
-            <strong>Lives in {residence.label}</strong>
-            <small>Verified from residence information</small>
+            <strong>{copy.livesIn(place)}</strong>
+            <small>{copy.residenceSub}</small>
           </div>
           <Switch
             checked={disclose.residence}
             disabled={busy}
-            label={`Lives in ${residence.label}`}
+            label={copy.livesIn(place)}
             onChange={(on) => setDisclose((d) => ({ ...d, residence: on }))}
           />
         </div>
         <div className="disclosure">
           <div>
-            <strong>Age range: {ageRange.label}</strong>
-            <small>Verified from date of birth</small>
+            <strong>{copy.ageRange(range)}</strong>
+            <small>{copy.ageSub}</small>
           </div>
           <Switch
             checked={disclose.ageRange}
             disabled={busy}
-            label={`Age range: ${ageRange.label}`}
+            label={copy.ageRange(range)}
             onChange={(on) => setDisclose((d) => ({ ...d, ageRange: on }))}
           />
         </div>
@@ -136,42 +142,38 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
             onChange={(event) => setIncludeHuman(event.target.checked)}
           />
           <span>
-            <strong>Include human check</strong>
-            <small>
-              {human.check === "world-id" ? "Verified with World ID" : "Simulated for the demo · not a World ID proof"}
-            </small>
+            <strong>{copy.includeHuman}</strong>
+            <small>{human.check === "world-id" ? t.wallet.human.verifiedWorldId : t.wallet.human.simulatedShort}</small>
           </span>
         </label>
       ) : (
         <div className="human-consent is-missing">
           <span>
-            <strong>Add a human check</strong>
-            <small>World ID · optional</small>
+            <strong>{copy.addHuman}</strong>
+            <small>{copy.worldIdOptional}</small>
           </span>
           <Link className="check-now" href={`/wallet/world-id?return=${encodeURIComponent(here)}`}>
-            Check now
+            {copy.checkNow}
           </Link>
         </div>
       )}
 
-      <p className="fine-print share-privacy">
-        Your name, date of birth, and original certificate won’t be shared.
-      </p>
+      <p className="fine-print share-privacy">{copy.privacy}</p>
 
       <div className="phone-actions">
         {error && <p className="error-banner">{error}</p>}
         <button type="button" className="btn btn-primary" onClick={share} disabled={busy || !wallet}>
           {busy && <span className="spinner" />}
           {step === "proving"
-            ? "Creating proof…"
+            ? copy.proving
             : step === "verifying"
               ? modes.chain === "sepolia"
-                ? "Recording on Sepolia…"
-                : `Checking with ${request.verifierName}…`
-              : "Share selected information"}
+                ? copy.recordingSepolia
+                : copy.checkingWith(request.verifierName)
+              : copy.submit}
         </button>
         <Link className="btn btn-text" href="/mingle">
-          Cancel
+          {t.common.cancel}
         </Link>
         <ModeBadges modes={modes} only={["prover", "chain"]} />
       </div>

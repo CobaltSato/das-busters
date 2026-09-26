@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
 
 type Status = { status: "pending" | "confirmed" | "reverted"; blockNumber?: string };
 
@@ -9,6 +10,7 @@ const MAX_POLLS = 40;
 
 // Polls /api/tx until the relayer's transaction lands on Sepolia.
 export function TxStatus({ txHash }: { txHash: string }) {
+  const { t } = useI18n();
   const [state, setState] = useState<Status>({ status: "pending" });
   const [gaveUp, setGaveUp] = useState(false);
 
@@ -43,12 +45,12 @@ export function TxStatus({ txHash }: { txHash: string }) {
   const link = `https://sepolia.etherscan.io/tx/${txHash}`;
   const label =
     state.status === "confirmed"
-      ? `Recorded on Sepolia, block ${state.blockNumber}`
+      ? t.tx.recorded(state.blockNumber ?? "")
       : state.status === "reverted"
-        ? "Sepolia transaction failed"
+        ? t.tx.failed
         : gaveUp
-          ? "Sent to Sepolia"
-          : "Recording on Sepolia…";
+          ? t.tx.sent
+          : t.tx.recording;
   return (
     <a href={link} target="_blank" rel="noreferrer">
       {label} ↗

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
+import { useI18n } from "@/components/I18nProvider";
 import { humanStore } from "@/lib/storage";
 
 // Simulated World ID Selfie Check: the camera opens for five seconds and
@@ -12,6 +13,8 @@ type Phase = "ready" | "opening" | "camera" | "done";
 const SECONDS = 5;
 
 export function HumanCheck({ returnTo }: { returnTo: string }) {
+  const { t } = useI18n();
+  const copy = t.wallet.selfie;
   const router = useRouter();
   const video = useRef<HTMLVideoElement>(null);
   const stream = useRef<MediaStream | null>(null);
@@ -29,11 +32,11 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
     stopCamera();
     if (!humanStore.set({ check: "simulated", verifiedAt: new Date().toISOString() })) {
       setPhase("ready");
-      setError("Could not save the result. Turn off private browsing and try again.");
+      setError(copy.storeFailed);
       return;
     }
     setPhase("done");
-  }, [stopCamera]);
+  }, [stopCamera, copy]);
 
   useEffect(() => {
     setCanStream(window.isSecureContext && Boolean(navigator.mediaDevices?.getUserMedia));
@@ -61,13 +64,13 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
       setPhase("camera");
     } catch {
       setPhase("ready");
-      setError("Camera access was not available. Allow camera access and try again.");
+      setError(copy.cameraFailed);
     }
   }
 
   const header = (
     <div className="phone-top">
-      <button type="button" className="phone-back" aria-label="Back" onClick={() => router.push(returnTo)}>
+      <button type="button" className="phone-back" aria-label={t.common.back} onClick={() => router.push(returnTo)}>
         ‹
       </button>
       <BrandLockup small />
@@ -83,12 +86,12 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
           <div className="selfie-check" aria-hidden="true">
             ✓
           </div>
-          <h1>Human check complete</h1>
-          <p>Simulated for the demo. No World ID verification was performed.</p>
+          <h1>{copy.complete}</h1>
+          <p>{copy.completeBody}</p>
         </section>
         <div className="phone-actions">
           <button type="button" className="btn btn-primary" onClick={() => router.push(returnTo)}>
-            Continue
+            {t.common.continue}
           </button>
         </div>
       </main>
@@ -99,8 +102,8 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
     <main className="phone">
       {header}
       <div className="selfie-heading">
-        <h1 className="screen-title">Human check</h1>
-        <p>World ID Selfie Check · simulated</p>
+        <h1 className="screen-title">{copy.title}</h1>
+        <p>{copy.subtitle}</p>
       </div>
       <div className="viewfinder">
         <video ref={video} autoPlay playsInline muted hidden={phase !== "camera"} />
@@ -108,12 +111,8 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
         {phase === "camera" && <span className="viewfinder-count">{count}</span>}
       </div>
       <div className="selfie-copy">
-        <h2>{phase === "camera" ? "Look at the camera" : "Ready for a quick camera check?"}</h2>
-        <p>
-          {phase === "camera"
-            ? "The camera closes by itself in five seconds."
-            : "The front camera opens for five seconds. Nothing is uploaded or saved."}
-        </p>
+        <h2>{phase === "camera" ? copy.lookAtCamera : copy.ready}</h2>
+        <p>{phase === "camera" ? copy.closesSoon : copy.opensFor}</p>
       </div>
       <div className="phone-actions">
         {error && <p className="error-banner">{error}</p>}
@@ -122,17 +121,17 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
             {phase === "opening" ? (
               <>
                 <span className="spinner" />
-                Opening camera…
+                {copy.openingCamera}
               </>
             ) : phase === "camera" ? (
-              "Checking…"
+              copy.checking
             ) : (
-              "Open camera"
+              copy.openCamera
             )}
           </button>
         ) : (
           <label className="btn btn-primary">
-            Open iPhone camera
+            {copy.openIphoneCamera}
             <input
               className="selfie-file"
               type="file"
@@ -146,7 +145,7 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
             />
           </label>
         )}
-        <p className="fine-print">Simulated for the demo. This does not create a World ID proof.</p>
+        <p className="fine-print">{copy.finePrint}</p>
       </div>
     </main>
   );

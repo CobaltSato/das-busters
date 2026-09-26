@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const hash = new URL(request.url).searchParams.get("hash");
   if (!hash || !/^0x[0-9a-fA-F]{64}$/.test(hash)) {
-    return NextResponse.json({ error: "Expected a transaction hash" }, { status: 400 });
+    return NextResponse.json({ error: "Expected a transaction hash", code: "bad-tx-hash" }, { status: 400 });
   }
   try {
     const receipt = await publicClient()

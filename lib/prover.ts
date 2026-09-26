@@ -26,21 +26,25 @@ export type ProveInput = {
 // witness error.
 export function buildPublicSignals({ credential, holderSecret, request, disclose }: ProveInput): PublicSignals {
   if (!hasValidIssuerSignature(credential)) {
-    throw new ProofError("The certificate signature is not valid");
+    throw new ProofError("The certificate signature is not valid", "bad-signature");
   }
   if (holderCommitment(holderSecret) !== credential.holderCommitment) {
-    throw new ProofError("This certificate belongs to someone else");
+    throw new ProofError("This certificate belongs to someone else", "not-your-certificate");
   }
   if (credential.maritalStatus !== "Single") {
-    throw new ProofError("The certificate does not show single status");
+    throw new ProofError("The certificate does not show single status", "not-single");
   }
   const { residence, ageRange } = request.asks;
   if (disclose.residence && credential.residenceCode !== residence.code) {
-    throw new ProofError(`The certificate does not show residence in ${residence.label}`);
+    throw new ProofError(`The certificate does not show residence in ${residence.label}`, "not-resident", {
+      place: residence.label,
+    });
   }
   const year = birthYear(credential.birthDate);
   if (disclose.ageRange && (year < ageRange.minBirthYear || year > ageRange.maxBirthYear)) {
-    throw new ProofError(`The birth date is not in the ${ageRange.label} range`);
+    throw new ProofError(`The birth date is not in the ${ageRange.label} range`, "not-in-age-range", {
+      range: ageRange.label,
+    });
   }
   return {
     nullifierHash: nullifierHash(holderSecret, request.scopeHash),
@@ -78,7 +82,10 @@ export async function prove(input: ProveInput): Promise<Presentation> {
     return { prover: "mock", publicSignals: expected, proof: { scheme: "mock", mac: mockMac(expected) }, provingMs: Date.now() - started };
   }
   if (signature.scheme !== "eddsa-poseidon") {
-    throw new ProofError("This certificate was issued before real proofs were switched on. Receive a new one at the counter.");
+    throw new ProofError(
+      "This certificate was issued before real proofs were switched on. Receive a new one at the counter.",
+      "stale-certificate",
+    );
   }
 
   const { credential, holderSecret } = input;

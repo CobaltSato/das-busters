@@ -2,21 +2,26 @@
 
 import { BrandLockup } from "@/components/BrandLockup";
 import { CertificateCard } from "@/components/CertificateCard";
+import { useI18n } from "@/components/I18nProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import type { CredentialPreview } from "@/lib/credential";
 import { GoogleSignIn } from "../_components/GoogleSignIn";
 
 type Props = { offer: string; preview: CredentialPreview };
 
 export function ReceiveScreen({ offer, preview }: Props) {
+  const { t } = useI18n();
+  const [first, second] = t.wallet.receive.title;
   return (
     <main className="phone">
       <div className="phone-top">
         <BrandLockup />
+        <LanguageToggle />
       </div>
       <h1 className="screen-title wallet-heading">
-        Receive your
+        {first}
         <br />
-        certificate
+        {second}
       </h1>
       <div className="wallet-card">
         <CertificateCard certificate={preview} />

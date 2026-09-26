@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BrandLockup } from "@/components/BrandLockup";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 type Props = {
   title: string;
@@ -12,6 +13,7 @@ export function Problem({ title, body, action }: Props) {
     <main className="phone">
       <div className="phone-top">
         <BrandLockup />
+        <LanguageToggle />
       </div>
       <section className="problem">
         <h1 className="screen-title">{title}</h1>

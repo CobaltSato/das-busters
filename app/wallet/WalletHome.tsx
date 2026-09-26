@@ -5,9 +5,13 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
 import { CertificateCard } from "@/components/CertificateCard";
+import { useI18n } from "@/components/I18nProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { lookup, type Messages } from "@/lib/i18n";
 import type { Modes } from "@/lib/modes";
 import {
   humanStore,
+  resetDemoData,
   sharesStore,
   userStore,
   walletStore,
@@ -19,14 +23,18 @@ import {
 import { errorMessage } from "@/lib/api";
 import { useProviderSignOut } from "./_components/holderKey";
 
-function describeShare(share: ShareRecord): string {
-  const extras = [share.disclosed.residence && `lives in ${share.disclosed.residence}`, share.disclosed.ageRange]
+function describeShare(t: Messages, share: ShareRecord): string {
+  const home = t.wallet.home;
+  const { residence, ageRange } = share.disclosed;
+  const extras = [residence && home.livesIn(lookup(t.places, residence)), ageRange && t.ageRange(ageRange)]
     .filter(Boolean)
-    .join(", ");
-  return extras ? `Shared single status, ${extras}` : "Shared single status";
+    .join(home.listSeparator);
+  return extras ? home.sharedSingleWith(extras) : home.sharedSingle;
 }
 
 export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
+  const { t } = useI18n();
+  const home = t.wallet.home;
   const dialog = useRef<HTMLDialogElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [wallet, setWallet] = useState<WalletRecord | null>(null);
@@ -48,13 +56,13 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
     try {
       await providerSignOut();
     } catch (e) {
-      setError(errorMessage(e));
+      setError(errorMessage(e, t));
       return;
     }
-    walletStore.clear();
-    humanStore.clear();
-    sharesStore.clear();
-    userStore.clear();
+    if (!resetDemoData()) {
+      setError(t.common.storageBlocked);
+      return;
+    }
     window.location.href = "/";
   }
 
@@ -62,7 +70,7 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
     try {
       await providerSignOut();
     } catch (e) {
-      setError(errorMessage(e));
+      setError(errorMessage(e, t));
       return;
     }
     userStore.clear();
@@ -76,49 +84,50 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
     <main className="phone">
       <div className="phone-top">
         <BrandLockup />
-        <button
-          type="button"
-          className="wallet-avatar"
-          aria-label="Open account"
-          onClick={() => dialog.current?.showModal()}
-        >
-          {user?.name.charAt(0) ?? "?"}
-        </button>
+        <div className="phone-top-side">
+          <LanguageToggle />
+          <button
+            type="button"
+            className="wallet-avatar"
+            aria-label={home.openAccount}
+            onClick={() => dialog.current?.showModal()}
+          >
+            {user?.name.charAt(0) ?? "?"}
+          </button>
+        </div>
       </div>
 
-      <h1 className="screen-title wallet-home-title">My proofs</h1>
+      <h1 className="screen-title wallet-home-title">{home.title}</h1>
       {loaded && wallet && <CertificateCard certificate={wallet.credential} showTitle />}
       {loaded && !wallet && (
         <div className="wallet-empty">
-          No certificate on this phone yet. Scan the QR code at the city office counter to receive one.
+          {home.empty}
           <br />
-          <Link href="/counter">Open the counter screen</Link>
+          <Link href="/counter">{t.common.openCounter}</Link>
         </div>
       )}
 
       <section className="human-card" aria-labelledby="human-title">
         <div className="human-heading">
           <div>
-            <h2 id="human-title">Human check</h2>
-            <p>{worldId === "idkit" ? "World ID" : "World ID · simulated"}</p>
+            <h2 id="human-title">{home.humanTitle}</h2>
+            <p>{worldId === "idkit" ? home.worldId : home.worldIdSimulated}</p>
           </div>
-          <span className={human ? "status-chip is-done" : "status-chip"}>{human ? "Done" : "Optional"}</span>
+          <span className={human ? "status-chip is-done" : "status-chip"}>{human ? home.done : home.optional}</span>
         </div>
         {human ? (
           <div className="human-done">
             <i aria-hidden="true">✓</i>
             <span>
-              <strong>Human check complete</strong>
-              <small>
-                {human.check === "world-id" ? "Verified with World ID" : "Simulated for the demo · not a World ID proof"}
-              </small>
+              <strong>{home.humanComplete}</strong>
+              <small>{human.check === "world-id" ? t.wallet.human.verifiedWorldId : t.wallet.human.simulatedShort}</small>
             </span>
           </div>
         ) : (
           <>
-            <p>Show apps that a real, unique person holds this certificate. Sharing it is always up to you.</p>
+            <p>{home.humanPitch}</p>
             <Link className="btn btn-primary" href="/wallet/world-id?return=/wallet">
-              Verify with World ID
+              {home.verifyWorldId}
             </Link>
           </>
         )}
@@ -131,40 +140,40 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
           if (event.target === dialog.current) dialog.current?.close();
         }}
       >
-        <button type="button" className="account-close" aria-label="Close" onClick={() => dialog.current?.close()}>
+        <button type="button" className="account-close" aria-label={t.common.close} onClick={() => dialog.current?.close()}>
           ×
         </button>
-        <h2>Account</h2>
+        <h2>{home.account}</h2>
         {error && <p className="error-banner">{error}</p>}
-        <p className="account-name">{user?.name ?? "Not signed in"}</p>
+        <p className="account-name">{user?.name ?? home.notSignedIn}</p>
         {user && (
           <>
             <p className="account-email">{user.email}</p>
             <p className="account-provider">
               <Image src="/brand/google-g.svg" alt="" width={18} height={18} />
-              {user.provider === "privy" ? "Signed in with Google" : "Signed in with Google (demo account)"}
+              {user.provider === "privy" ? home.signedInGoogle : home.signedInGoogleDemo}
             </p>
           </>
         )}
-        <p className="account-section">Connected services</p>
+        <p className="account-section">{home.connectedServices}</p>
         <Link className="account-service" href="/mingle">
           <span className="account-service-icon" aria-hidden="true">
             m
           </span>
           <span>
             <strong>Mingle</strong>
-            <small>{mingle ? describeShare(mingle) : "Not connected"}</small>
+            <small>{mingle ? describeShare(t, mingle) : home.notConnected}</small>
           </span>
           <span className="account-chevron" aria-hidden="true">
             ›
           </span>
         </Link>
         <button type="button" className="account-reset" onClick={resetDemo}>
-          Reset demo on this phone
+          {home.reset}
         </button>
         {user && (
           <button type="button" className="btn btn-outline" onClick={signOut}>
-            Sign out
+            {home.signOut}
           </button>
         )}
       </dialog>

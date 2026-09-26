@@ -1,48 +1,40 @@
 import Link from "next/link";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { ModeBadges } from "@/components/ModeBadges";
+import { getMessages } from "@/lib/i18n/server";
 import { getModes } from "@/lib/modes";
 
-const apps = [
-  {
-    href: "/counter",
-    device: "Desktop / iPad",
-    title: "Issuing counter",
-    body: "The city office screen. It shows a QR code for picking up a Single Status Certificate.",
-  },
-  {
-    href: "/wallet",
-    device: "Phone",
-    title: "DAS Busters",
-    body: "Keeps the certificate on your phone and shares only the facts you choose.",
-  },
-  {
-    href: "/mingle",
-    device: "Phone",
-    title: "Mingle",
-    body: "A dating app that asks for proof of single status before showing the badge.",
-  },
-];
+const APPS = [
+  { href: "/counter", key: "counter" },
+  { href: "/wallet", key: "wallet" },
+  { href: "/mingle", key: "mingle" },
+] as const;
 
-export default function Hub() {
+export default async function Hub() {
+  const t = await getMessages();
   return (
     <main className="hub">
-      <p className="hub-eyebrow">ETHGlobal Tokyo 2026</p>
-      <h1>DAS Busters demo</h1>
-      <p className="hub-lede">
-        Prove you are single to a dating app without handing over your certificate.
-      </p>
+      <div className="hub-top">
+        <p className="hub-eyebrow">ETHGlobal Tokyo 2026</p>
+        <LanguageToggle />
+      </div>
+      <h1>{t.hub.title}</h1>
+      <p className="hub-lede">{t.hub.lede}</p>
       <ul className="hub-apps">
-        {apps.map((app) => (
-          <li key={app.href}>
-            <Link href={app.href} className="hub-card">
-              <span className="hub-device">{app.device}</span>
-              <strong>{app.title}</strong>
-              <span>{app.body}</span>
+        {APPS.map(({ href, key }) => (
+          <li key={href}>
+            <Link href={href} className="hub-card">
+              <span className="hub-device">{t.hub.apps[key].device}</span>
+              <strong>{t.hub.apps[key].title}</strong>
+              <span>{t.hub.apps[key].body}</span>
             </Link>
           </li>
         ))}
       </ul>
       <ModeBadges modes={getModes()} className="hub-modes" />
+      <Link href="/reset" className="hub-reset">
+        {t.reset.title}
+      </Link>
     </main>
   );
 }

@@ -1,3 +1,4 @@
+import { getMessages } from "@/lib/i18n/server";
 import { getModes } from "@/lib/modes";
 import { TokenError } from "@/lib/token";
 import { readRequest } from "@/lib/tokens";
@@ -8,12 +9,14 @@ type Props = { searchParams: Promise<{ req?: string | string[] }> };
 
 export default async function SharePage({ searchParams }: Props) {
   const { req } = await searchParams;
+  const t = await getMessages();
+  const p = t.wallet.problems;
   if (typeof req !== "string" || !req) {
     return (
       <Problem
-        title="No request to answer"
-        body="Open Mingle and choose Verify with DAS Busters to start."
-        action={{ href: "/mingle", label: "Open Mingle" }}
+        title={p.noRequest}
+        body={p.noRequestBody}
+        action={{ href: "/mingle", label: t.common.openMingle }}
       />
     );
   }
@@ -23,9 +26,9 @@ export default async function SharePage({ searchParams }: Props) {
     if (!(error instanceof TokenError)) throw error;
     return (
       <Problem
-        title={error.reason === "expired" ? "This request has expired" : "This request is not valid"}
-        body="Go back to Mingle and start the verification again."
-        action={{ href: "/mingle", label: "Back to Mingle" }}
+        title={error.reason === "expired" ? p.requestExpired : p.requestInvalid}
+        body={p.requestRetry}
+        action={{ href: "/mingle", label: t.common.backToMingle }}
       />
     );
   }

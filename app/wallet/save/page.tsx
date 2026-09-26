@@ -1,3 +1,4 @@
+import { getMessages } from "@/lib/i18n/server";
 import { TokenError } from "@/lib/token";
 import { readOffer } from "@/lib/tokens";
 import { Problem } from "../_components/Problem";
@@ -7,12 +8,15 @@ type Props = { searchParams: Promise<{ offer?: string | string[] }> };
 
 export default async function SavePage({ searchParams }: Props) {
   const { offer } = await searchParams;
+  const t = await getMessages();
+  const p = t.wallet.problems;
+  const toCounter = { href: "/counter", label: t.common.openCounter };
   if (typeof offer !== "string" || !offer) {
     return (
       <Problem
-        title="Nothing to save yet"
-        body="Scan the QR code at the counter to receive your certificate first."
-        action={{ href: "/counter", label: "Open the counter screen" }}
+        title={p.nothingToSave}
+        body={p.nothingToSaveBody}
+        action={toCounter}
       />
     );
   }
@@ -22,9 +26,9 @@ export default async function SavePage({ searchParams }: Props) {
     if (!(error instanceof TokenError)) throw error;
     return (
       <Problem
-        title="This QR code has expired"
-        body="The pickup QR code is valid for three minutes. Ask the counter for a new one and scan it again."
-        action={{ href: "/counter", label: "Open the counter screen" }}
+        title={p.qrExpired}
+        body={p.qrExpiredBody}
+        action={toCounter}
       />
     );
   }

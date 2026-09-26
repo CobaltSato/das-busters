@@ -1,3 +1,4 @@
+import { getMessages } from "@/lib/i18n/server";
 import { getModes } from "@/lib/modes";
 import { TokenError } from "@/lib/token";
 import { readResult } from "@/lib/tokens";
@@ -15,7 +16,7 @@ export default async function MinglePage({ searchParams }: Props) {
       incoming = { result: await readResult(result), token: result };
     } catch (error) {
       if (!(error instanceof TokenError)) throw error;
-      incoming = { error: "The verification result could not be checked. Start the verification again." };
+      incoming = { error: (await getMessages()).mingle.unreadableResult };
     }
   }
   return <MingleApp incoming={incoming} modes={getModes()} />;

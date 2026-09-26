@@ -4,10 +4,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
 import { CertificateCard } from "@/components/CertificateCard";
+import { useI18n } from "@/components/I18nProvider";
 import { SuccessMark } from "@/components/SuccessMark";
 import { walletStore, type WalletRecord } from "@/lib/storage";
 
 export default function SavedPage() {
+  const { t } = useI18n();
+  const copy = t.wallet.saved;
   const router = useRouter();
   const [wallet, setWallet] = useState<WalletRecord | null>(null);
   const [opening, setOpening] = useState(false);
@@ -24,8 +27,8 @@ export default function SavedPage() {
       </div>
       <section className="saved-hero">
         <SuccessMark size={64} />
-        <h1>Certificate saved</h1>
-        <p>You can access it anytime from Home.</p>
+        <h1>{copy.title}</h1>
+        <p>{copy.body}</p>
       </section>
       {wallet && (
         <div className="wallet-card">
@@ -45,10 +48,10 @@ export default function SavedPage() {
           {opening ? (
             <>
               <span className="spinner" />
-              Opening home…
+              {copy.opening}
             </>
           ) : (
-            "Go to home"
+            copy.goHome
           )}
         </button>
       </div>

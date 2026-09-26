@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { getMessages } from "@/lib/i18n/server";
-import { CounterScreen } from "./CounterScreen";
-import "./counter.css";
+import { ResetScreen } from "./ResetScreen";
+import "./reset.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getMessages();
-  return { title: t.meta.counterTitle };
+  return { title: t.reset.title };
 }
 
-export default function CounterPage() {
-  return <CounterScreen />;
+export default function ResetPage() {
+  return <ResetScreen />;
 }

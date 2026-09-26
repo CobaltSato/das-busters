@@ -1,7 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { RefObject } from "react";
+import { useI18n } from "@/components/I18nProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { ModeBadges } from "@/components/ModeBadges";
+import { lookup } from "@/lib/i18n";
 import { MINGLE_PROFILE } from "@/lib/mingle";
 import type { Modes } from "@/lib/modes";
 import type { MingleRecord } from "@/lib/storage";
@@ -38,9 +41,10 @@ function Messages({ notice, error }: Pick<Shared, "notice" | "error">) {
 }
 
 function SubHeader({ title, go }: { title: string; go: Shared["go"] }) {
+  const { t } = useI18n();
   return (
     <header className="mingle-header">
-      <button type="button" className="mingle-back" aria-label="Back" onClick={() => go("profile")}>
+      <button type="button" className="mingle-back" aria-label={t.common.back} onClick={() => go("profile")}>
         ‹
       </button>
       <h1>{title}</h1>
@@ -50,15 +54,17 @@ function SubHeader({ title, go }: { title: string; go: Shared["go"] }) {
 }
 
 function VerifiedBadges({ verification }: { verification: NonNullable<Verification> }) {
+  const { t } = useI18n();
+  const m = t.mingle;
   const { residence, ageRange } = verification.disclosed;
   return (
     <div className="mingle-badges">
-      <span className="mingle-status is-done">✓ Single status verified</span>
-      {residence && <span className="mingle-status is-done">Lives in {residence}</span>}
-      {ageRange && <span className="mingle-status is-done">{ageRange}</span>}
+      <span className="mingle-status is-done">{m.badgeVerified}</span>
+      {residence && <span className="mingle-status is-done">{m.livesIn(lookup(t.places, residence))}</span>}
+      {ageRange && <span className="mingle-status is-done">{t.ageRange(ageRange)}</span>}
       {verification.humanCheck && (
         <span className="mingle-status is-done">
-          {verification.humanCheck === "world-id" ? "Real person · World ID" : "Human check · simulated"}
+          {verification.humanCheck === "world-id" ? m.realPerson : m.humanSimulated}
         </span>
       )}
     </div>
@@ -66,77 +72,79 @@ function VerifiedBadges({ verification }: { verification: NonNullable<Verificati
 }
 
 export function ProfileScreen({ notice, error, verification, go }: Shared) {
-  const { name, age, city, photo, stats } = MINGLE_PROFILE;
+  const { t } = useI18n();
+  const m = t.mingle;
+  const { name, age, photo, stats } = MINGLE_PROFILE;
   return (
     <main className="mingle">
       <header className="mingle-header">
         <span className="mingle-wordmark">mingle</span>
-        <button type="button" className="mingle-icon-button" aria-label="Settings" onClick={() => go("settings")}>
+        <button type="button" className="mingle-icon-button" aria-label={m.settings} onClick={() => go("settings")}>
           <SlidersIcon />
         </button>
       </header>
       <Messages notice={notice} error={error} />
       <section className="mingle-person">
-        <Image className="mingle-portrait" src={photo} alt={`${name}’s profile photo`} width={112} height={112} priority />
+        <Image className="mingle-portrait" src={photo} alt={m.photoAlt(name)} width={112} height={112} priority />
         <h1>
           {name}
           <span>{age}</span>
         </h1>
-        <p>{city}</p>
+        <p>{m.profileData.city}</p>
         {verification && <VerifiedBadges verification={verification} />}
         <button type="button" className="mingle-edit" onClick={() => go("edit")}>
           <PencilIcon />
-          Edit profile
+          {m.editProfile}
         </button>
       </section>
-      <section className="mingle-stats" aria-label="Activity">
+      <section className="mingle-stats" aria-label={m.activity}>
         <div>
           <strong>{stats.likes}</strong>
-          <span>Likes</span>
+          <span>{m.likes}</span>
         </div>
         <div>
           <strong>{stats.matches}</strong>
-          <span>Matches</span>
+          <span>{m.matches}</span>
         </div>
         <div>
           <strong>{stats.views}</strong>
-          <span>Views</span>
+          <span>{m.views}</span>
         </div>
       </section>
       <nav className="mingle-menu">
         <button type="button" onClick={() => go("verification")}>
           <ShieldIcon />
-          <span>Identity &amp; verification</span>
-          <small>{verification ? "Single status verified" : "Identity verified"}</small>
+          <span>{m.identityVerification}</span>
+          <small>{verification ? m.verified : m.identityVerified}</small>
           <b>›</b>
         </button>
         <button type="button" onClick={() => go("settings")}>
           <GearIcon />
-          <span>Settings</span>
+          <span>{m.settings}</span>
           <b>›</b>
         </button>
         <button type="button" onClick={() => go("help")}>
           <HelpIcon />
-          <span>Help</span>
+          <span>{m.help}</span>
           <b>›</b>
         </button>
       </nav>
-      <nav className="mingle-tabs" aria-label="Main">
+      <nav className="mingle-tabs" aria-label={m.mainNav}>
         <span>
           <SearchIcon />
-          Discover
+          {m.discover}
         </span>
         <span>
           <HeartIcon />
-          Likes
+          {m.likes}
         </span>
         <span>
           <ChatIcon />
-          Messages
+          {m.messages}
         </span>
         <span aria-current="page">
           <UserIcon />
-          Profile
+          {m.profile}
         </span>
       </nav>
     </main>
@@ -144,41 +152,47 @@ export function ProfileScreen({ notice, error, verification, go }: Shared) {
 }
 
 function ProofDetails({ verification, go }: { verification: NonNullable<Verification>; go: Shared["go"] }) {
+  const { t } = useI18n();
+  const p = t.mingle.proof;
   const { residence, ageRange } = verification.disclosed;
-  const shared = ["Single", residence && `lives in ${residence}`, ageRange].filter(Boolean).join(", ");
+  const shared = [p.single, residence && p.livesIn(lookup(t.places, residence)), ageRange && t.ageRange(ageRange)]
+    .filter(Boolean)
+    .join(p.listSeparator);
   const short = `${verification.nullifierHash.slice(0, 6)}…${verification.nullifierHash.slice(-4)}`;
   return (
     <>
       <dl className="mingle-proof-details">
         <div>
-          <dt>Shared</dt>
+          <dt>{p.shared}</dt>
           <dd>{shared}</dd>
         </div>
         <div>
-          <dt>Proof</dt>
-          <dd>{verification.prover === "groth16" ? "Zero-knowledge (Groth16)" : "Mock proof"}</dd>
+          <dt>{p.proof}</dt>
+          <dd>{verification.prover === "groth16" ? p.zk : p.mock}</dd>
         </div>
         <div>
-          <dt>Checked</dt>
+          <dt>{p.checked}</dt>
           <dd>
             {verification.chain === "sepolia" && verification.txHash ? (
               <TxStatus txHash={verification.txHash} />
             ) : (
-              "Off-chain by Mingle"
+              p.offChain
             )}
           </dd>
         </div>
         <div>
-          <dt>Nullifier</dt>
+          <dt>{p.nullifier}</dt>
           <dd>
             <code>{short}</code>
           </dd>
         </div>
       </dl>
-      {verification.chainNote && <p className="mingle-proof-note">{verification.chainNote}</p>}
-      <p className="mingle-proof-note">Mingle never received your name, birth date or address.</p>
+      {verification.chainNote && (
+        <p className="mingle-proof-note">{lookup(t.mingle.chainNotes, verification.chainNote)}</p>
+      )}
+      <p className="mingle-proof-note">{p.neverReceived}</p>
       <button type="button" className="mingle-view" onClick={() => go("profile")}>
-        View on profile
+        {p.viewOnProfile}
       </button>
     </>
   );
@@ -192,55 +206,58 @@ type VerificationProps = Shared & {
 };
 
 export function VerificationScreen({ notice, error, verification, go, modes, dialog, connecting, onConnect }: VerificationProps) {
+  const { t } = useI18n();
+  const m = t.mingle;
+  const c = m.checks;
   return (
     <main className="mingle">
-      <SubHeader title="Identity & verification" go={go} />
+      <SubHeader title={m.identityVerification} go={go} />
       <Messages notice={notice} error={error} />
       <div className="mingle-proofs">
         <article>
           <div className="mingle-proof-title">
-            <h2>Identity check</h2>
-            <span className="mingle-status is-done">Verified</span>
+            <h2>{c.identity}</h2>
+            <span className="mingle-status is-done">{c.verified}</span>
           </div>
-          <p>Your identity has been verified using a government-issued ID.</p>
+          <p>{c.identityBody}</p>
         </article>
         <article>
           <div className="mingle-proof-title">
-            <h2>Single status</h2>
+            <h2>{c.single}</h2>
             <span className={verification ? "mingle-status is-done" : "mingle-status"}>
-              {verification ? "Verified" : "Not verified"}
+              {verification ? c.verified : c.notVerified}
             </span>
           </div>
-          <p>Use an official certificate to show your single status on your profile.</p>
+          <p>{c.singleBody}</p>
           {verification ? (
             <ProofDetails verification={verification} go={go} />
           ) : (
             <button type="button" className="mingle-connect" onClick={() => dialog.current?.showModal()}>
               <Image src="/brand/das-busters.png" alt="" width={24} height={24} />
-              <span>Verify with DAS Busters</span>
+              <span>{c.connect}</span>
               <b aria-hidden="true">›</b>
             </button>
           )}
         </article>
         <article>
           <div className="mingle-proof-title">
-            <h2>Income</h2>
-            <span className="mingle-status">Not verified</span>
+            <h2>{c.income}</h2>
+            <span className="mingle-status">{c.notVerified}</span>
           </div>
-          <p>Verify your income to give potential matches more confidence in your profile.</p>
+          <p>{c.incomeBody}</p>
         </article>
       </div>
       <ModeBadges modes={modes} only={["prover", "chain"]} />
       <dialog ref={dialog} className="mingle-dialog">
-        <h2>Connect DAS Busters?</h2>
-        <p>Open DAS Busters to verify your single status.</p>
+        <h2>{m.connectTitle}</h2>
+        <p>{m.connectBody}</p>
         <div>
           <button type="button" onClick={() => dialog.current?.close()} disabled={connecting}>
-            Cancel
+            {t.common.cancel}
           </button>
           <button type="button" onClick={onConnect} disabled={connecting}>
             {connecting && <span className="spinner" />}
-            Continue
+            {t.common.continue}
           </button>
         </div>
       </dialog>
@@ -249,16 +266,21 @@ export function VerificationScreen({ notice, error, verification, go, modes, dia
 }
 
 export function SettingsScreen({ notice, error, go, onReset }: Shared & { onReset: () => void }) {
+  const { t } = useI18n();
   return (
     <main className="mingle">
-      <SubHeader title="Settings" go={go} />
+      <SubHeader title={t.mingle.settings} go={go} />
       <Messages notice={notice} error={error} />
       <section className="mingle-secondary">
+        <div className="mingle-setting">
+          <span>{t.language}</span>
+          <LanguageToggle />
+        </div>
         <Link className="mingle-outline" href="/wallet">
-          Back to DAS Busters
+          {t.mingle.backToWallet}
         </Link>
         <button type="button" className="mingle-reset" onClick={onReset}>
-          Reset Mingle for another demo run
+          {t.mingle.reset}
         </button>
       </section>
     </main>
@@ -266,26 +288,26 @@ export function SettingsScreen({ notice, error, go, onReset }: Shared & { onRese
 }
 
 export function HelpScreen({ notice, error, go }: Shared) {
+  const { t } = useI18n();
   return (
     <main className="mingle">
-      <SubHeader title="Help" go={go} />
+      <SubHeader title={t.mingle.help} go={go} />
       <Messages notice={notice} error={error} />
       <section className="mingle-secondary">
-        <p>You can connect a Single Status Certificate under Identity &amp; verification.</p>
-        <p className="muted">
-          Mingle never sees the certificate itself. DAS Busters sends a proof that you are single, plus anything else you
-          choose to share.
-        </p>
+        <p>{t.mingle.helpBody}</p>
+        <p className="muted">{t.mingle.helpMuted}</p>
       </section>
     </main>
   );
 }
 
 export function EditScreen({ notice, error, go }: Shared) {
-  const { name, age, city, bio } = MINGLE_PROFILE;
+  const { t } = useI18n();
+  const { name, age } = MINGLE_PROFILE;
+  const { city, bio } = t.mingle.profileData;
   return (
     <main className="mingle">
-      <SubHeader title="Edit profile" go={go} />
+      <SubHeader title={t.mingle.editProfile} go={go} />
       <Messages notice={notice} error={error} />
       <section className="mingle-secondary">
         <p>

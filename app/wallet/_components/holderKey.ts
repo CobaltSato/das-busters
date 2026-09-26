@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/components/I18nProvider";
 import { useCreateWallet, usePrivy, useSignMessage, useWallets, type User } from "@privy-io/react-auth";
 import { randomField } from "@/lib/fields";
 import { HOLDER_KEY_MESSAGE, PRIVY_ENABLED, secretFromSignature } from "@/lib/privy";
@@ -40,6 +41,7 @@ function withTimeout<T>(promise: Promise<T>, message: string): Promise<T> {
 }
 
 function usePrivySecret(): HolderSecretSource {
+  const { t } = useI18n();
   const { ready, authenticated, user } = usePrivy();
   const { wallets } = useWallets();
   const { createWallet } = useCreateWallet();
@@ -65,7 +67,7 @@ function usePrivySecret(): HolderSecretSource {
           const { signature } = await signMessage({ message: HOLDER_KEY_MESSAGE }, { address });
           return secretFromSignature(signature);
         })(),
-        "Setting up your key took too long. Check your connection and try again.",
+        t.wallet.save.keyTimeout,
       ),
   };
 }

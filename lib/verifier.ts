@@ -12,10 +12,10 @@ export function checkAgainstRequest(
   request: PresentationRequest,
 ): VerificationResult["disclosed"] {
   if (signals.scopeHash !== request.scopeHash || signals.requestHash !== request.requestHash) {
-    throw new ProofError("This proof was made for a different request");
+    throw new ProofError("This proof was made for a different request", "wrong-request");
   }
   if (!isTrustedIssuer(signals.issuerAx, signals.issuerAy)) {
-    throw new ProofError("The certificate was not issued by a trusted city office");
+    throw new ProofError("The certificate was not issued by a trusted city office", "untrusted-issuer");
   }
 
   const { residence, ageRange } = request.asks;
@@ -23,19 +23,19 @@ export function checkAgainstRequest(
   const revealAge = flag(signals.revealAge);
 
   if (revealResidence && signals.expectedResidence !== String(residence.code)) {
-    throw new ProofError("The residence in the proof does not match the request");
+    throw new ProofError("The residence in the proof does not match the request", "residence-mismatch");
   }
   if (!revealResidence && signals.expectedResidence !== "0") {
-    throw new ProofError("A hidden field carries a value");
+    throw new ProofError("A hidden field carries a value", "hidden-field");
   }
   const rangeMatches =
     signals.minBirthYear === String(ageRange.minBirthYear) &&
     signals.maxBirthYear === String(ageRange.maxBirthYear);
   if (revealAge && !rangeMatches) {
-    throw new ProofError("The age range in the proof does not match the request");
+    throw new ProofError("The age range in the proof does not match the request", "age-mismatch");
   }
   if (!revealAge && (signals.minBirthYear !== "0" || signals.maxBirthYear !== "0")) {
-    throw new ProofError("A hidden field carries a value");
+    throw new ProofError("A hidden field carries a value", "hidden-field");
   }
 
   return {
@@ -46,7 +46,7 @@ export function checkAgainstRequest(
 }
 
 function flag(value: string): boolean {
-  if (value !== "0" && value !== "1") throw new ProofError("A disclosure flag is not 0 or 1");
+  if (value !== "0" && value !== "1") throw new ProofError("A disclosure flag is not 0 or 1", "bad-flag");
   return value === "1";
 }
 

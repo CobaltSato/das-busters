@@ -1,0 +1,21 @@
+.reset-top {
+  justify-content: flex-end;
+}
+
+.reset-note {
+  margin-top: 16px;
+}
+
+.reset-done {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #eaf6ee;
+  color: #1c6b3a;
+  font-size: 13px;
+  line-height: 20px;
+  text-align: left;
+}

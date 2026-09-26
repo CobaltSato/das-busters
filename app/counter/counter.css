@@ -50,6 +50,12 @@
   font-size: 13px;
 }
 
+.counter-header-side {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
 .counter-number {
   display: flex;
   align-items: center;

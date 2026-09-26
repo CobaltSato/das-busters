@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
 import { CertificateCard } from "@/components/CertificateCard";
+import { useI18n } from "@/components/I18nProvider";
 import { SuccessMark } from "@/components/SuccessMark";
 import { errorMessage, postJson } from "@/lib/api";
 import type { Credential, CredentialPreview } from "@/lib/credential";
@@ -21,6 +22,8 @@ function needsSignIn(user: UserRecord | null): boolean {
 }
 
 export function SaveScreen({ offer, preview }: Props) {
+  const { t } = useI18n();
+  const copy = t.wallet.save;
   const router = useRouter();
   const holder = useHolderSecret();
   const [user, setUser] = useState<UserRecord | null>(null);
@@ -51,11 +54,11 @@ export function SaveScreen({ offer, preview }: Props) {
       });
       const stored = walletStore.set({ credential, holderSecret, savedAt: new Date().toISOString() });
       if (!stored) {
-        throw new Error("This browser would not let us store the certificate. Turn off private browsing and try again.");
+        throw new Error(copy.storeFailed);
       }
       router.push("/wallet/saved");
     } catch (e) {
-      setError(errorMessage(e));
+      setError(errorMessage(e, t));
       setSaving(false);
     }
   }
@@ -67,13 +70,13 @@ export function SaveScreen({ offer, preview }: Props) {
       </div>
       <p className="signed-in">
         <SuccessMark size={40} />
-        {user ? `Signed in as ${user.name}` : "Signed in"}
+        {user ? copy.signedInAs(user.name) : copy.signedIn}
       </p>
-      <h1 className="screen-title wallet-heading">Save to this device</h1>
+      <h1 className="screen-title wallet-heading">{copy.title}</h1>
       <p className="screen-lede">
-        Access and present your certificate
+        {copy.lede[0]}
         <br />
-        anytime in DAS Busters.
+        {copy.lede[1]}
       </p>
       <div className="wallet-card">
         <CertificateCard certificate={preview} variant="compact" />
@@ -84,18 +87,18 @@ export function SaveScreen({ offer, preview }: Props) {
           {holder.status !== "ready" ? (
             <>
               <span className="spinner" />
-              Preparing your key…
+              {copy.preparingKey}
             </>
           ) : saving ? (
             <>
               <span className="spinner" />
-              Saving…
+              {copy.saving}
             </>
           ) : (
-            "Save certificate"
+            copy.save
           )}
         </button>
-        <p className="fine-print">Stored only on this device.</p>
+        <p className="fine-print">{copy.finePrint}</p>
       </div>
     </main>
   );

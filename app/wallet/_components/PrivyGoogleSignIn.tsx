@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useLoginWithOAuth, usePrivy, type User } from "@privy-io/react-auth";
+import { useI18n } from "@/components/I18nProvider";
 import { errorMessage } from "@/lib/api";
 import { userStore } from "@/lib/storage";
 
@@ -27,10 +28,10 @@ function isPending(): boolean {
   }
 }
 
-function remember(user: User): boolean {
+function remember(user: User, fallbackName: string): boolean {
   const google = user.google;
   return userStore.set({
-    name: google?.name ?? google?.email ?? "Google user",
+    name: google?.name ?? google?.email ?? fallbackName,
     email: google?.email ?? "",
     provider: "privy",
   });
@@ -40,18 +41,20 @@ function remember(user: User): boolean {
 // matches the design. Google redirects back to this page, and Privy finishes
 // the login when it loads.
 export function PrivyGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
+  const { t } = useI18n();
+  const g = t.wallet.google;
   const { ready, authenticated, user } = usePrivy();
   const [error, setError] = useState<string | null>(null);
   const continued = useRef(false);
   const { initOAuth, state } = useLoginWithOAuth({
-    onError: (code) => setError(`Google sign-in did not finish (${code}). Try again.`),
+    onError: (code) => setError(g.didNotFinish(code)),
   });
 
   function proceed(signedIn: User, tapped = false) {
     // A tap always retries; the automatic path runs once.
     if (continued.current && !tapped) return;
-    if (!remember(signedIn)) {
-      setError("This browser blocked storage. Turn off private browsing and try again.");
+    if (!remember(signedIn, g.fallbackName)) {
+      setError(t.common.storageBlocked);
       return;
     }
     continued.current = true;
@@ -80,7 +83,7 @@ export function PrivyGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
       await initOAuth({ provider: "google" });
     } catch (e) {
       markPending(false);
-      setError(errorMessage(e));
+      setError(errorMessage(e, t));
     }
   }
 
@@ -92,7 +95,7 @@ export function PrivyGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
       {error && <p className="error-banner">{error}</p>}
       <button type="button" className="google-button" onClick={start} disabled={busy}>
         <Image src="/brand/google-g.svg" alt="" width={20} height={20} />
-        <span>{busy ? "Connecting…" : name ? `Continue as ${name}` : "Continue with Google"}</span>
+        <span>{busy ? g.connecting : name ? g.continueAs(name) : g.continueWith}</span>
       </button>
     </>
   );

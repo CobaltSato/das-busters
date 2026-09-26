@@ -434,6 +434,14 @@
   font-size: 12px;
 }
 
+.mingle-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  font-size: 14px;
+}
+
 .mingle-outline {
   width: 100%;
   min-height: 48px;

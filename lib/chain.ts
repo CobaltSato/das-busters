@@ -40,13 +40,19 @@ const REGISTRY_ABI = [
 
 const RECEIPT_TIMEOUT_MS = 45_000;
 
-const REVERT_MESSAGES: Record<string, string> = {
-  NullifierAlreadyUsed:
-    "This certificate is already linked to a Mingle account. Reset Mingle to start another demo run.",
-  UntrustedIssuer: "The registry does not trust the city office that signed this certificate.",
-  InvalidProof: "The proof did not verify on-chain.",
+const REVERTS: Record<string, { code: string; message: string }> = {
+  NullifierAlreadyUsed: {
+    code: "nullifier-used",
+    message: "This certificate is already linked to a Mingle account. Reset the demo to start another run.",
+  },
+  UntrustedIssuer: {
+    code: "registry-untrusted-issuer",
+    message: "The registry does not trust the city office that signed this certificate.",
+  },
+  InvalidProof: { code: "invalid-proof-onchain", message: "The proof did not verify on-chain." },
 };
 
+// chainNote is a code ("rpc-unreachable", "unconfirmed") the UI translates.
 export type ChainOutcome =
   | { chain: "sepolia"; txHash: Hex; chainNote: string | null }
   | { chain: "off"; txHash: null; chainNote: string | null };
@@ -87,7 +93,10 @@ function throwIfRevert(error: unknown): void {
   const revert = error instanceof BaseError ? error.walk((e) => e instanceof ContractFunctionRevertedError) : null;
   if (revert instanceof ContractFunctionRevertedError) {
     const name = revert.data?.errorName ?? "";
-    throw new ProofError(REVERT_MESSAGES[name] ?? `The registry rejected the proof (${name || "no reason"}).`);
+    const known = REVERTS[name];
+    if (known) throw new ProofError(known.message, known.code);
+    const reason = name || "no reason";
+    throw new ProofError(`The registry rejected the proof (${reason}).`, "registry-rejected", { reason });
   }
 }
 
@@ -110,7 +119,7 @@ export async function recordOnChain(presentation: Presentation): Promise<ChainOu
     return {
       chain: "off",
       txHash: null,
-      chainNote: "Sepolia could not be reached, so Mingle checked the proof off-chain only.",
+      chainNote: "rpc-unreachable",
     };
   }
 
@@ -124,11 +133,11 @@ export async function recordOnChain(presentation: Presentation): Promise<ChainOu
     // The simulation passed but another transaction for the same nullifier
     // was mined first. Simulate again against the new state to get the reason.
     await client.simulateContract(call).catch(throwIfRevert);
-    throw new ProofError("The registry rejected the proof when it was mined.");
+    throw new ProofError("The registry rejected the proof when it was mined.", "mined-revert");
   }
   return {
     chain: "sepolia",
     txHash,
-    chainNote: receipt ? null : "Sepolia has not confirmed the transaction yet. The link shows its status.",
+    chainNote: receipt ? null : "unconfirmed",
   };
 }
