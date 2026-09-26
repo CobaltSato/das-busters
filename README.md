@@ -57,7 +57,7 @@ The proof, the contracts, Google sign-in and the World ID request are real. Our 
 | Certificate | Stand-in data, real signature. Every pickup issues fictional Shibuya resident Ken Sato's certificate, bound to your own holder secret. |
 | Mingle | Stand-in app. Our server plays its backend: the verifier and the relayer. |
 
-The hub shows four badges for the parts that can run as a stand-in. On the live demo they read `Sign-in: Google via Privy`, `Proof: Groth16`, `Recorded on Sepolia` and `Human check: World ID staging`; a badge saying mock, off-chain or simulated marks a stand-in. World's Developer Portal accepts Simulator proofs only during a 24-hour staging window. The current one closes on 27 September 2026 at 23:53 JST, and after that the human check is labelled simulated. How a real deployment would split these roles: [Demo setup vs a real deployment](docs/technical.md#demo-setup-vs-a-real-deployment).
+The hub shows four badges for the parts that can run as a stand-in. On the live demo they read `Sign-in: Google via Privy`, `Proof: Groth16`, `Recorded on Sepolia` and `Human check: World ID staging`; a badge saying mock, off-chain or simulated marks a stand-in. World's Developer Portal accepts Simulator proofs only during a 24-hour staging window. The current one closes on 28 September 2026 at 07:02 JST, and after that the human check is labelled simulated. How a real deployment would split these roles: [Demo setup vs a real deployment](docs/technical.md#demo-setup-vs-a-real-deployment).
 
 ## Try it
 

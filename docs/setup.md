@@ -39,7 +39,7 @@ With `PROVER_MODE=groth16`, the phone makes each proof in the browser and `/api/
 
 ## World ID staging window
 
-The Portal accepts proofs from the World ID Simulator only while a staging window is open. The current window closes on **27 September 2026 at 23:53 JST** (14:53 UTC). After that the server falls back by itself and the hub shows `Human check: simulated`.
+The Portal accepts proofs from the World ID Simulator only while a staging window is open. The current window closes on **28 September 2026 at 07:02 JST** (22:02 UTC on 27 September). After that the server falls back by itself and the hub shows `Human check: simulated`.
 
 To open a new window (needs `WORLD_PORTAL_API_KEY` in `.env.local`):
 

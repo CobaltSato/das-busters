@@ -34,7 +34,7 @@ proof of human を選んだ理由と、Mingle が受け取るものは [docs/tec
 
 ## 詰まったところ
 
-**staging の証明には staging 窓が要る**：Portal の `/api/v4/verify` は、24時間の staging 窓を開いてそのトークンを `x-staging-verification-token` ヘッダーで送るまで、Simulator の証明に `403 environment_not_allowed` を返しました。Portal の Web 画面で窓を開く方法は見つけられず、チームの API キーを使って Portal の MCP エンドポイント（`set_world_id_staging_verification`）から開きました（[scripts/world-staging.ts](scripts/world-staging.ts)）。窓を開き直すたびにトークンが変わるので、デプロイ先のトークンを入れ替えて再デプロイする必要があり、そのあいだ本番の World ID 確認は失敗します（[docs/setup.ja.md](docs/setup.ja.md#world-id-の-staging-窓)）。開発中に窓が閉じたときは、どの確認も Portal で失敗しました。いまはサーバーが窓の閉じる時刻を持っていて、過ぎたらシミュレーションだと表示した確認に切り替えます。いまの窓は2026年9月27日 23:53 JST に閉じます。
+**staging の証明には staging 窓が要る**：Portal の `/api/v4/verify` は、24時間の staging 窓を開いてそのトークンを `x-staging-verification-token` ヘッダーで送るまで、Simulator の証明に `403 environment_not_allowed` を返しました。Portal の Web 画面で窓を開く方法は見つけられず、チームの API キーを使って Portal の MCP エンドポイント（`set_world_id_staging_verification`）から開きました（[scripts/world-staging.ts](scripts/world-staging.ts)）。窓を開き直すたびにトークンが変わるので、デプロイ先のトークンを入れ替えて再デプロイする必要があり、そのあいだ本番の World ID 確認は失敗します（[docs/setup.ja.md](docs/setup.ja.md#world-id-の-staging-窓)）。開発中に窓が閉じたときは、どの確認も Portal で失敗しました。いまはサーバーが窓の閉じる時刻を持っていて、過ぎたらシミュレーションだと表示した確認に切り替えます。いまの窓は2026年9月28日 07:02 JST に閉じます。
 
 **Simulator はリクエストを1回しか読まない**：スマホでは Simulator が別タブで開きました。承認したあと元のタブに戻ればいいと気づかない人がいて、待っている側のタブが固まったり再読み込みされたりすると、答えが届きません。Simulator を閉じるとリクエストはキャンセルになり、次は新しく署名し直す必要があります。いまはリクエストを `connect_url` に入れて、Simulator を iframe で画面の上に開き、答えが届いたら画面が自動で進みます（[IdkitRequest.tsx](app/wallet/world-id/IdkitRequest.tsx) のコメント）。
 

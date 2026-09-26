@@ -27,7 +27,7 @@ flowchart LR
 
 **Language.** Everything starts in English. The `EN / 日本語` toggle is on the hub, the counter, every DAS Busters screen from pickup to sharing, and Mingle's profile and Settings. Adding `?lang=ja` to any URL also switches to Japanese. The counter's QR code carries its language to the phone, so switching the counter is enough.
 
-**Check before going on stage.** The hub (`/`) shows four mode badges. For the full demo they read `Sign-in: Google via Privy`, `Proof: Groth16` and `Recorded on Sepolia`. `Human check: World ID staging` is expected until the Portal's staging window closes on 27 September 2026 at 23:53 JST (see step 5); after that it falls back to `Human check: simulated`. See [Mode badges](#mode-badges) if any of them says mock or off-chain.
+**Check before going on stage.** The hub (`/`) shows four mode badges. For the full demo they read `Sign-in: Google via Privy`, `Proof: Groth16` and `Recorded on Sepolia`. `Human check: World ID staging` is expected until the Portal's staging window closes on 28 September 2026 at 07:02 JST (see step 5); after that it falls back to `Human check: simulated`. See [Mode badges](#mode-badges) if any of them says mock or off-chain.
 
 ## The run
 
