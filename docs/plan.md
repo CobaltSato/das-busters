@@ -1,5 +1,8 @@
 # DAS Busters / Single Proof 実装計画（ETHGlobal Tokyo 2026）
 
+> ハッキングを始める前に書いた計画で、当時のまま残しています。World ID の staging 対応、スマホでの証明、テストの形などその後に変えた点は、[README](../README.ja.md) と git log にあります。
+> This is the plan we wrote before building, kept as it was. Later changes (World ID staging, proving on the phone, the test setup and more) are in the [README](../README.md) and the git log.
+
 ## Context
 
 - **締切**: ETHGlobal Tokyo 2026（9/25〜27）の提出締切は **9/27(日) 09:00 JST**。
@@ -32,7 +35,7 @@
 | 認証 | Privy。正規デザインの「Continue with Google」ボタンから `useLoginWithOAuth().initOAuth({provider:'google'})` を呼ぶ。埋め込みウォレットで署名する |
 | World ID | 後回し。IDKit 4 前提で差し込み口だけ作り、それまでは「Simulated」と明示したモックで動かす |
 | モック | 統合ごとに `mock`/`real` を env で切り替える。env が無ければ mock に倒す。**UI に現在のモードを出す**（`off-chain` なのに on-chain と見せない） |
-| コミット | 英語の Conventional Commits（審査員が読めるように）、小さく刻んで頻繁に push、`Co-Authored-By` 付き。squash や履歴の書き換えはしない |
+| コミット | 英語の Conventional Commits（英語圏の読み手にも読めるように）、小さく刻んで頻繁に push、`Co-Authored-By` 付き。squash や履歴の書き換えはしない |
 
 ## URL 設計（1プロジェクト・2アプリ）
 
