@@ -3,7 +3,8 @@ import type { Modes } from "@/lib/modes";
 import { ActorIcon } from "../_components/icons";
 
 // Three tiers: what runs in the browser, the roles the one server plays,
-// and the outside services. Laid out in HTML so it reflows on phones.
+// and the outside services. Laid out in HTML so it reflows on phones. The
+// city office box says on its face that its key sits here for the demo only.
 
 type Copy = StoryCopy["architecture"];
 type ServerRole = keyof Copy["server"] & ("issuer" | "prover" | "verifier" | "worldId");
@@ -52,6 +53,12 @@ export function ArchitectureMap({ copy, worldId }: { copy: Copy; worldId: Modes[
               <strong>{copy.server[role].name}</strong>
               <code className="hiw-tech">{copy.server[role].routes}</code>
               <span>{copy.server[role].key}</span>
+              {role === "issuer" && (
+                <>
+                  <em className="hiw-arch-status">{copy.server.issuer.demo}</em>
+                  <span className="hiw-arch-demo-note">{copy.server.issuer.demoNote}</span>
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -69,6 +76,7 @@ export function ArchitectureMap({ copy, worldId }: { copy: Copy; worldId: Modes[
             <ActorIcon actor="chain" size={20} />
             <strong>{copy.outside.chain.name}</strong>
             <span>{copy.outside.chain.note}</span>
+            <code className="hiw-tech">{copy.outside.chain.code}</code>
           </div>
           <div className={worldIdLive ? "hiw-arch-box" : "hiw-arch-box is-dashed"}>
             <ActorIcon actor="human" size={20} />

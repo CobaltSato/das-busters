@@ -155,7 +155,7 @@
 
 @keyframes hiw-sa-pop {
   0% {
-    opacity: 0;
+    opacity: 0.25;
     transform: scale(0.8);
   }
   10%,
@@ -164,7 +164,7 @@
     transform: scale(1);
   }
   100% {
-    opacity: 0;
+    opacity: 0.25;
     transform: scale(0.8);
   }
 }
@@ -283,7 +283,7 @@
 
 /* Basics: chain */
 
-.hiw-ma-block rect {
+.hiw-ma-block > rect {
   fill: #ffffff;
   stroke: var(--line);
 }
@@ -291,25 +291,42 @@
 .hiw-ma-block-label {
   fill: var(--muted);
   font-size: 6.5px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .hiw-ma-block-number {
-  fill: var(--ink);
-  font: 500 8px var(--hiw-mono);
+  fill: var(--muted);
+  font: 500 7px var(--hiw-mono);
 }
 
-.hiw-ma-block.is-yours {
-  animation: hiw-ma-slide 6s ease-out infinite both;
+.hiw-ma-prev rect {
+  fill: #ffffff;
+  stroke: var(--blue);
+  stroke-dasharray: 2 2;
 }
 
-.hiw-ma-block.is-yours rect {
+.hiw-ma-prev text {
+  fill: var(--blue);
+  font: 500 6.5px var(--hiw-mono);
+}
+
+/* Your entry pulses between faint and full; it never disappears. */
+.hiw-ma-entry.is-yours {
+  animation: hiw-ma-entry 6s ease infinite both;
+}
+
+.hiw-ma-entry.is-yours rect {
   fill: #e8f2ff;
   stroke: var(--blue);
 }
 
-.hiw-ma-block.is-yours .hiw-ma-block-label,
-.hiw-ma-block.is-yours .hiw-ma-block-number {
+.hiw-ma-entry.is-yours text {
+  fill: var(--blue);
+  font-size: 6.4px;
+  font-weight: 700;
+}
+
+.hiw-ma-travel {
   fill: var(--blue);
 }
 
@@ -376,9 +393,11 @@
   fill: var(--ink);
 }
 
+/* The stamps and the valid/broken pills dim between loops but never
+   vanish, so the picture always carries its answer. */
 @keyframes hiw-ma-stamp {
   0% {
-    opacity: 0;
+    opacity: 0.25;
     transform: scale(1.6) rotate(-8deg);
   }
   12%,
@@ -387,7 +406,7 @@
     transform: scale(1) rotate(-8deg);
   }
   100% {
-    opacity: 0;
+    opacity: 0.25;
     transform: scale(1) rotate(-8deg);
   }
 }
@@ -395,14 +414,14 @@
 @keyframes hiw-ma-fade {
   0%,
   14% {
-    opacity: 0;
+    opacity: 0.25;
   }
   22%,
   88% {
     opacity: 1;
   }
   100% {
-    opacity: 0;
+    opacity: 0.25;
   }
 }
 
@@ -458,19 +477,16 @@
   }
 }
 
-@keyframes hiw-ma-slide {
+@keyframes hiw-ma-entry {
   0%,
-  20% {
-    opacity: 0;
-    transform: translateX(24px);
+  18% {
+    opacity: 0.3;
   }
-  32%,
+  30%,
   90% {
     opacity: 1;
-    transform: translateX(0);
   }
   100% {
-    opacity: 0;
-    transform: translateX(0);
+    opacity: 0.3;
   }
 }

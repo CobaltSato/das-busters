@@ -117,11 +117,24 @@ export function SequencePlayer({ label, steps, actors, phases, controls }: Playe
   );
 }
 
+// The words on the arrow: plain ones in Plain view, the route or call in
+// Engineer view. Both are in the SVG; CSS shows one.
+function ArcLabel({ text, x, y, className }: { text: string; x: number; y: number; className: string }) {
+  const width = labelWidth(text);
+  const labelX = clampLabel(x, width);
+  return (
+    <g className={`hiw-seq-label ${className}`}>
+      <rect x={labelX - width / 2} y={y - 9} width={width} height="18" rx="9" />
+      <text x={labelX} y={y + 3.5} textAnchor="middle">
+        {text}
+      </text>
+    </g>
+  );
+}
+
 // Keyed by step, so each message redraws its arc from the start.
 function Stage({ step, actors }: { step: PlayerStep; actors: Record<ActorId, string> }) {
   const arc = arcBetween(step.from, step.to);
-  const width = labelWidth(step.arrow);
-  const labelX = clampLabel(arc.labelX, width);
   const active = (actor: ActorId) => actor === step.from || actor === step.to;
   return (
     <svg className="hiw-seq-svg" viewBox={`0 0 ${STAGE.width} ${STAGE.height}`} aria-hidden="true">
@@ -134,12 +147,8 @@ function Stage({ step, actors }: { step: PlayerStep; actors: Record<ActorId, str
       <circle r="4" className="hiw-seq-dot hiw-motion">
         <animateMotion dur="1.6s" repeatCount="indefinite" path={arc.d} />
       </circle>
-      <g className="hiw-seq-label">
-        <rect x={labelX - width / 2} y={arc.labelY - 9} width={width} height="18" rx="9" />
-        <text x={labelX} y={arc.labelY + 3.5} textAnchor="middle">
-          {step.arrow}
-        </text>
-      </g>
+      <ArcLabel text={step.label} x={arc.labelX} y={arc.labelY} className="hiw-plain-only" />
+      <ArcLabel text={step.arrow} x={arc.labelX} y={arc.labelY} className="hiw-tech" />
       {ACTORS.map((actor) => (
         <g key={actor} className={active(actor) ? "hiw-seq-node is-active" : "hiw-seq-node"}>
           <circle cx={nodeX(actor)} cy={STAGE.nodeY} r={STAGE.radius} />

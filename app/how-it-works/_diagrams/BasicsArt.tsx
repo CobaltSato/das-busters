@@ -88,34 +88,72 @@ export function HashArt({ copy }: { copy: Basics["hash"]["art"] }) {
   );
 }
 
-const BLOCK_X = [8, 66, 124, 182];
-const BLOCK_NUMBERS = ["1843…", "5096…", "3320…", "9127…"];
+// Three blocks in a row. Each one starts with the fingerprint of the block
+// before it (the same value printed under that block), which is what links
+// them: change an old block and its fingerprint no longer matches. Your
+// nullifier is one entry inside the newest block. Fingerprints are made up.
+const BLOCK_X = [8, 88, 168];
+const BLOCK_W = 64;
+const FINGERPRINTS = ["7a41…", "c09e…", "3f2d…"];
+const BEFORE_FIRST = "e5b8…";
+
+function Block({ x, index, copy, last }: { x: number; index: number; copy: Basics["chain"]["art"]; last: boolean }) {
+  const previous = index === 0 ? BEFORE_FIRST : FINGERPRINTS[index - 1];
+  const middle = x + BLOCK_W / 2;
+  return (
+    <g className="hiw-ma-block">
+      <rect x={x} y="4" width={BLOCK_W} height="58" rx="6" />
+      <text x={x + 7} y="14" className="hiw-ma-block-label">
+        {copy.block} {101 + index}
+      </text>
+      <g className="hiw-ma-prev">
+        <rect x={x + 5} y="19" width={BLOCK_W - 10} height="12" rx="6" />
+        <text x={middle} y="27.5" textAnchor="middle">
+          ← {previous}
+        </text>
+      </g>
+      <rect x={x + 8} y="36" width={BLOCK_W - 16} height="4" rx="2" className="hiw-ma-bar" />
+      {last ? (
+        <g className="hiw-ma-entry is-yours">
+          <rect x={x + 3} y="42" width={BLOCK_W - 6} height="12" rx="6" />
+          <text x={middle} y="50.5" textAnchor="middle">
+            {copy.yours}
+          </text>
+        </g>
+      ) : (
+        <rect x={x + 8} y="45" width={BLOCK_W - 24} height="4" rx="2" className="hiw-ma-bar" />
+      )}
+      <text x={middle} y="72" textAnchor="middle" className="hiw-ma-block-number">
+        {FINGERPRINTS[index]}
+      </text>
+    </g>
+  );
+}
 
 export function ChainArt({ copy }: { copy: Basics["chain"]["art"] }) {
   const last = BLOCK_X.length - 1;
   return (
-    <svg viewBox="0 0 240 96" className="hiw-mini-art" role="img" aria-label={`${copy.read}. ${copy.erase}.`}>
+    <svg
+      viewBox="0 0 240 104"
+      className="hiw-mini-art"
+      role="img"
+      aria-label={`${copy.block} 101 → ${copy.block} 102 → ${copy.block} 103: ${copy.link}. ${copy.yours}. ${copy.read}. ${copy.erase}.`}
+    >
       {BLOCK_X.map((x, i) => (
-        <g key={x} className={i === last ? "hiw-ma-block is-yours" : "hiw-ma-block"}>
-          {i > 0 && <path d={`M${x - 14} 32h14`} className="hiw-ma-wire" />}
-          <rect x={x} y="12" width="44" height="40" rx="6" />
-          <text x={x + 22} y="27" textAnchor="middle" className="hiw-ma-block-label">
-            {i === last ? copy.yours : copy.block}
-          </text>
-          <text x={x + 22} y="43" textAnchor="middle" className="hiw-ma-block-number">
-            {BLOCK_NUMBERS[i]}
-          </text>
-        </g>
+        <path key={`wire-${x}`} d={`M${i === 0 ? 0 : x - 16} 25h${i === 0 ? 13 : 21}`} className="hiw-ma-wire" />
+      ))}
+      {BLOCK_X.map((x, i) => (
+        <Block key={x} x={x} index={i} copy={copy} last={i === last} />
       ))}
       <g className="hiw-ma-pill is-ok">
-        <rect x="8" y="66" width="108" height="20" rx="10" />
-        <text x="62" y="79" textAnchor="middle">
+        <rect x="8" y="80" width="108" height="20" rx="10" />
+        <text x="62" y="93" textAnchor="middle">
           {copy.read}
         </text>
       </g>
       <g className="hiw-ma-pill is-broken">
-        <rect x="124" y="66" width="108" height="20" rx="10" />
-        <text x="178" y="79" textAnchor="middle">
+        <rect x="124" y="80" width="108" height="20" rx="10" />
+        <text x="178" y="93" textAnchor="middle">
           {copy.erase}
         </text>
       </g>
@@ -123,26 +161,19 @@ export function ChainArt({ copy }: { copy: Basics["chain"]["art"] }) {
   );
 }
 
-const PHONE_Y = [6, 30, 54];
-
+// One sign-up, one person: the check says a person approved it, not who.
 export function HumanArt({ copy }: { copy: Basics["worldId"]["art"] }) {
+  const path = "M44 40 L138 40";
   return (
-    <svg viewBox="0 0 240 96" className="hiw-mini-art" role="img" aria-label={`${copy.accounts} → ${copy.human}. ${copy.noName}.`}>
-      {PHONE_Y.map((y, i) => {
-        const path = `M40 ${y + 10} L138 40`;
-        return (
-          <g key={y}>
-            <ActorIcon actor="phone" size={20} x={14} y={y} />
-            <path d={path} className="hiw-ma-wire" />
-            <circle r="3" className="hiw-ma-dot hiw-motion">
-              <animateMotion dur="3s" begin={`${i * 0.4}s`} repeatCount="indefinite" path={path} />
-            </circle>
-          </g>
-        );
-      })}
-      <text x="8" y="90" className="hiw-ma-caption">
-        {copy.accounts}
+    <svg viewBox="0 0 240 96" className="hiw-mini-art" role="img" aria-label={`${copy.request} → ${copy.human}. ${copy.noName}.`}>
+      <ActorIcon actor="phone" size={26} x={16} y={27} />
+      <text x="29" y="70" textAnchor="middle" className="hiw-ma-caption">
+        {copy.request}
       </text>
+      <path d={path} className="hiw-ma-wire" />
+      <circle r="3" className="hiw-ma-travel hiw-motion">
+        <animateMotion dur="3s" repeatCount="indefinite" path={path} />
+      </circle>
       <circle cx="162" cy="40" r="22" className="hiw-ma-human" />
       <g className="hiw-ma-human-icon">
         <ActorIcon actor="human" size={24} x={150} y={28} />

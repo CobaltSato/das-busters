@@ -1,6 +1,7 @@
 import type { ReferenceCopy } from "@/lib/i18n/how-it-works/reference.en";
 import type { StoryCopy } from "@/lib/i18n/how-it-works/story.en";
 import type { Modes } from "@/lib/modes";
+import { Rich } from "../_components/Rich";
 import { Section } from "../_components/Section";
 import { StampArt } from "../_diagrams/BasicsArt";
 import { BorrowArt, ChecksArt, OnchainArt, ServerArt } from "../_diagrams/FaqArt";
@@ -51,10 +52,14 @@ export function Qa({ copy, pictures, worldId }: { copy: Copy; pictures: Pictures
                 <article key={item.id} id={`faq-${item.id}`} className={figure ? "hiw-faq-item has-figure" : "hiw-faq-item"}>
                   <div className="hiw-faq-text">
                     <h4>{item.q}</h4>
-                    <p className="hiw-faq-answer">{text(item.a, worldId)}</p>
+                    <p className="hiw-faq-answer">
+                      <Rich text={text(item.a, worldId)} />
+                    </p>
                     <details className="hiw-faq-more">
                       <summary>{copy.more}</summary>
-                      <p>{text(item.d, worldId)}</p>
+                      <p>
+                        <Rich text={text(item.d, worldId)} />
+                      </p>
                     </details>
                   </div>
                   {figure && <figure className="hiw-faq-figure">{figure}</figure>}

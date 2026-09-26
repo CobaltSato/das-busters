@@ -1,6 +1,16 @@
 import type { Locale } from "@/lib/i18n/config";
-import { ADDRESSES, CHAIN_LINKS, DEMO_LINKS, DEPLOY_TX, DOC_LINKS, SITE_HOST, SOURCE_LINKS } from "@/lib/i18n/how-it-works/links";
+import {
+  ADDRESSES,
+  BACKGROUND_LINKS,
+  CHAIN_LINKS,
+  DEMO_LINKS,
+  DEPLOY_TX,
+  DOC_LINKS,
+  SITE_HOST,
+  SOURCE_LINKS,
+} from "@/lib/i18n/how-it-works/links";
 import type { ReferenceCopy } from "@/lib/i18n/how-it-works/reference.en";
+import { Rich } from "../_components/Rich";
 import { Section } from "../_components/Section";
 
 type Copy = ReferenceCopy["check"];
@@ -11,10 +21,13 @@ function short(hex: string): string {
   return `${hex.slice(0, 6)}…${hex.slice(-4)}`;
 }
 
-// Etherscan links show the address or transaction they point at.
+// Explorer links show the site and the address or transaction they point at.
 const CHAIN_SHOWN = {
+  registryBlockscout: `eth-sepolia.blockscout.com · ${short(ADDRESSES.registry)}`,
+  verifierBlockscout: `eth-sepolia.blockscout.com · ${short(ADDRESSES.verifier)}`,
+  registrySourcify: `repo.sourcify.dev · ${short(ADDRESSES.registry)}`,
+  verifierSourcify: `repo.sourcify.dev · ${short(ADDRESSES.verifier)}`,
   registry: `sepolia.etherscan.io · ${short(ADDRESSES.registry)}`,
-  verifier: `sepolia.etherscan.io · ${short(ADDRESSES.verifier)}`,
   registryDeploy: `sepolia.etherscan.io · tx ${short(DEPLOY_TX.registry)}`,
   verifierDeploy: `sepolia.etherscan.io · tx ${short(DEPLOY_TX.verifier)}`,
 };
@@ -77,7 +90,9 @@ export function Check({ copy, locale }: { copy: Copy; locale: Locale }) {
         <h3>{copy.recipeTitle}</h3>
         <ol>
           {copy.recipe.map((step) => (
-            <li key={step}>{step}</li>
+            <li key={step}>
+              <Rich text={step} />
+            </li>
           ))}
         </ol>
       </div>
@@ -85,6 +100,7 @@ export function Check({ copy, locale }: { copy: Copy; locale: Locale }) {
       <Group title={copy.chainTitle} links={cards(copy.chain, CHAIN_LINKS, CHAIN_SHOWN)} />
       <Group title={copy.sourceTitle} links={cards(copy.source, SOURCE_LINKS)} />
       <Group title={copy.docsTitle} links={cards(copy.docs, docs)} />
+      <Group title={copy.backgroundTitle} links={cards(copy.background, BACKGROUND_LINKS)} />
     </Section>
   );
 }

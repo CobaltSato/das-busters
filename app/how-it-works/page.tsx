@@ -5,7 +5,7 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { howItWorksFor } from "@/lib/i18n/how-it-works";
 import { DOC_LINKS } from "@/lib/i18n/how-it-works/links";
 import { getLocale } from "@/lib/i18n/server";
-import { getModes } from "@/lib/modes";
+import { getModes, provingLocation } from "@/lib/modes";
 import { LevelRoot, LevelToggle } from "./_components/Level";
 import { Architecture } from "./_sections/Architecture";
 import { Basics } from "./_sections/Basics";
@@ -46,6 +46,7 @@ export default async function HowItWorksPage() {
   const locale = await getLocale();
   const { story, reference } = howItWorksFor(locale);
   const modes = getModes();
+  const proveOn = provingLocation();
   return (
     <LevelRoot className={`hiw ${mono.variable}`}>
       <div className="hiw-top">
@@ -54,7 +55,7 @@ export default async function HowItWorksPage() {
         </Link>
         <LanguageToggle />
       </div>
-      <Hero copy={story.hero} strip={story.why.diagram} modes={modes} />
+      <Hero copy={story.hero} strip={story.why.diagram} modes={modes} proveOn={proveOn} />
       <nav className="hiw-toc" aria-label={story.nav.label}>
         <ul>
           {CONTENTS.map((id) => (
@@ -70,7 +71,7 @@ export default async function HowItWorksPage() {
       <Basics copy={story.basics} worldId={modes.worldId} />
       <Flow copy={story.flow} />
       <Architecture copy={story.architecture} worldId={modes.worldId} />
-      <Tech copy={reference.tech} modes={modes} />
+      <Tech copy={reference.tech} modes={modes} proveOn={proveOn} />
       <Built copy={reference.built} worldId={modes.worldId} />
       <Check copy={reference.check} locale={locale} />
       <Qa

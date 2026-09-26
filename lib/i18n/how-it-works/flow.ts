@@ -11,6 +11,8 @@ export type PhaseId = (typeof PHASES)[number];
 type StepShape = { id: string; phase: PhaseId; from: ActorId; to: ActorId };
 
 // Mirrors the sequence diagram in README.md and the API routes it names.
+// The proof is made on the phone by default, so both proving steps stay
+// there; the server fallback is described in the step's tech text.
 export const STEPS = [
   { id: "offer", phase: "issue", from: "counter", to: "server" },
   { id: "scan", phase: "issue", from: "counter", to: "phone" },
@@ -21,8 +23,8 @@ export const STEPS = [
   { id: "request", phase: "ask", from: "mingle", to: "server" },
   { id: "open", phase: "ask", from: "mingle", to: "phone" },
   { id: "choose", phase: "ask", from: "phone", to: "phone" },
-  { id: "prove", phase: "prove", from: "phone", to: "server" },
-  { id: "proof", phase: "prove", from: "server", to: "phone" },
+  { id: "prove", phase: "prove", from: "phone", to: "phone" },
+  { id: "proof", phase: "prove", from: "phone", to: "phone" },
   { id: "verify", phase: "verify", from: "phone", to: "server" },
   { id: "record", phase: "verify", from: "server", to: "chain" },
   { id: "registry", phase: "verify", from: "chain", to: "chain" },
@@ -33,6 +35,9 @@ export const STEPS = [
 export type StepId = (typeof STEPS)[number]["id"];
 
 export type StepCopy = {
+  // The arrow's words in Plain view; `arrow` (a route or call) replaces
+  // them in Engineer view.
+  label: string;
   arrow: string;
   title: string;
   body: string;

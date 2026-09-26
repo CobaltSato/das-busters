@@ -27,7 +27,9 @@ export function OnchainArt({ copy }: { copy: Figs["onchain"] }) {
   );
 }
 
-// Phone on the left, our server top right, Mingle bottom right.
+// Phone on the left, Mingle bottom right: the proof goes straight there.
+// Our server, top right, is the dashed backup path the phone uses only when
+// it can't finish a proof.
 export function ServerArt({ copy }: { copy: Figs["server"] }) {
   return (
     <svg viewBox="0 0 360 172" className="hiw-faq-svg" role="img" aria-label={copy.label}>
@@ -35,6 +37,9 @@ export function ServerArt({ copy }: { copy: Figs["server"] }) {
       <ActorIcon actor="phone" size={22} x={35} y={71} />
       <text x="46" y="122" textAnchor="middle" className="hiw-fa-name">
         {copy.phone}
+      </text>
+      <text x="46" y="136" textAnchor="middle" className="hiw-fa-label is-proof">
+        {copy.makes}
       </text>
 
       <rect x="212" y="6" width="142" height="50" rx="10" className="hiw-fa-server" />
@@ -45,14 +50,14 @@ export function ServerArt({ copy }: { copy: Figs["server"] }) {
         {copy.keeps}
       </text>
 
-      <path d="M72 70 208 30" className="hiw-fa-line" />
+      <path d="M72 70 208 30" className="hiw-fa-line is-back" />
       <path d="M200 27.5l8 2.5-6 5.5" className="hiw-fa-head" />
-      <text x="128" y="40" textAnchor="middle" className="hiw-fa-label">
+      <text x="118" y="30" textAnchor="middle" className="hiw-fa-note">
         {copy.send}
       </text>
 
       <path d="M208 48 74 86" className="hiw-fa-line is-back" />
-      <text x="160" y="76" textAnchor="middle" className="hiw-fa-label">
+      <text x="160" y="76" textAnchor="middle" className="hiw-fa-note">
         {copy.back}
       </text>
 
