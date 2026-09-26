@@ -143,7 +143,8 @@ const storyEn = {
       formula: [
         "Poseidon(1) → 1858…9027",
         "Poseidon(2) → 8645…4349",
-        "// circomlib, compiled with circom 2: Poseidon of 2 inputs = 517 constraints,",
+        "// circomlib, measured with circom 2:",
+        "// Poseidon of 2 inputs = 517 constraints",
         "// SHA-256 of 32 bytes = 31,264 constraints",
       ],
     },
@@ -190,7 +191,7 @@ const storyEn = {
       analogy: "A public notebook nobody can quietly edit, with rules that run themselves.",
       body: "Records go into blocks, and each block carries the fingerprint (hash) of the block before. Changing an old record would break every later link, so nobody can quietly edit or erase it. A smart contract is a program stored on the chain that runs exactly as written.",
       why: "If Mingle kept the used numbers in its own database, it could delete or change them and nobody outside could check. On a public chain anyone can look them up.",
-      inApp: "After Mingle's server checks the proof, it sends it to our contract {{(SingleProofRegistry)}} on **Sepolia**, Ethereum's public test network. The contract checks the proof again, adds the nullifier to its used list and refuses the same number next time. Our demo server pays the fee, so you need no crypto.",
+      inApp: "After Mingle's server checks the proof, it sends it to our contract{{ (SingleProofRegistry)}} on **Sepolia**, Ethereum's public test network. The contract checks the proof again, adds the nullifier to its used list and refuses the same number next time. Our demo server pays the fee, so you need no crypto.",
       link: "See every record on Blockscout",
       art: {
         block: "Block",
@@ -435,11 +436,11 @@ const storyEn = {
         {
           part: "City office (issuer)",
           demo: "Part of the demo server. The signing key is a Vercel environment variable, a setting on the server.",
-          real: "Run by the municipality, or through the national family-register system or Mynaportal. The signing key never leaves the office's own key-safe hardware {{(an HSM)}}, and its public key is published in a list of trusted issuers.",
+          real: "Run by the municipality, or through the national family-register system or Mynaportal. The signing key never leaves the office's own key-safe hardware{{ (an HSM)}}, and its public key is published in a list of trusted issuers.",
         },
         {
           part: "Wallet (DAS Busters)",
-          demo: "Web pages on the same site as Mingle. The certificate and secret key sit in the browser's storage {{(localStorage)}}.",
+          demo: "Web pages on the same site as Mingle. The certificate and secret key sit in the browser's storage{{ (localStorage)}}.",
           real: "Its own app or website. Keys in the phone's secure storage.",
         },
         {
@@ -455,7 +456,7 @@ const storyEn = {
         {
           part: "Recording",
           demo: "Sepolia test network. The demo server's wallet pays the fee.",
-          real: "A public main network, or a cheaper network built on Ethereum (a layer 2). Mingle, or the wallet, sends the transaction. The contract checks that the issuer is on the trusted list without learning which city it is {{(a set-membership proof, for example against a Merkle root of city keys)}}.",
+          real: "A public main network, or a cheaper network built on Ethereum (a layer 2). Mingle, or the wallet, sends the transaction. The contract checks that the issuer is on the trusted list without learning which city it is{{ (a set-membership proof, for example against a Merkle root of city keys)}}.",
         },
         {
           part: "Human check",
@@ -465,10 +466,10 @@ const storyEn = {
         {
           part: "Freshness and revocation",
           demo: "Not checked.",
-          real: "Mingle asks for proof that the certificate was issued on or after a given date {{(a public input)}}, and the issuer publishes withdrawn certificates.",
+          real: "Mingle asks for proof that the certificate was issued on or after a given date{{ (a public input)}}, and the issuer publishes withdrawn certificates.",
         },
       ],
-      note: "Nothing in the right-hand column is built yet. It is the design, not a description of this demo.",
+      note: "The right-hand column is the intended design. None of it is built yet.",
     },
     dataTitle: "Where your data lives",
     dataLede: "Green: held. Crossed out: never held.",

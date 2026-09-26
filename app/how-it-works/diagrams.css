@@ -356,7 +356,7 @@
 @keyframes hiw-n-row2 {
   0%,
   18% {
-    opacity: 0.2;
+    opacity: 0.3;
   }
   28%,
   88% {
@@ -364,14 +364,14 @@
   }
   96%,
   100% {
-    opacity: 0.2;
+    opacity: 0.3;
   }
 }
 
 @keyframes hiw-n-row3 {
   0%,
   42% {
-    opacity: 0.2;
+    opacity: 0.3;
   }
   52%,
   88% {
@@ -379,7 +379,7 @@
   }
   96%,
   100% {
-    opacity: 0.2;
+    opacity: 0.3;
   }
 }
 

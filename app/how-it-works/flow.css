@@ -130,6 +130,12 @@
   font: 500 10px var(--hiw-mono);
 }
 
+/* Plain words on the arrow read as words, not code. */
+.hiw-seq-label.hiw-plain-only text {
+  font-family: inherit;
+  font-weight: 600;
+}
+
 .hiw-seq-node {
   color: #8b909a;
 }

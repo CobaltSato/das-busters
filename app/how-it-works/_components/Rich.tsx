@@ -1,7 +1,9 @@
 // Copy strings mark `code`, **bold** and {{Engineer-only text}} inline;
 // everything else is text. The Engineer-only part is hidden in Plain view,
 // so a sentence can carry a contract name or a formula for engineers
-// without putting jargon in front of everyone else.
+// without putting jargon in front of everyone else. Put any leading space
+// inside the braces ("storage{{ (localStorage)}}.") so Plain view keeps no
+// stray space before the punctuation.
 const INLINE = /(`[^`]+`|\*\*[^*]+\*\*|\{\{[^}]+\}\})/g;
 
 export function Rich({ text }: { text: string }) {
