@@ -18,7 +18,7 @@ import {
   SlidersIcon,
   UserIcon,
 } from "./icons";
-import { TxStatus } from "./TxStatus";
+import { TxStatus, TxUrl } from "./TxStatus";
 
 export type Screen = "profile" | "verification" | "settings" | "help" | "edit";
 type Verification = MingleRecord["verification"];
@@ -113,6 +113,7 @@ export function ProfileScreen({ error, verification, ready, go }: Shared) {
         {verification ? (
           <>
             <VerifiedBadges verification={verification} />
+            {verification.chain === "sepolia" && verification.txHash && <TxUrl txHash={verification.txHash} />}
             <button type="button" className="mingle-received" onClick={() => go("verification")}>
               {m.whatReceived} ›
             </button>

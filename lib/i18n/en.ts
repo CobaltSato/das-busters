@@ -469,6 +469,7 @@ const en = {
     failed: "Sepolia transaction failed",
     sent: "Sent to Sepolia",
     recording: "Recording on Sepolia…",
+    transaction: "Sepolia transaction",
   },
 
   errors: {} as Lookup,

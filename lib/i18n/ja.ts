@@ -463,6 +463,7 @@ const ja: Messages = {
     failed: "Sepolia のトランザクションが失敗しました",
     sent: "Sepolia に送信済み",
     recording: "Sepolia に記録中…",
+    transaction: "Sepolia のトランザクション",
   },
 
   errors: {

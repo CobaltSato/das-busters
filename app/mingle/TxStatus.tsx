@@ -8,9 +8,14 @@ type Status = { status: "pending" | "confirmed" | "reverted"; blockNumber?: stri
 const POLL_MS = 3000;
 const MAX_POLLS = 40;
 
+// Blockscout has the contracts' source, so its logs tab shows the event
+// decoded; Etherscan would show raw hex.
+function explorerUrl(txHash: string): string {
+  return `https://eth-sepolia.blockscout.com/tx/${txHash}?tab=logs`;
+}
+
 // Polls /api/tx until the relayer's transaction lands on Sepolia.
-export function TxStatus({ txHash }: { txHash: string }) {
-  const { t } = useI18n();
+function useTxStatus(txHash: string): { state: Status; gaveUp: boolean } {
   const [state, setState] = useState<Status>({ status: "pending" });
   const [gaveUp, setGaveUp] = useState(false);
 
@@ -42,9 +47,12 @@ export function TxStatus({ txHash }: { txHash: string }) {
     };
   }, [txHash]);
 
-  // Blockscout has the contracts' source, so its logs tab shows the event
-  // decoded; Etherscan would show raw hex.
-  const link = `https://eth-sepolia.blockscout.com/tx/${txHash}?tab=logs`;
+  return { state, gaveUp };
+}
+
+export function TxStatus({ txHash }: { txHash: string }) {
+  const { t } = useI18n();
+  const { state, gaveUp } = useTxStatus(txHash);
   const label =
     state.status === "confirmed"
       ? t.tx.recorded(state.blockNumber ?? "")
@@ -54,8 +62,22 @@ export function TxStatus({ txHash }: { txHash: string }) {
           ? t.tx.sent
           : t.tx.recording;
   return (
-    <a href={link} target="_blank" rel="noreferrer">
+    <a href={explorerUrl(txHash)} target="_blank" rel="noreferrer">
       {label}{"\u00a0"}↗
+    </a>
+  );
+}
+
+// The transaction's address under the profile badges, shown only once the
+// block has landed, so what it links to is already on Sepolia.
+export function TxUrl({ txHash }: { txHash: string }) {
+  const { t } = useI18n();
+  const { state } = useTxStatus(txHash);
+  if (state.status !== "confirmed") return null;
+  return (
+    <a className="mingle-tx" href={explorerUrl(txHash)} target="_blank" rel="noreferrer">
+      <span>{t.tx.transaction}{"\u00a0"}↗</span>
+      <code>eth-sepolia.blockscout.com/tx/{txHash.slice(0, 8)}…{txHash.slice(-5)}</code>
     </a>
   );
 }

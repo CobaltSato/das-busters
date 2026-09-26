@@ -133,6 +133,27 @@
   line-height: 26px;
 }
 
+/* Under the badges once the block lands: the Sepolia transaction. */
+.mingle-tx {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: -4px auto 12px;
+  padding: 4px 8px;
+  color: #5f6670;
+  font-size: 12px;
+  line-height: 16px;
+  text-decoration: none;
+}
+
+.mingle-tx code {
+  color: #0866ed;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
 /* Under the badges: opens the list of what Mingle got. */
 .mingle-received {
   display: block;
