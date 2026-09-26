@@ -237,3 +237,45 @@
     display: none;
   }
 }
+
+/* Laptops, iPads in landscape and projectors: the QR code follows the window
+   height, so the countdown and the "No phone?" link stay on screen on a
+   13-inch laptop, and it grows on a 1080p projector. Each calc subtracts
+   everything else on the page (measured in EN and JA). Phones and iPads in
+   portrait (980 px and narrower) keep the layout above. */
+@media (min-width: 981px) and (min-height: 921px) {
+  .counter-content {
+    grid-template-columns: minmax(440px, 1fr) minmax(390px, 620px);
+  }
+
+  .qr-panel .qr-code {
+    width: min(560px, 100%, calc(100vh - 500px));
+  }
+}
+
+@media (min-width: 981px) and (max-height: 920px) {
+  .counter {
+    padding-top: 20px;
+    padding-bottom: 16px;
+  }
+
+  .counter-header {
+    padding-bottom: 14px;
+  }
+
+  .counter-content {
+    padding: 16px 0;
+  }
+
+  .qr-panel {
+    padding: 16px 24px 14px;
+  }
+
+  .qr-panel .qr-code {
+    width: min(560px, 100%, calc(100vh - 400px));
+  }
+
+  .qr-expiry {
+    padding-top: 10px;
+  }
+}
