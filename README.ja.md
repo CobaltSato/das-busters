@@ -90,7 +90,7 @@ DAS Busters がアプリに渡すのは、確認済みの事実1つと、アプ�
 
 **proof of human で足りる理由**：IDKit の `proofOfHuman` プリセットを使っています（[app/wallet/world-id/IdkitRequest.tsx](app/wallet/world-id/IdkitRequest.tsx)）。婚姻の状況、居住地、年代は証明書が受け持つので、World ID に頼むのは「人であること」だけで済みます。proof of human はそれ以外、つまり名前も顔も ID 番号も渡しません。セルフィーチェックは、World 自身の説明では中程度の保証です。デバイスのカメラで、その場に本人がいるか（liveness）と顔の類似を確かめて sybil スコアを返し、その判断はアプリに任されます（[World のドキュメント](https://docs.world.org/world-id/idkit/credentials)）。1人1アカウントのためには、Orb に裏付けられた proof of human の一意性がほしかったのです。パスポートなどの書類系のクレデンシャルは、区役所の証明書と同じことを重ねて証明するうえに、利用者からもっと多くの情報を取ります。
 
-**Mingle が受け取るもの**：人間確認が通ったことと、その種類（World ID、World ID staging、シミュレーション）だけです。World ID の nullifier は私たちのサーバーが署名するトークンの中に入れたままで、[app/api/verify/route.ts](app/api/verify/route.ts) が Mingle に渡すのは環境の種類だけです。
+**Mingle が受け取るもの**：World ID の確認が通ると、私たちのサーバーが署名したトークンをウォレットが送ります。Mingle のサーバーはこれを読むので、このアプリ用の World ID の匿名の番号（World ID の nullifier）も見えます。ただし Mingle が残す結果には、人間確認が通ったことと、その種類（World ID、World ID staging、シミュレーション）しか入りません（[app/api/verify/route.ts](app/api/verify/route.ts)）。このデモでは、トークンに署名するサーバーが Mingle のバックエンドも兼ねています。
 
 **World ID を使わない場合**：人間確認は任意です。Simulator をキャンセルしても、確認自体を飛ばしても、共有は同じように動きます。Mingle には独身証明が出て、人間確認のバッジだけが付きません。この流れは [docs/demo.ja.md](docs/demo.ja.md#5b-world-id-を使わない場合任意) にあります。
 
@@ -114,14 +114,14 @@ sequenceDiagram
   S->>P: staging トークン付きで POST /api/v4/verify
   P-->>S: 成功、nullifier、環境
   S-->>W: 署名付きの human トークン（7日間）
-  Note over W: 次の共有で一緒に送る。Mingle に見えるのは「World ID staging」だけ
+  Note over W: 次の共有で一緒に送る。Mingle の結果に残るのは「World ID staging」だけ
 ```
 
 組み込みの経過、詰まった点、あると助かるものは [FEEDBACK.ja.md](FEEDBACK.ja.md) に書きました。
 
 ## データの置き場所
 
-証明書と保有者鍵はスマホに残り、証明もスマホが作ります。古いブラウザやメモリ不足で作りきれなかったときだけ、その1回のために証明書と保有者鍵を `/api/prove` に送ります。ボタンにもそう出て、サーバーは何も保存しません。Mingle が受け取るのは「独身」という答え、本人が共有を選んだ項目、nullifier です。Sepolia に保存されるのは nullifier だけで、イベントのログには nullifier、scope hash、request hash が載ります。トランザクションの入力には証明と10個の公開シグナルが入ります。中身は区役所の公開鍵と、共有を選んだときだけの東京のコード（13）と生まれ年の範囲です。氏名、生年月日、住所はチェーンに載りません。
+証明書と保有者鍵はスマホに残り、証明もスマホが作ります。古いブラウザやメモリ不足で作りきれなかったときだけ、その1回のために証明書と保有者鍵を `/api/prove` に送ります。ボタンにもそう出て、サーバーは何も保存しません。Mingle が受け取るのは「独身」という答え、本人が共有を選んだ項目、nullifier、区役所の公開鍵です。公開鍵からは、どの区役所が署名したかがわかります。Sepolia に保存されるのは nullifier だけで、イベントのログには nullifier、scope hash、request hash が載ります。トランザクションの入力には証明と10個の公開シグナルが入ります。中身は区役所の公開鍵と、共有を選んだときだけの東京のコード（13）と生まれ年の範囲です。氏名、生年月日、住所はチェーンに載りません。
 
 ```mermaid
 flowchart LR
@@ -132,7 +132,7 @@ flowchart LR
   end
   fallback["サーバーの /api/prove<br/>予備。何も保存しない"]
   subgraph mingle["Mingle"]
-    seen["独身：はい<br/>東京在住と30代：選んだときだけ<br/>nullifier"]
+    seen["独身：はい<br/>東京在住と30代：選んだときだけ<br/>nullifier、区役所の公開鍵"]
   end
   subgraph chain["Sepolia"]
     stored["保存するもの：nullifier<br/>イベントのログ：nullifier、scope hash、request hash"]

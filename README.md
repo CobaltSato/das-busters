@@ -90,7 +90,7 @@ The certificate proves civil status. It cannot tell whether one person is behind
 
 **Why proof of human is the minimum.** We request IDKit's `proofOfHuman` preset ([app/wallet/world-id/IdkitRequest.tsx](app/wallet/world-id/IdkitRequest.tsx)). The certificate already covers civil status, residence and age, so World ID only needs to add personhood, and proof of human adds nothing else: no name, face or ID number. World describes the selfie check as medium assurance: a device-camera check for liveness and facial similarity that returns a sybil score the app has to interpret ([World docs](https://docs.world.org/world-id/idkit/credentials)). For one person per account we wanted the Orb-backed uniqueness of proof of human. A passport or document credential would repeat what the city certificate proves and ask the user for more.
 
-**What Mingle receives.** Only that a human check passed and which kind it was: World ID, World ID staging or simulated. Our server keeps the World ID nullifier inside the token it signs, and [app/api/verify/route.ts](app/api/verify/route.ts) passes Mingle only the environment.
+**What Mingle receives.** The wallet sends the token our server signed after the World ID check. Mingle's server reads it, so it sees World ID's anonymous number for this app (the World ID nullifier), but the result it keeps says only that a human check passed and which kind it was: World ID, World ID staging or simulated ([app/api/verify/route.ts](app/api/verify/route.ts)). In this demo our server signs that token and also plays Mingle's backend.
 
 **Without World ID.** The check is optional. Cancel the Simulator, or skip the check, and sharing works the same way; Mingle shows single status without the Human badge. [docs/demo.md](docs/demo.md#5b-without-world-id-optional) shows this path.
 
@@ -114,14 +114,14 @@ sequenceDiagram
   S->>P: POST /api/v4/verify with the staging token
   P-->>S: success, nullifier, environment
   S-->>W: signed human token (7 days)
-  Note over W: sent with the next share, Mingle sees only "World ID staging"
+  Note over W: sent with the next share; Mingle's result keeps only "World ID staging"
 ```
 
 How the integration went, what slowed us down and what would help: [FEEDBACK.md](FEEDBACK.md).
 
 ## Where the data lives
 
-The certificate and the holder secret stay on the phone, and the phone makes the proof. Only if it cannot finish (an old browser, too little memory) does it send them to `/api/prove` for that one proof; the button says so, and the server keeps nothing. Mingle gets a yes, anything you chose to share, and the nullifier. Sepolia stores only the nullifier; the event log carries the nullifier, the scope hash and the request hash. The transaction input carries the proof and its 10 public signals: the city office's public key, plus the Tokyo code (13) and the birth-year range only if you chose to share them. No name, birth date or address goes on-chain.
+The certificate and the holder secret stay on the phone, and the phone makes the proof. Only if it cannot finish (an old browser, too little memory) does it send them to `/api/prove` for that one proof; the button says so, and the server keeps nothing. Mingle gets a yes, anything you chose to share, the nullifier, and the city office's public key, which shows which office signed. Sepolia stores only the nullifier; the event log carries the nullifier, the scope hash and the request hash. The transaction input carries the proof and its 10 public signals: the city office's public key, plus the Tokyo code (13) and the birth-year range only if you chose to share them. No name, birth date or address goes on-chain.
 
 ```mermaid
 flowchart LR
@@ -132,7 +132,7 @@ flowchart LR
   end
   fallback["Server: /api/prove<br/>fallback only, keeps nothing"]
   subgraph mingle["Mingle"]
-    seen["Single: yes<br/>Tokyo, 30s: only if you chose them<br/>nullifier"]
+    seen["Single: yes<br/>Tokyo, 30s: only if you chose them<br/>nullifier, city office public key"]
   end
   subgraph chain["Sepolia"]
     stored["storage: nullifier<br/>event log: nullifier, scope hash, request hash"]
