@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
 import { CertificateCard } from "@/components/CertificateCard";
 import { useI18n } from "@/components/I18nProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { SuccessMark } from "@/components/SuccessMark";
 import { walletStore, type WalletRecord } from "@/lib/storage";
 
@@ -24,6 +26,7 @@ export default function SavedPage() {
     <main className="phone">
       <div className="phone-top">
         <BrandLockup />
+        <LanguageToggle />
       </div>
       <section className="saved-hero">
         <SuccessMark size={64} />
@@ -54,6 +57,9 @@ export default function SavedPage() {
             copy.goHome
           )}
         </button>
+        <Link className="btn btn-outline" href="/mingle?screen=verification">
+          {copy.useOnMingle}
+        </Link>
       </div>
     </main>
   );

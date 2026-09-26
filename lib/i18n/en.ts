@@ -88,6 +88,7 @@ const en = {
     issued: (when: string) => `Issued: ${when}`,
     system: "DAS Busters Digital Certificate Issuance System",
     preview: "Open the phone flow on this device",
+    receiveHere: "Receive it on this phone",
   },
 
   wallet: {
@@ -182,6 +183,7 @@ const en = {
       body: "You can access it anytime from Home.",
       opening: "Opening home…",
       goHome: "Go to home",
+      useOnMingle: "Verify single status on Mingle",
     },
 
     share: {

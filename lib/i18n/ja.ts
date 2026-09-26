@@ -90,6 +90,7 @@ const ja: Messages = {
     issued: (when) => `発行日時: ${when}`,
     system: "DAS Busters 電子証明書発行システム",
     preview: "この端末でスマホ側の画面を開く",
+    receiveHere: "このスマホで受け取る",
   },
 
   wallet: {
@@ -181,6 +182,7 @@ const ja: Messages = {
       body: "ホームからいつでも確認できます。",
       opening: "ホームを開いています…",
       goHome: "ホームへ",
+      useOnMingle: "Mingle で独身証明を使う",
     },
 
     share: {

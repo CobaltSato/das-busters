@@ -15,12 +15,14 @@ function freshRecord(): MingleRecord {
   return { epoch: newEpoch(), pendingNonce: null, verification: null };
 }
 
-export function MingleApp({ incoming, modes }: { incoming: Incoming; modes: Modes }) {
+type Props = { incoming: Incoming; modes: Modes; initialScreen: Screen };
+
+export function MingleApp({ incoming, modes, initialScreen }: Props) {
   const { t } = useI18n();
   const router = useRouter();
   const dialog = useRef<HTMLDialogElement>(null);
   const [record, setRecord] = useState<MingleRecord | null>(null);
-  const [screen, setScreen] = useState<Screen>("profile");
+  const [screen, setScreen] = useState<Screen>(initialScreen);
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Set once from the incoming result; read through a ref so switching the
@@ -43,8 +45,8 @@ export function MingleApp({ incoming, modes }: { incoming: Incoming; modes: Mode
     }
     mingleStore.set(next);
     setRecord(next);
-    if (incoming) window.history.replaceState(null, "", "/mingle");
-  }, [incoming]);
+    if (incoming || initialScreen !== "profile") window.history.replaceState(null, "", "/mingle");
+  }, [incoming, initialScreen]);
 
   function save(next: MingleRecord) {
     mingleStore.set(next);

@@ -110,6 +110,11 @@ export function CounterScreen() {
             <strong>{remaining === null ? "3:00" : formatRemaining(remaining)}</strong>
           </div>
           <p>{c.refreshes}</p>
+          {receiveUrl && (
+            <a className="btn btn-primary counter-receive-here" href={receiveUrl}>
+              {c.receiveHere}
+            </a>
+          )}
         </div>
       </section>
 

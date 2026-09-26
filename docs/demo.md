@@ -24,7 +24,7 @@ flowchart LR
 | URL | https://single-proof.vercel.app, on both devices |
 | Google account | Any Google account. The sign-in app is published, so judges can use their own. |
 
-**Language.** Everything starts in English. The `EN / 日本語` toggle is on the hub, the counter, the wallet home and Mingle's Settings. Adding `?lang=ja` to any URL also switches to Japanese. The counter's QR code carries its language to the phone, so switching the counter is enough.
+**Language.** Everything starts in English. The `EN / 日本語` toggle is on the hub, the counter, every DAS Busters screen from pickup to sharing, and Mingle's profile and Settings. Adding `?lang=ja` to any URL also switches to Japanese. The counter's QR code carries its language to the phone, so switching the counter is enough.
 
 **Check before going on stage.** The hub (`/`) shows four mode badges. For the full demo they read `Sign-in: Google via Privy`, `Proof: Groth16` and `Recorded on Sepolia`. `Human check: simulated` is expected. See [Mode badges](#mode-badges) if any of them says mock or off-chain.
 
@@ -62,7 +62,7 @@ flowchart LR
 
 ### 6. Mingle asks
 
-- **Do**: open Mingle from the hub. Tap **Identity & verification**, then **Verify with DAS Busters**, then **Continue**.
+- **Do**: open Mingle from the hub (or tap **Verify single status on Mingle** on the Certificate saved screen, which opens this screen directly). Tap **Identity & verification**, then **Verify with DAS Busters**, then **Continue**.
 - **They see**: Ken's profile (36, Tokyo), Single status **Not verified**, then DAS Busters with **Choose what to share**.
 - **Say**: "Mingle wants to know one thing: is Ken single?"
 

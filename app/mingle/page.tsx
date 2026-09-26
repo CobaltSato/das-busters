@@ -4,12 +4,12 @@ import { TokenError } from "@/lib/token";
 import { readResult } from "@/lib/tokens";
 import { MingleApp, type Incoming } from "./MingleApp";
 
-type Props = { searchParams: Promise<{ result?: string | string[] }> };
+type Props = { searchParams: Promise<{ result?: string | string[]; screen?: string | string[] }> };
 
 // A result token comes back from the wallet in the URL. Mingle checks its
 // signature here, on the server, before the page trusts it.
 export default async function MinglePage({ searchParams }: Props) {
-  const { result } = await searchParams;
+  const { result, screen } = await searchParams;
   let incoming: Incoming = null;
   if (typeof result === "string" && result) {
     try {
@@ -19,5 +19,7 @@ export default async function MinglePage({ searchParams }: Props) {
       incoming = { error: (await getMessages()).mingle.unreadableResult };
     }
   }
-  return <MingleApp incoming={incoming} modes={getModes()} />;
+  // DAS Busters links straight to the verification screen after saving.
+  const initialScreen = screen === "verification" ? "verification" : "profile";
+  return <MingleApp incoming={incoming} modes={getModes()} initialScreen={initialScreen} />;
 }

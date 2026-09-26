@@ -215,3 +215,16 @@
     font-size: 11px;
   }
 }
+
+/* A phone cannot scan its own screen, so on phones the QR code comes with a
+   button that opens the pickup on the same device. The iPad demo keeps the QR. */
+.counter-receive-here {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .counter-receive-here {
+    display: flex;
+    margin-top: 16px;
+  }
+}
