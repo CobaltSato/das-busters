@@ -22,7 +22,6 @@ export function MingleApp({ incoming, modes }: { incoming: Incoming; modes: Mode
   const [record, setRecord] = useState<MingleRecord | null>(null);
   const [screen, setScreen] = useState<Screen>("profile");
   const [connecting, setConnecting] = useState(false);
-  const [verifiedNow, setVerifiedNow] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Set once from the incoming result; read through a ref so switching the
   // language does not re-run the effect that accepts it.
@@ -34,12 +33,9 @@ export function MingleApp({ incoming, modes }: { incoming: Incoming; modes: Mode
       const { result, token } = incoming;
       // Accept a result only for the request this browser sent. The check is
       // idempotent so a re-run of the effect does not reject a saved result.
-      if (next.verification?.nonce === result.nonce) {
-        setVerifiedNow(true);
-      } else if (next.pendingNonce === result.nonce) {
+      if (next.pendingNonce === result.nonce) {
         next = { ...next, pendingNonce: null, verification: { ...result, token } };
-        setVerifiedNow(true);
-      } else {
+      } else if (next.verification?.nonce !== result.nonce) {
         setError(foreignResult.current);
       }
     } else if (incoming && "error" in incoming) {
@@ -57,7 +53,6 @@ export function MingleApp({ incoming, modes }: { incoming: Incoming; modes: Mode
 
   function go(next: Screen) {
     setError(null);
-    setVerifiedNow(false);
     setScreen(next);
     window.scrollTo(0, 0);
   }
@@ -89,8 +84,7 @@ export function MingleApp({ incoming, modes }: { incoming: Incoming; modes: Mode
   }
 
   const verification = record?.verification ?? null;
-  const notice = verifiedNow ? t.mingle.verified : null;
-  const shared = { notice, error, verification, go };
+  const shared = { error, verification, go };
 
   switch (screen) {
     case "verification":

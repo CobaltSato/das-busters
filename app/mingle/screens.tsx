@@ -4,7 +4,7 @@ import type { RefObject } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ModeBadges } from "@/components/ModeBadges";
-import { lookup } from "@/lib/i18n";
+import { lookup, type Messages as Copy } from "@/lib/i18n";
 import { MINGLE_PROFILE } from "@/lib/mingle";
 import type { Modes } from "@/lib/modes";
 import type { MingleRecord } from "@/lib/storage";
@@ -25,19 +25,13 @@ export type Screen = "profile" | "verification" | "settings" | "help" | "edit";
 type Verification = MingleRecord["verification"];
 
 type Shared = {
-  notice: string | null;
   error: string | null;
   verification: Verification;
   go: (screen: Screen) => void;
 };
 
-function Messages({ notice, error }: Pick<Shared, "notice" | "error">) {
-  return (
-    <>
-      {notice && <p className="mingle-notice">✓ {notice}</p>}
-      {error && <p className="error-banner">{error}</p>}
-    </>
-  );
+function Messages({ error }: Pick<Shared, "error">) {
+  return error ? <p className="error-banner">{error}</p> : null;
 }
 
 function SubHeader({ title, go }: { title: string; go: Shared["go"] }) {
@@ -62,20 +56,12 @@ function VerifiedBadges({ verification }: { verification: NonNullable<Verificati
       <span className="mingle-status is-done">{m.badgeVerified}</span>
       {residence && <span className="mingle-status is-done">{m.livesIn(lookup(t.places, residence))}</span>}
       {ageRange && <span className="mingle-status is-done">{t.ageRange(ageRange)}</span>}
-      {verification.humanCheck && (
-        <span className="mingle-status is-done">
-          {verification.humanCheck !== "world-id"
-            ? m.humanSimulated
-            : verification.humanEnvironment === "production"
-              ? m.realPerson
-              : m.humanStaging}
-        </span>
-      )}
+      {verification.humanCheck && <span className="mingle-status is-done">{m.human}</span>}
     </div>
   );
 }
 
-export function ProfileScreen({ notice, error, verification, go }: Shared) {
+export function ProfileScreen({ error, verification, go }: Shared) {
   const { t } = useI18n();
   const m = t.mingle;
   const { name, age, photo, stats } = MINGLE_PROFILE;
@@ -87,7 +73,7 @@ export function ProfileScreen({ notice, error, verification, go }: Shared) {
           <SlidersIcon />
         </button>
       </header>
-      <Messages notice={notice} error={error} />
+      <Messages error={error} />
       <section className="mingle-person">
         <Image className="mingle-portrait" src={photo} alt={m.photoAlt(name)} width={112} height={112} priority />
         <h1>
@@ -184,6 +170,12 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
             )}
           </dd>
         </div>
+        {verification.humanCheck && (
+          <div>
+            <dt>{p.human}</dt>
+            <dd>{humanMethod(p, verification)}</dd>
+          </div>
+        )}
         <div>
           <dt>{p.nullifier}</dt>
           <dd>
@@ -202,6 +194,12 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
   );
 }
 
+// The profile badge just says "Human"; how it was checked is spelled out here.
+function humanMethod(p: Copy["mingle"]["proof"], verification: NonNullable<Verification>): string {
+  if (verification.humanCheck !== "world-id") return p.humanSimulated;
+  return verification.humanEnvironment === "production" ? p.humanWorldId : p.humanStaging;
+}
+
 type VerificationProps = Shared & {
   modes: Modes;
   dialog: RefObject<HTMLDialogElement | null>;
@@ -209,14 +207,14 @@ type VerificationProps = Shared & {
   onConnect: () => void;
 };
 
-export function VerificationScreen({ notice, error, verification, go, modes, dialog, connecting, onConnect }: VerificationProps) {
+export function VerificationScreen({ error, verification, go, modes, dialog, connecting, onConnect }: VerificationProps) {
   const { t } = useI18n();
   const m = t.mingle;
   const c = m.checks;
   return (
     <main className="mingle">
       <SubHeader title={m.identityVerification} go={go} />
-      <Messages notice={notice} error={error} />
+      <Messages error={error} />
       <div className="mingle-proofs">
         <article>
           <div className="mingle-proof-title">
@@ -269,12 +267,12 @@ export function VerificationScreen({ notice, error, verification, go, modes, dia
   );
 }
 
-export function SettingsScreen({ notice, error, go, onReset }: Shared & { onReset: () => void }) {
+export function SettingsScreen({ error, go, onReset }: Shared & { onReset: () => void }) {
   const { t } = useI18n();
   return (
     <main className="mingle">
       <SubHeader title={t.mingle.settings} go={go} />
-      <Messages notice={notice} error={error} />
+      <Messages error={error} />
       <section className="mingle-secondary">
         <div className="mingle-setting">
           <span>{t.language}</span>
@@ -291,12 +289,12 @@ export function SettingsScreen({ notice, error, go, onReset }: Shared & { onRese
   );
 }
 
-export function HelpScreen({ notice, error, go }: Shared) {
+export function HelpScreen({ error, go }: Shared) {
   const { t } = useI18n();
   return (
     <main className="mingle">
       <SubHeader title={t.mingle.help} go={go} />
-      <Messages notice={notice} error={error} />
+      <Messages error={error} />
       <section className="mingle-secondary">
         <p>{t.mingle.helpBody}</p>
         <p className="muted">{t.mingle.helpMuted}</p>
@@ -305,14 +303,14 @@ export function HelpScreen({ notice, error, go }: Shared) {
   );
 }
 
-export function EditScreen({ notice, error, go }: Shared) {
+export function EditScreen({ error, go }: Shared) {
   const { t } = useI18n();
   const { name, age } = MINGLE_PROFILE;
   const { city, bio } = t.mingle.profileData;
   return (
     <main className="mingle">
       <SubHeader title={t.mingle.editProfile} go={go} />
-      <Messages notice={notice} error={error} />
+      <Messages error={error} />
       <section className="mingle-secondary">
         <p>
           <strong>{name}</strong>
