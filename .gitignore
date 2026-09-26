@@ -18,3 +18,7 @@ contracts/cache/
 
 # Circuit intermediates (runtime artifacts live in public/zk and are committed)
 circuits/build/
+
+# Local anvil deployments
+lib/chain/deployment-31337.json
+contracts/broadcast/*/31337/
