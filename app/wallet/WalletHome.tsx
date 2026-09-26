@@ -101,7 +101,7 @@ export function WalletHome({ worldId, prover, proveOn }: Props) {
       </div>
 
       <h1 className="screen-title wallet-home-title">{home.title}</h1>
-      {loaded && wallet && <CertificateCard certificate={wallet.credential} showTitle />}
+      {loaded && wallet && <CertificateCard certificate={wallet.credential} variant="compact" />}
       {loaded && !wallet && (
         <div className="wallet-empty">
           {home.empty}
