@@ -6,6 +6,27 @@ import { useLoginWithOAuth, usePrivy, type User } from "@privy-io/react-auth";
 import { errorMessage } from "@/lib/api";
 import { userStore } from "@/lib/storage";
 
+// Set just before leaving for Google. The page that loads on the way back
+// reads it to tell "just signed in" apart from "was already signed in".
+const OAUTH_PENDING_KEY = "dasb:oauth-pending";
+
+function markPending(pending: boolean) {
+  try {
+    if (pending) window.sessionStorage.setItem(OAUTH_PENDING_KEY, "1");
+    else window.sessionStorage.removeItem(OAUTH_PENDING_KEY);
+  } catch {
+    // Without sessionStorage the user taps "Continue as …" instead.
+  }
+}
+
+function isPending(): boolean {
+  try {
+    return window.sessionStorage.getItem(OAUTH_PENDING_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 function remember(user: User): boolean {
   const google = user.google;
   return userStore.set({
@@ -38,7 +59,11 @@ export function PrivyGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
 
   // Back from Google: carry on without another tap.
   useEffect(() => {
-    if (state.status === "done" && authenticated && user) proceed(user);
+    if (!ready || !authenticated || !user) return;
+    if (state.status === "done" || isPending()) {
+      markPending(false);
+      proceed(user);
+    }
   });
 
   async function start() {
@@ -48,8 +73,10 @@ export function PrivyGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
       return;
     }
     try {
+      markPending(true);
       await initOAuth({ provider: "google" });
     } catch (e) {
+      markPending(false);
       setError(errorMessage(e));
     }
   }
