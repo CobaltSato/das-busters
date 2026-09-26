@@ -293,7 +293,8 @@ const en = {
       ],
       openingSimulator: "Opening the World ID Simulator…",
       simulatorTitle: "World ID Simulator · test identity",
-      simulatorHint: "Tap Continue below. When it shows Presented, this closes by itself.",
+      simulatorHint:
+        "Tap Continue below. This closes by itself about 10 seconds later. To stop, or if the Simulator goes back to its card list, tap × above.",
       copyLink: "Copy link",
       copied: "Link copied",
       copyFailed: "Could not copy. Scan the code instead.",
@@ -303,6 +304,7 @@ const en = {
       failed: (code: string) => `World ID did not finish (${code}). Try again.`,
       tryAgain: "Try again",
       cancel: "Cancel",
+      cancelled: "World ID cancelled. Nothing was shared. You can still share your single status without it.",
       complete: "Human check complete",
       completeBody: "World ID confirmed that a person approved this request.",
       completeBodyStaging:

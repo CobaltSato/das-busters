@@ -23,6 +23,8 @@ type Verified = { environment: HumanEnvironment; verifiedAt: string; token: stri
 export type WorldIdCheck = {
   phase: WorldIdPhase;
   error: string | null;
+  // Set after the holder closes the request, so closing is never silent.
+  notice: string | null;
   start: () => Promise<void>;
   cancel: () => void;
   // The open request: the Simulator over the screen on staging, the World App
@@ -39,6 +41,7 @@ export function useWorldIdCheck(onDone?: (record: HumanRecord) => void): WorldId
   const copy = t.wallet.worldId;
   const [phase, setPhase] = useState<WorldIdPhase>({ name: "ready" });
   const [error, setError] = useState<string | null>(null);
+  const [cancelled, setCancelled] = useState(false);
   const done = useRef(onDone);
 
   useEffect(() => {
@@ -47,6 +50,7 @@ export function useWorldIdCheck(onDone?: (record: HumanRecord) => void): WorldId
 
   async function start() {
     setError(null);
+    setCancelled(false);
     setPhase({ name: "preparing" });
     try {
       const signed = await postJson<SignedRequest>("/api/world-id/rp-context", {});
@@ -83,7 +87,10 @@ export function useWorldIdCheck(onDone?: (record: HumanRecord) => void): WorldId
     [copy, t],
   );
 
-  const cancel = useCallback(() => setPhase({ name: "ready" }), []);
+  const cancel = useCallback(() => {
+    setCancelled(true);
+    setPhase({ name: "ready" });
+  }, []);
 
   const fail = useCallback(
     (code: string) => {
@@ -98,5 +105,5 @@ export function useWorldIdCheck(onDone?: (record: HumanRecord) => void): WorldId
       <IdkitRequest signed={phase.signed} onResult={verify} onFailed={fail} onCancel={cancel} />
     ) : null;
 
-  return { phase, error, start, cancel, request };
+  return { phase, error, notice: cancelled ? copy.cancelled : null, start, cancel, request };
 }

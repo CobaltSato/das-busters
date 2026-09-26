@@ -292,7 +292,8 @@ const ja: Messages = {
       ],
       openingSimulator: "World ID Simulator を開いています…",
       simulatorTitle: "World ID Simulator · テスト用 ID",
-      simulatorHint: "下の Continue を押してください。Presented と出たら自動で閉じます。",
+      simulatorHint:
+        "下の Continue を押してください。10 秒ほどで自動で閉じます。やめるときや、Simulator がカード一覧に戻ったときは、上の × を押してください。",
       copyLink: "リンクをコピー",
       copied: "コピーしました",
       copyFailed: "コピーできませんでした。コードを読み取ってください。",
@@ -302,6 +303,7 @@ const ja: Messages = {
       failed: (code) => `World ID の確認が終わりませんでした（${code}）。もう一度お試しください。`,
       tryAgain: "もう一度試す",
       cancel: "キャンセル",
+      cancelled: "World ID の確認を取り消しました。何も共有されていません。独身であることは World ID なしでも共有できます。",
       complete: "人間確認が完了しました",
       completeBody: "人がこのリクエストを承認したことを、World ID が確認しました。",
       completeBodyStaging:

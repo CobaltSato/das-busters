@@ -365,6 +365,25 @@
   line-height: 18px;
 }
 
+.worldid-notice {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* Outranks .human-card > p, which would turn a home error grey. */
+.human-card > .worldid-error,
+.human-card > .worldid-notice {
+  margin: 12px 0 0;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.human-card > .worldid-error {
+  color: var(--alert);
+}
+
 /* Home: what this wallet has shared */
 
 .shared-list {
@@ -752,8 +771,21 @@
 }
 
 .human-consent.is-missing {
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+}
+
+.human-consent.is-missing > span {
+  flex: 1;
+  min-width: 0;
+}
+
+/* An error or notice under Check now takes a line of its own. */
+.human-consent .worldid-error,
+.human-consent .worldid-notice {
+  flex-basis: 100%;
+  margin-top: 0;
 }
 
 .check-now {

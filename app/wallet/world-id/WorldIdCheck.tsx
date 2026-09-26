@@ -12,7 +12,7 @@ export function WorldIdCheck({ returnTo, environment }: { returnTo: string; envi
   const { t } = useI18n();
   const copy = t.wallet.worldId;
   const router = useRouter();
-  const { phase, error, start, cancel, request } = useWorldIdCheck();
+  const { phase, error, notice, start, cancel, request } = useWorldIdCheck();
   const staging = environment === "staging";
 
   const header = (
@@ -69,6 +69,7 @@ export function WorldIdCheck({ returnTo, environment }: { returnTo: string; envi
       )}
       <div className="phone-actions">
         {error && <p className="error-banner">{error}</p>}
+        {notice && !error && <p className="fine-print" role="status">{notice}</p>}
         {request ? (
           <button type="button" className="btn btn-text" onClick={cancel}>
             {copy.cancel}

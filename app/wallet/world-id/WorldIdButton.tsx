@@ -11,7 +11,7 @@ type Props = { label: string; className: string; onDone: (record: HumanRecord) =
 export function WorldIdButton({ label, className, onDone }: Props) {
   const { t } = useI18n();
   const copy = t.wallet.worldId;
-  const { phase, error, start, request } = useWorldIdCheck(onDone);
+  const { phase, error, notice, start, request } = useWorldIdCheck(onDone);
 
   return (
     <>
@@ -29,6 +29,7 @@ export function WorldIdButton({ label, className, onDone }: Props) {
         </button>
       )}
       {error && <p className="worldid-error">{error}</p>}
+      {notice && !error && <p className="worldid-notice" role="status">{notice}</p>}
     </>
   );
 }
