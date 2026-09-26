@@ -13,7 +13,7 @@ DAS Busters のウォレットに付けた任意の人間確認です。独身�
 - 確認が通ると、サーバーが署名したトークンがウォレットに返ります。Mingle はこのトークンがあるときだけ確認を数えます。
 - staging と World ID Simulator だけで動かしています。本番の設定はしていません。
 
-proof of human を選んだ理由と、Mingle が受け取るものは [README](README.ja.md#world-id) にあります。
+proof of human を選んだ理由と、Mingle が受け取るものは [docs/technical.ja.md](docs/technical.ja.md#world-id) にあります。
 
 ## 経過
 

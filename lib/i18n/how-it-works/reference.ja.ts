@@ -278,7 +278,7 @@ const referenceJa: ReferenceCopy = {
     },
     docsTitle: "ドキュメント",
     docs: {
-      readme: { label: "README", note: "概要、図、コントラクト、イベント前に作ったもの。" },
+      readme: { label: "README", note: "概要、コントラクト、テスト、限界、イベント前に作ったもの。" },
       demo: { label: "デモの手順", note: "3分のデモの操作と話す内容。" },
       aiUsage: { label: "AI の利用", note: "Claude Code が生成したものと、チームがやったこと。" },
     },
