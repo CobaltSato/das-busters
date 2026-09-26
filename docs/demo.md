@@ -86,7 +86,7 @@ Use this instead of step 5 to show that the human check is optional.
 ### 8. Share
 
 - **Do**: tap **Share selected information**.
-- **They see**: two steps under the list. **Zero-knowledge proof** reads "Making it on this phone…", then "Made on this phone in 0.9 s" (the real time). **Mingle checks it and records it on Sepolia** then counts up: "Waiting for a Sepolia block · 8 s". Then Mingle's profile with **✓ Single status verified** and a badge for each fact Ken chose (and a Human badge if he included the check).
+- **They see**: two steps under the list. **Zero-knowledge proof** reads "Making it on this phone…", then "Made on this phone in 0.9 s" (the real time). **Mingle checks it and records it on Sepolia** then counts up: "Waiting for a Sepolia block · 8 s". Then Mingle's profile with **✓ Single status verified** and a badge for each fact Ken chose (and a Human badge if he included the check). Under the badges, once the block has landed, **Sepolia transaction ↗** with the transaction's Blockscout address.
 - **If the phone cannot finish**: the first step changes to "This phone could not finish. Making it on the DAS Busters server…" and the server makes that one proof (about 1 to 4 seconds on Vercel). Say so on stage.
 - **Say**: "That was a zero-knowledge proof, made on the phone. Mingle learned that Ken is single, and nothing else."
 
