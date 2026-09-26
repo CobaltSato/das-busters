@@ -282,7 +282,7 @@ const referenceEn = {
     },
     docsTitle: "Docs",
     docs: {
-      readme: { label: "README", note: "Overview, diagrams, contracts, what we made before the event." },
+      readme: { label: "README", note: "Overview, contracts, tests, limits, what we made before the event." },
       demo: { label: "Demo walkthrough", note: "The three-minute run, step by step, with what to say." },
       aiUsage: { label: "AI usage", note: "What Claude Code generated and what the team did." },
     },
