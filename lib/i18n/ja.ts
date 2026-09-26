@@ -489,6 +489,7 @@ const ja: Messages = {
     "world-id-mismatch": "この World ID の証明は、別のリクエスト向けに作られています",
     "world-id-rejected": "World ID が証明を確認できませんでした（{reason}）",
     "world-id-unconfirmed": "World ID の確認を検証できませんでした。DAS Busters からもう一度確認してください。",
+    "world-id-unreachable": "World の Developer Portal から応答がありませんでした。もう一度お試しください。",
   },
 };
 

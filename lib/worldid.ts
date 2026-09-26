@@ -65,12 +65,18 @@ export async function verifyWithPortal(config: WorldIdConfig, result: { action?:
   if (config.environment === "staging" && config.stagingToken) {
     headers["x-staging-verification-token"] = config.stagingToken;
   }
-  const response = await fetch(`${VERIFY_URL}/${config.rpId}`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(result),
-    signal: AbortSignal.timeout(VERIFY_TIMEOUT_MS),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${VERIFY_URL}/${config.rpId}`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(result),
+      signal: AbortSignal.timeout(VERIFY_TIMEOUT_MS),
+    });
+  } catch (error) {
+    console.error("World ID verify did not answer", error);
+    throw new ProofError("World ID's Developer Portal did not answer. Try again.", "world-id-unreachable");
+  }
   const body = (await response.json().catch(() => null)) as {
     success?: boolean;
     code?: string;
@@ -79,9 +85,10 @@ export async function verifyWithPortal(config: WorldIdConfig, result: { action?:
   } | null;
   if (!response.ok || !body?.success) {
     console.error("World ID verify refused", response.status, body?.code);
-    throw new ProofError("World ID could not confirm this proof", "world-id-rejected", {
-      reason: body?.code ?? String(response.status),
-    });
+    // The Portal's code is the clue, e.g. environment_not_allowed once the
+    // staging token has been rotated, so English shows it too.
+    const reason = body?.code ?? String(response.status);
+    throw new ProofError(`World ID could not confirm this proof (${reason})`, "world-id-rejected", { reason });
   }
   if (body.environment !== config.environment || !body.nullifier) {
     throw new ProofError("World ID confirmed a proof from a different environment", "world-id-mismatch");
