@@ -361,7 +361,7 @@ const ja: Messages = {
     title: "プライバシーポリシー",
     updated: "最終更新 2026年9月26日",
     intro:
-      "DAS Busters は ETHGlobal Tokyo 2026 で作ったデモです。証明書、区役所、Mingle はすべて架空のものです。本物の個人書類はアップロードしないでください。",
+      "DAS Busters は ETHGlobal Tokyo 2026 で作ったデモです。証明書と Mingle は架空のもので、区役所の窓口画面はデモのために渋谷区の名前を借りているだけです。本物の個人書類はアップロードしないでください。",
     privyLink: "Privy のプライバシーポリシー",
     contactLink: "GitHub で Issue を作成",
     sections: {
@@ -371,15 +371,19 @@ const ja: Messages = {
       },
       certificate: {
         heading: "証明書と保有者鍵",
-        body: "デモの証明書と保有者鍵は、このブラウザにだけ保存されます。サーバーは証明を作る1回のリクエストのあいだだけ証明書を読み、保存しません。",
+        body: "デモの証明書と保有者鍵は、このブラウザにだけ保存されます。証明はスマホの中で作ります。DAS Busters のサーバーが証明書と保有者鍵を受け取るのは、スマホで証明を作れなかったときと、デモがモック証明かサーバー側の証明で動いているときだけです。使うのはその 1 回のリクエストだけで、何も保存しません。",
       },
       shared: {
         heading: "Mingle とブロックチェーンが受け取るもの",
-        body: "Mingle が受け取るのは、独身であること、あなたが選んで共有した情報、nullifier だけです。nullifier は Ethereum の Sepolia テストネットに記録されます。Sepolia は公開されていて、記録は消せません。nullifier に氏名、生年月日、住所は含まれません。",
+        body: "Mingle が受け取るのは、独身であること、あなたが選んで共有した情報、Mingle 専用に作られる匿名の番号（nullifier）だけです。デモがオンチェーンに記録するときは、Ethereum の Sepolia テストネットのトランザクションに、この番号と証明が載ります。東京の都道府県コードと生まれ年の範囲も、共有を選んだときだけ載ります。Sepolia は公開されていて、記録は消せません。氏名、生年月日、住所がチェーンに載ることはありません。",
+      },
+      worldId: {
+        heading: "World ID",
+        body: "人間確認に World ID を使うときは、IDKit がリクエストを World App か World ID Simulator に渡し、World の Developer Portal が答えを確認します。World が受け取るのは、そのリクエストに対する World ID の証明です。氏名、写真、証明書は受け取りません。DAS Busters は結果をこのブラウザに保存し、私たちのサーバーには保存しません。",
       },
       camera: {
         heading: "カメラ",
-        body: "人間確認では、前面カメラが 5 秒間だけ開きます。映像のアップロードや保存はしません。",
+        body: "人間確認がシミュレーションのときだけ、前面カメラが 5 秒間開きます。映像のアップロードや保存はしません。",
       },
       hosting: {
         heading: "ホスティングと Cookie",

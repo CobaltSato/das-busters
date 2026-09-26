@@ -364,7 +364,7 @@ const en = {
     title: "Privacy policy",
     updated: "Last updated 26 September 2026",
     intro:
-      "DAS Busters is a demo built at ETHGlobal Tokyo 2026. The certificate, the city office and Mingle are fictional. Please do not upload real personal documents.",
+      "DAS Busters is a demo built at ETHGlobal Tokyo 2026. The certificate and Mingle are made up, and the city office screen only borrows the name Shibuya City for the demo. Please do not upload real personal documents.",
     privyLink: "Privy's privacy policy",
     contactLink: "Open an issue on GitHub",
     sections: {
@@ -374,15 +374,19 @@ const en = {
       },
       certificate: {
         heading: "Certificate and holder key",
-        body: "The demo certificate and your holder key are stored only in this browser. The server reads the certificate for a single proving request and does not keep it.",
+        body: "The demo certificate and your holder key are stored only in this browser, and the proof is made on your phone. The DAS Busters server receives the certificate and holder key only when your phone cannot make the proof, or when the demo runs with mock or server-side proofs. It uses them for that one request and keeps nothing.",
       },
       shared: {
         heading: "What Mingle and the blockchain receive",
-        body: "Mingle receives only that you are single, anything else you choose to share, and a nullifier. The nullifier is recorded on the Ethereum Sepolia test network, which is public and cannot be erased. It does not contain your name, birth date or address.",
+        body: "Mingle receives only that you are single, anything else you choose to share, and an anonymous number made for Mingle only (a nullifier). When the demo records on-chain, a transaction on the Ethereum Sepolia test network carries that number and the proof, plus the Tokyo code and the birth-year range if you chose to share them. Sepolia is public and cannot be erased. Your name, birth date and address never go on-chain.",
+      },
+      worldId: {
+        heading: "World ID",
+        body: "When the human check uses World ID, IDKit passes the request to World App or the World ID Simulator, and World's Developer Portal checks the answer. World receives the World ID proof for that request, not your name, photo or certificate. DAS Busters keeps the result in this browser; our server does not store it.",
       },
       camera: {
         heading: "Camera",
-        body: "The human check opens the front camera for five seconds. Nothing is uploaded or saved.",
+        body: "Only when the human check is simulated, it opens the front camera for five seconds. Nothing is uploaded or saved.",
       },
       hosting: {
         heading: "Hosting and cookies",
