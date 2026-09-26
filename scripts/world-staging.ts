@@ -3,8 +3,9 @@ import { readFileSync, writeFileSync } from "node:fs";
 // Opens the Developer Portal's 24-hour staging window, so /api/v4/verify
 // accepts proofs from the World ID Simulator. The Portal issues a token that
 // every staging verify call must send; this writes it to .env.local as
-// WORLDID_STAGING_TOKEN and prints only the expiry. Opening a new window
-// replaces the old token, so update Vercel's copy afterwards.
+// WORLDID_STAGING_TOKEN, with the closing time as WORLDID_STAGING_EXPIRES_AT,
+// and prints only the expiry. Opening a new window replaces the old token, so
+// update Vercel's copies afterwards.
 //
 //   npx tsx --env-file=.env.local scripts/world-staging.ts
 const ENV_FILE = ".env.local";
@@ -37,13 +38,15 @@ async function openWindow(apiKey: string, appId: string): Promise<StagingWindow>
   return JSON.parse(body.result?.content?.[0]?.text ?? "{}") as StagingWindow;
 }
 
-function saveToken(token: string): void {
-  const line = `WORLDID_STAGING_TOKEN=${token}`;
+function setEnv(env: string, name: string, value: string): string {
+  const line = `${name}=${value}`;
+  const pattern = new RegExp(`^${name}=.*$`, "m");
+  return pattern.test(env) ? env.replace(pattern, line) : `${env.trimEnd()}\n${line}\n`;
+}
+
+function saveWindow(token: string, expiresAt: string): void {
   const env = readFileSync(ENV_FILE, "utf8");
-  const next = /^WORLDID_STAGING_TOKEN=.*$/m.test(env)
-    ? env.replace(/^WORLDID_STAGING_TOKEN=.*$/m, line)
-    : `${env.trimEnd()}\n${line}\n`;
-  writeFileSync(ENV_FILE, next);
+  writeFileSync(ENV_FILE, setEnv(setEnv(env, "WORLDID_STAGING_TOKEN", token), "WORLDID_STAGING_EXPIRES_AT", expiresAt));
 }
 
 async function main() {
@@ -53,8 +56,9 @@ async function main() {
     throw new Error("Set WORLD_PORTAL_API_KEY (api_...) and WORLDID_APP_ID (app_...) in .env.local");
   }
   const window = await openWindow(apiKey, appId);
-  if (!window.staging_verification_token) throw new Error("The Portal did not return a staging token");
-  saveToken(window.staging_verification_token);
+  const { staging_verification_token: token, staging_verification_expires_at: expiresAt } = window;
+  if (!token || !expiresAt) throw new Error("The Portal did not return a staging token and expiry");
+  saveWindow(token, expiresAt);
   console.log(`Staging window open until ${window.staging_verification_expires_at}; token written to ${ENV_FILE}`);
 }
 

@@ -33,11 +33,14 @@ export function worldIdConfig(): WorldIdConfig | null {
   const action = process.env.WORLDID_ACTION || "das-busters-human";
   const environment: WorldIdEnvironment = process.env.WORLDID_ENVIRONMENT === "production" ? "production" : "staging";
   const stagingToken = process.env.WORLDID_STAGING_TOKEN || null;
+  const stagingExpiresAt = Date.parse(process.env.WORLDID_STAGING_EXPIRES_AT ?? "");
   if (process.env.WORLDID_MODE !== "idkit") return null;
   if (!appId?.startsWith("app_") || !rpId?.startsWith("rp_") || !signingKey || !/^[0-9a-fA-F]{64}$/.test(signingKey)) {
     return null;
   }
-  if (environment === "staging" && !stagingToken) return null;
+  // Once the Portal's staging window closes, every check would fail; fall
+  // back to the simulated one instead of showing a World ID that cannot work.
+  if (environment === "staging" && (!stagingToken || !(stagingExpiresAt > Date.now()))) return null;
   return { appId: appId as `app_${string}`, rpId, signingKey, action, environment, stagingToken };
 }
 
