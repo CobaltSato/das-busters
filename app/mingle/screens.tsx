@@ -27,6 +27,9 @@ type Verification = MingleRecord["verification"];
 type Shared = {
   error: string | null;
   verification: Verification;
+  // False until the saved record is read, so a verified profile does not
+  // flash the "verify" button first.
+  ready: boolean;
   go: (screen: Screen) => void;
 };
 
@@ -47,21 +50,45 @@ function SubHeader({ title, go }: { title: string; go: Shared["go"] }) {
   );
 }
 
+type HumanKind = keyof Copy["mingle"]["humanBadge"];
+
+// Only a production World ID check comes from a person's World App; staging
+// uses the Simulator and the simulated check has no evidence, so neither
+// gets the done style.
+function humanKind(verification: NonNullable<Verification>): HumanKind | null {
+  if (!verification.humanCheck) return null;
+  if (verification.humanCheck !== "world-id") return "simulated";
+  return verification.humanEnvironment === "production" ? "worldId" : "staging";
+}
+
 function VerifiedBadges({ verification }: { verification: NonNullable<Verification> }) {
   const { t } = useI18n();
   const m = t.mingle;
   const { residence, ageRange } = verification.disclosed;
+  const human = humanKind(verification);
   return (
     <div className="mingle-badges">
       <span className="mingle-status is-done">{m.badgeVerified}</span>
-      {residence && <span className="mingle-status is-done">{m.livesIn(lookup(t.places, residence))}</span>}
-      {ageRange && <span className="mingle-status is-done">{t.ageRange(ageRange)}</span>}
-      {verification.humanCheck && <span className="mingle-status is-done">{m.human}</span>}
+      {residence && <span className="mingle-status is-done">{m.residenceVerified(lookup(t.places, residence))}</span>}
+      {ageRange && <span className="mingle-status is-done">{m.ageVerified(t.ageRange(ageRange))}</span>}
+      {human && (
+        <span className={human === "worldId" ? "mingle-status is-done" : "mingle-status"}>{m.humanBadge[human]}</span>
+      )}
     </div>
   );
 }
 
-export function ProfileScreen({ error, verification, go }: Shared) {
+function ConnectLabel({ label }: { label: string }) {
+  return (
+    <>
+      <Image src="/brand/das-busters.png" alt="" width={24} height={24} />
+      <span>{label}</span>
+      <b aria-hidden="true">›</b>
+    </>
+  );
+}
+
+export function ProfileScreen({ error, verification, ready, go }: Shared) {
   const { t } = useI18n();
   const m = t.mingle;
   const { name, age, photo, stats } = MINGLE_PROFILE;
@@ -84,7 +111,20 @@ export function ProfileScreen({ error, verification, go }: Shared) {
           <span>{age}</span>
         </h1>
         <p>{m.profileData.city}</p>
-        {verification && <VerifiedBadges verification={verification} />}
+        {verification ? (
+          <>
+            <VerifiedBadges verification={verification} />
+            <button type="button" className="mingle-received" onClick={() => go("verification")}>
+              {m.whatReceived} ›
+            </button>
+          </>
+        ) : (
+          ready && (
+            <button type="button" className="mingle-connect" onClick={() => go("verification")}>
+              <ConnectLabel label={m.verifyCta} />
+            </button>
+          )
+        )}
         <button type="button" className="mingle-edit" onClick={() => go("edit")}>
           <PencilIcon />
           {m.editProfile}
@@ -108,7 +148,7 @@ export function ProfileScreen({ error, verification, go }: Shared) {
         <button type="button" onClick={() => go("verification")}>
           <ShieldIcon />
           <span>{m.identityVerification}</span>
-          <small>{verification ? m.verified : m.identityVerified}</small>
+          <small>{verification ? m.verified : ready && m.singleNotVerified}</small>
           <b>›</b>
         </button>
         <button type="button" onClick={() => go("settings")}>
@@ -148,16 +188,39 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
   const { t } = useI18n();
   const p = t.mingle.proof;
   const { residence, ageRange } = verification.disclosed;
-  const shared = [p.single, residence && p.livesIn(lookup(t.places, residence)), ageRange && t.ageRange(ageRange)]
-    .filter(Boolean)
-    .join(p.listSeparator);
+  const human = humanKind(verification);
   const short = `${verification.nullifierHash.slice(0, 6)}…${verification.nullifierHash.slice(-4)}`;
   return (
     <>
+      <h3 className="mingle-proof-subhead">{p.received}</h3>
       <dl className="mingle-proof-details">
         <div>
-          <dt>{p.shared}</dt>
-          <dd>{shared}</dd>
+          <dt>{p.singleStatus}</dt>
+          <dd>✓ {p.single}</dd>
+        </div>
+        {residence && (
+          <div>
+            <dt>{p.residence}</dt>
+            <dd>✓ {lookup(t.places, residence)}</dd>
+          </div>
+        )}
+        {ageRange && (
+          <div>
+            <dt>{p.ageRange}</dt>
+            <dd>✓ {t.ageRange(ageRange)}</dd>
+          </div>
+        )}
+        {human && (
+          <div>
+            <dt>{p.human}</dt>
+            <dd>{p.humanMethod[human]}</dd>
+          </div>
+        )}
+        <div>
+          <dt>{p.nullifier}</dt>
+          <dd>
+            <code>{short}</code>
+          </dd>
         </div>
         <div>
           <dt>{p.proof}</dt>
@@ -173,34 +236,17 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
             )}
           </dd>
         </div>
-        {verification.humanCheck && (
-          <div>
-            <dt>{p.human}</dt>
-            <dd>{humanMethod(p, verification)}</dd>
-          </div>
-        )}
-        <div>
-          <dt>{p.nullifier}</dt>
-          <dd>
-            <code>{short}</code>
-          </dd>
-        </div>
       </dl>
       {verification.chainNote && (
         <p className="mingle-proof-note">{lookup(t.mingle.chainNotes, verification.chainNote)}</p>
       )}
+      <h3 className="mingle-proof-subhead">{p.notReceived}</h3>
       <p className="mingle-proof-note">{p.neverReceived}</p>
       <button type="button" className="mingle-view" onClick={() => go("profile")}>
         {p.viewOnProfile}
       </button>
     </>
   );
-}
-
-// The profile badge just says "Human"; how it was checked is spelled out here.
-function humanMethod(p: Copy["mingle"]["proof"], verification: NonNullable<Verification>): string {
-  if (verification.humanCheck !== "world-id") return p.humanSimulated;
-  return verification.humanEnvironment === "production" ? p.humanWorldId : p.humanStaging;
 }
 
 type VerificationProps = Shared & {
@@ -222,7 +268,7 @@ export function VerificationScreen({ error, verification, go, modes, dialog, con
         <article>
           <div className="mingle-proof-title">
             <h2>{c.identity}</h2>
-            <span className="mingle-status is-done">{c.verified}</span>
+            <span className="mingle-status">{c.notVerified}</span>
           </div>
           <p>{c.identityBody}</p>
         </article>
@@ -238,9 +284,7 @@ export function VerificationScreen({ error, verification, go, modes, dialog, con
             <ProofDetails verification={verification} go={go} />
           ) : (
             <button type="button" className="mingle-connect" onClick={() => dialog.current?.showModal()}>
-              <Image src="/brand/das-busters.png" alt="" width={24} height={24} />
-              <span>{c.connect}</span>
-              <b aria-hidden="true">›</b>
+              <ConnectLabel label={c.connect} />
             </button>
           )}
         </article>
@@ -305,6 +349,7 @@ export function HelpScreen({ error, go }: Shared) {
       <section className="mingle-secondary">
         <p>{t.mingle.helpBody}</p>
         <p className="muted">{t.mingle.helpMuted}</p>
+        <p className="muted">{t.mingle.helpDemo}</p>
       </section>
     </main>
   );
@@ -326,6 +371,7 @@ export function EditScreen({ error, go }: Shared) {
           {age} · {city}
         </p>
         <p>{bio}</p>
+        <p className="muted">{t.mingle.editDemo}</p>
       </section>
     </main>
   );
