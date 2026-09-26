@@ -1,0 +1,20 @@
+# Pre-event reference material. Read-only, never committed.
+dump/
+
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+.DS_Store
+
+.env*
+!.env.example
+
+# Foundry
+contracts/out/
+contracts/cache/
+
+# Circuit intermediates (runtime artifacts live in public/zk and are committed)
+circuits/build/
