@@ -6,6 +6,7 @@ import {
   createPublicClient,
   createWalletClient,
   http,
+  InsufficientFundsError,
   isAddress,
   type Address,
   type Hex,
@@ -52,7 +53,8 @@ const REVERTS: Record<string, { code: string; message: string }> = {
   InvalidProof: { code: "invalid-proof-onchain", message: "The proof did not verify on-chain." },
 };
 
-// chainNote is a code ("rpc-unreachable", "unconfirmed") the UI translates.
+// chainNote is a code ("rpc-unreachable", "relayer-unfunded", "unconfirmed")
+// the UI translates.
 export type ChainOutcome =
   | { chain: "sepolia"; txHash: Hex; chainNote: string | null }
   | { chain: "off"; txHash: null; chainNote: string | null };
@@ -100,6 +102,12 @@ function throwIfRevert(error: unknown): void {
   }
 }
 
+// viem maps a node's "insufficient funds" answer to InsufficientFundsError
+// somewhere in the cause chain, whichever call hit it.
+function isRelayerUnfunded(error: unknown): boolean {
+  return error instanceof BaseError && error.walk((e) => e instanceof InsufficientFundsError) instanceof InsufficientFundsError;
+}
+
 export async function recordOnChain(presentation: Presentation): Promise<ChainOutcome> {
   if (getModes().chain !== "sepolia" || presentation.prover !== "groth16") {
     return { chain: "off", txHash: null, chainNote: null };
@@ -113,8 +121,15 @@ export async function recordOnChain(presentation: Presentation): Promise<ChainOu
     const { request } = await client.simulateContract(call);
     txHash = await createWalletClient({ account, chain, transport: http(rpcUrl) }).writeContract(request);
   } catch (error) {
+    // An empty relayer is our problem, not the registry's. viem wraps a node
+    // error with code -32603 as a revert even when it says "insufficient
+    // funds", so this check runs before the revert check.
+    if (isRelayerUnfunded(error)) {
+      console.error("The relayer cannot pay for gas", error);
+      return { chain: "off", txHash: null, chainNote: "relayer-unfunded" };
+    }
     throwIfRevert(error);
-    // Anything else is the network or the relayer (for example, no gas).
+    // Anything else (no answer, a timeout) is reported as Sepolia unreachable.
     console.error("Recording on-chain failed", error);
     return {
       chain: "off",

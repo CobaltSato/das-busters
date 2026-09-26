@@ -86,7 +86,7 @@ export function MingleApp({ incoming, modes, initialScreen }: Props) {
   }
 
   const verification = record?.verification ?? null;
-  const shared = { error, verification, go };
+  const shared = { error, verification, ready: record !== null, go };
 
   switch (screen) {
     case "verification":

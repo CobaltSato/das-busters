@@ -60,6 +60,9 @@ export type VerificationResult = {
   chain: ChainMode;
   txHash: string | null;
   chainNote: string | null;
+  // Set when Mingle dropped a human check the wallet sent. Absent in results
+  // saved before this field existed.
+  humanNote?: string | null;
 };
 
 export function signalsToArray(signals: PublicSignals): string[] {

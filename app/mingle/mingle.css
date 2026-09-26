@@ -125,6 +125,23 @@
   line-height: 22px;
 }
 
+/* Under the badges: opens the list of what Mingle got. */
+.mingle-received {
+  display: block;
+  min-height: 32px;
+  margin: -8px auto 10px;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  color: #0866ed;
+  font-size: 12px;
+}
+
+/* Before any result, the profile points at the verification screen. */
+.mingle-person .mingle-connect {
+  margin: 0 0 14px;
+}
+
 .mingle-edit {
   display: inline-flex;
   align-items: center;
@@ -287,6 +304,21 @@
   margin-left: auto;
   font-size: 22px;
   font-weight: 400;
+}
+
+.mingle-proof-subhead {
+  margin-top: 18px;
+  color: #73737f;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.mingle-proof-subhead + .mingle-proof-details {
+  margin-top: 8px;
+}
+
+.mingle-proof-subhead + .mingle-proof-note {
+  margin-top: 6px;
 }
 
 .mingle-proof-details {
