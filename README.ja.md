@@ -90,7 +90,7 @@ DAS Busters がアプリに渡すのは、確認済みの事実1つと、アプ�
 
 **proof of human で足りる理由**：IDKit の `proofOfHuman` プリセットを使っています（[app/wallet/world-id/IdkitRequest.tsx](app/wallet/world-id/IdkitRequest.tsx)）。婚姻の状況、居住地、年代は証明書が受け持つので、World ID に頼むのは「人であること」だけで済みます。proof of human はそれ以外、つまり名前も顔も ID 番号も渡しません。セルフィーチェックは、World 自身の説明では中程度の保証です。デバイスのカメラで、その場に本人がいるか（liveness）と顔の類似を確かめて sybil スコアを返し、その判断はアプリに任されます（[World のドキュメント](https://docs.world.org/world-id/idkit/credentials)）。1人1アカウントのためには、Orb に裏付けられた proof of human の一意性がほしかったのです。パスポートなどの書類系のクレデンシャルは、区役所の証明書と同じことを重ねて証明するうえに、利用者からもっと多くの情報を取ります。
 
-**Mingle が受け取るもの**：World ID の確認が通ると、私たちのサーバーが署名したトークンをウォレットが送ります。Mingle のサーバーはこれを読むので、このアプリ用の World ID の匿名の番号（World ID の nullifier）も見えます。ただし Mingle が残す結果には、人間確認が通ったことと、その種類（World ID、World ID staging、シミュレーション）しか入りません（[app/api/verify/route.ts](app/api/verify/route.ts)）。このデモでは、トークンに署名するサーバーが Mingle のバックエンドも兼ねています。
+**Mingle が受け取るもの**：World ID の確認が通ると、私たちのサーバーが署名したトークンがウォレットに届き、人間確認を含めて共有するときに、ウォレットがそれを Mingle に送ります。Mingle のサーバーはこれを読むので、このアプリ用の World ID の匿名の番号（World ID の nullifier）も見えます。ただし Mingle が残す結果には、人間確認が通ったことと、その種類（World ID、World ID staging、シミュレーション）しか入りません（[app/api/verify/route.ts](app/api/verify/route.ts)）。このデモでは、トークンに署名するサーバーが Mingle のバックエンドも兼ねています。
 
 **World ID を使わない場合**：人間確認は任意です。Simulator をキャンセルしても、確認自体を飛ばしても、共有は同じように動きます。Mingle には独身証明が出て、人間確認のバッジだけが付きません。この流れは [docs/demo.ja.md](docs/demo.ja.md#5b-world-id-を使わない場合任意) にあります。
 
