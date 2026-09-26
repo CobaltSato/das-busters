@@ -140,7 +140,7 @@ const en = {
       provedMock: "Mock proof · not a real proof",
       humanComplete: "Human check complete",
       humanPitch:
-        "Add proof that a person passed a World ID check. It is not tied to this certificate yet. You choose each time whether to share it.",
+        "Show Mingle that a person, not a bot, is behind this profile. World ID shares no name, face or ID number. It is checked separately from the certificate, and you choose each time whether to share it.",
       humanPitchSimulated:
         "Add a simulated human check. No World ID proof is made in this mode. You choose each time whether to share it.",
       verifyWorldId: "Verify with World ID",

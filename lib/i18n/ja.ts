@@ -139,7 +139,7 @@ const ja: Messages = {
       provedMock: "モック証明 · 本物の証明ではありません",
       humanComplete: "人間確認が完了しました",
       humanPitch:
-        "World ID の確認を通ったことを、アプリに示せます。この確認はまだ証明書とは結び付いていません。渡すかどうかは毎回あなたが決めます。",
+        "このプロフィールの向こうにいるのが bot ではなく人であることを、Mingle に示せます。World ID は名前も顔も ID 番号も渡しません。確認は証明書とは別に行い、渡すかどうかは毎回あなたが決めます。",
       humanPitchSimulated:
         "シミュレーションの人間確認を追加できます。このモードでは World ID の証明は作りません。渡すかどうかは毎回あなたが決めます。",
       verifyWorldId: "World ID で確認",
