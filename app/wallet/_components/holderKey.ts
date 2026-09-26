@@ -1,29 +1,72 @@
 "use client";
 
-import { usePrivy, useSignMessage, useWallets } from "@privy-io/react-auth";
+import { useCreateWallet, usePrivy, useSignMessage, useWallets, type User } from "@privy-io/react-auth";
 import { randomField } from "@/lib/fields";
 import { HOLDER_KEY_MESSAGE, PRIVY_ENABLED, secretFromSignature } from "@/lib/privy";
 
 // Where the holder secret comes from. With Privy it is derived from the
 // embedded wallet's signature, so it belongs to the Google account; without
 // Privy it is random. Either way it is stored only on this phone.
-type HolderSecretSource = { ready: boolean; create: () => Promise<string> };
+export type HolderStatus = "loading" | "ready" | "signed-out";
+type HolderSecretSource = { status: HolderStatus; create: () => Promise<string> };
+
+const SIGN_TIMEOUT_MS = 30_000;
 
 function useRandomSecret(): HolderSecretSource {
-  return { ready: true, create: async () => randomField() };
+  return { status: "ready", create: async () => randomField() };
+}
+
+function linkedEmbeddedAddress(user: User | null): string | null {
+  const account = user?.linkedAccounts.find(
+    (linked) => linked.type === "wallet" && linked.walletClientType === "privy",
+  );
+  return account && "address" in account ? account.address : null;
+}
+
+function withTimeout<T>(promise: Promise<T>, message: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), SIGN_TIMEOUT_MS);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error: unknown) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
 }
 
 function usePrivySecret(): HolderSecretSource {
-  const { wallets, ready } = useWallets();
+  const { ready, authenticated, user } = usePrivy();
+  const { wallets } = useWallets();
+  const { createWallet } = useCreateWallet();
   const { signMessage } = useSignMessage();
-  const embedded = wallets.find((wallet) => wallet.walletClientType === "privy");
+  const status: HolderStatus = !ready ? "loading" : authenticated ? "ready" : "signed-out";
+
+  // The wallet is normally created at sign-in, but leaving the page early can
+  // cut that short, so create it here if it is still missing.
+  async function walletAddress(): Promise<string> {
+    const connected = wallets.find((wallet) => wallet.walletClientType === "privy");
+    const existing = connected?.address ?? linkedEmbeddedAddress(user);
+    if (existing) return existing;
+    const created = await createWallet();
+    return created.address;
+  }
+
   return {
-    ready: ready && Boolean(embedded),
-    create: async () => {
-      if (!embedded) throw new Error("Your key is still being set up. Wait a moment and try again.");
-      const { signature } = await signMessage({ message: HOLDER_KEY_MESSAGE }, { address: embedded.address });
-      return secretFromSignature(signature);
-    },
+    status,
+    create: () =>
+      withTimeout(
+        (async () => {
+          const address = await walletAddress();
+          const { signature } = await signMessage({ message: HOLDER_KEY_MESSAGE }, { address });
+          return secretFromSignature(signature);
+        })(),
+        "Setting up your key took too long. Check your connection and try again.",
+      ),
   };
 }
 

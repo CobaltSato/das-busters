@@ -8,10 +8,17 @@ import { SuccessMark } from "@/components/SuccessMark";
 import { errorMessage, postJson } from "@/lib/api";
 import type { Credential, CredentialPreview } from "@/lib/credential";
 import { holderCommitment } from "@/lib/fields";
+import { PRIVY_ENABLED } from "@/lib/privy";
 import { userStore, walletStore, type UserRecord } from "@/lib/storage";
 import { useHolderSecret } from "../_components/holderKey";
 
 type Props = { offer: string; preview: CredentialPreview };
+
+// A sign-in record left over from the mock, or a Privy session that has
+// ended, would leave the key spinner running forever: sign in again instead.
+function needsSignIn(user: UserRecord | null): boolean {
+  return !user || (PRIVY_ENABLED && user.provider !== "privy");
+}
 
 export function SaveScreen({ offer, preview }: Props) {
   const router = useRouter();
@@ -22,13 +29,14 @@ export function SaveScreen({ offer, preview }: Props) {
 
   useEffect(() => {
     const signedIn = userStore.get();
-    if (!signedIn) {
+    if (needsSignIn(signedIn) || holder.status === "signed-out") {
+      userStore.clear();
       router.replace(`/wallet/receive?offer=${encodeURIComponent(offer)}`);
       return;
     }
     setUser(signedIn);
     router.prefetch("/wallet/saved");
-  }, [offer, router]);
+  }, [offer, router, holder.status]);
 
   async function save() {
     setSaving(true);
@@ -72,8 +80,8 @@ export function SaveScreen({ offer, preview }: Props) {
       </div>
       <div className="phone-actions">
         {error && <p className="error-banner">{error}</p>}
-        <button type="button" className="btn btn-primary" onClick={save} disabled={saving || !user || !holder.ready}>
-          {!holder.ready ? (
+        <button type="button" className="btn btn-primary" onClick={save} disabled={saving || !user || holder.status !== "ready"}>
+          {holder.status !== "ready" ? (
             <>
               <span className="spinner" />
               Preparing your key…
