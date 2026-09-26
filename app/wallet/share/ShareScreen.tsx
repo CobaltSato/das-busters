@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
 import { useI18n } from "@/components/I18nProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -50,6 +50,16 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   const [provingMs, setProvingMs] = useState<number | null>(null);
   // Seconds spent waiting for Mingle's check and the Sepolia block.
   const [waited, setWaited] = useState(0);
+  // False once the holder leaves this screen. A proof that finishes after
+  // Cancel or ‹ is dropped, so leaving while proving really cancels.
+  const onScreen = useRef(true);
+
+  useEffect(() => {
+    onScreen.current = true;
+    return () => {
+      onScreen.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     setWallet(walletStore.get());
@@ -112,7 +122,7 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
       });
       return { presentation, provedOn: "device" };
     } catch (e) {
-      if (e instanceof ProofError) throw e;
+      if (e instanceof ProofError || !onScreen.current) throw e;
       console.warn("Proving on this device failed; using the server", e);
       setFellBack(true);
       setStep("proving-server");
@@ -127,6 +137,7 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
     setProvingMs(null);
     try {
       const { presentation, provedOn } = await makeProof();
+      if (!onScreen.current) return;
       setProvingMs(presentation.provingMs);
       setStep("verifying");
       const { result, resultToken } = await postJson<{ result: VerificationResult; resultToken: string }>(
@@ -169,7 +180,8 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   const serverProves = proveOn === "server" || fellBack;
   // Leaving while Mingle checks and records the proof would not stop it, and
   // its result would still open Mingle later, so the exits wait. Proving
-  // keeps Cancel: it is the way out if the circuit download stalls.
+  // keeps Cancel: it is the way out if the circuit download stalls, and
+  // onScreen keeps a late proof from being sent.
   const recording = step === "verifying";
   // Mingle's request is older than 10 minutes, so sharing again cannot work.
   const expired = error?.code === "token-expired";
