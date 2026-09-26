@@ -70,7 +70,7 @@ const storyEn = {
     statusTitle: "Running in this deployment",
     notice: {
       mockProver:
-        "This deployment uses the mock prover: the server checks the same rules but makes no zero-knowledge proof. The Groth16 parts below describe the real prover.",
+        "This deployment uses the mock prover: the server checks the same rules but makes no zero-knowledge proof. In this mode the phone sends the certificate and the secret key to the server for each request, and the server keeps nothing. The Groth16 and phone-proving parts below describe the real prover.",
       offChain:
         "This deployment checks proofs off-chain only, so the Sepolia steps below do not run here.",
       serverProver:
