@@ -9,7 +9,7 @@ const referenceJa: ReferenceCopy = {
     lede: "ここに書いた数字は、すべてリポジトリのコードから取っています。",
     numbers: [
       { value: "9,921", label: "証明の中で確かめる式の数（回路の制約）" },
-      { value: "10", label: "Mingle が見る公開の数" },
+      { value: "10", label: "Mingle に見える数（公開値）の個数" },
       { value: "1", label: "登録1件でブロックチェーンに残る数" },
       { value: "0", label: "ブロックチェーンに載る氏名と生年月日" },
       { value: "7.7 MB", label: "証明を作るためにスマホが読み込む回路ファイル" },
@@ -129,7 +129,7 @@ const referenceJa: ReferenceCopy = {
     modes: {
       title: "モックと本物の切り替え",
       lede: "連携ごとにモック版と本物があります。サーバーが環境変数で選ぶので、ブラウザ側から確認を切ることはできません。何も設定しなければ、4つともモックで動きます。",
-      head: { part: "部分", env: "有効にする設定", mock: "モック", real: "本物", now: "このデプロイ" },
+      head: { part: "連携", env: "有効にする設定", mock: "モック", real: "本物", now: "このデプロイ" },
       rows: {
         auth: {
           part: "ログイン",
