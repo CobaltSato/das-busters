@@ -222,6 +222,11 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
             <code>{short}</code>
           </dd>
         </div>
+        {/* The issuer key is a public signal, so Mingle learns which office signed. */}
+        <div>
+          <dt>{p.issuer}</dt>
+          <dd>{verification.prover === "groth16" ? p.issuerKey : p.issuerMock}</dd>
+        </div>
         <div>
           <dt>{p.proof}</dt>
           <dd>{verification.prover === "groth16" ? p.zk : p.mock}</dd>
