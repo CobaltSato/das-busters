@@ -23,6 +23,7 @@ DAS Busters（リポジトリ名 single-proof）。ETHGlobal Tokyo 2026 の提�
 - **mock / real の切り替え**: `lib/modes.ts` の env で切り替え、env が無ければ mock に倒す。モードはサーバー側で決め、クライアントからは切り替えさせない。
 - **UI に検証方式を出す**: `off-chain` で検証した結果を on-chain と見せない。Simulated の World ID を本物と見せない。
 - **revert の扱い**: コントラクトの revert（nullifier 使用済み、発行者違い）は失敗として UI に出す。オフチェーンに落としてよいのは RPC 障害のときだけ。
+- **英語ファースト**: UI 文言と人間向け Docs は英語が正で、日本語（`lib/i18n/ja.ts`、`*.ja.md`）も同じ変更で必ず追従させる。
 - **AI 利用の記録**: 新しい部分を AI で書いたら、`AI_USAGE.md` の表を更新する。
 
 ## コミット
