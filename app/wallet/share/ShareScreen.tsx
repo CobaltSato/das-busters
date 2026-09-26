@@ -165,7 +165,9 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
           {step === "proving"
             ? "Creating proof…"
             : step === "verifying"
-              ? `Checking with ${request.verifierName}…`
+              ? modes.chain === "sepolia"
+                ? "Recording on Sepolia…"
+                : `Checking with ${request.verifierName}…`
               : "Share selected information"}
         </button>
         <Link className="btn btn-text" href="/mingle">

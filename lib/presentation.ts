@@ -56,7 +56,7 @@ export type VerificationResult = {
   prover: ProverMode;
   chain: ChainMode;
   txHash: string | null;
-  fallbackReason: string | null;
+  chainNote: string | null;
 };
 
 export function signalsToArray(signals: PublicSignals): string[] {

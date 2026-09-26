@@ -16,9 +16,9 @@ import { ProofError } from "./errors";
 import { getModes } from "./modes";
 import { signalsToArray, type Presentation } from "./presentation";
 
-// Mingle's relayer records each verified proof in SingleProofRegistry. It
-// returns the tx hash without waiting for the receipt; the page polls
-// /api/tx instead, so the function stays short on Vercel.
+// Mingle's relayer records each verified proof in SingleProofRegistry and
+// waits for the receipt, so a result never says "recorded" for a transaction
+// that later reverts (for example, two accounts racing on one certificate).
 
 const REGISTRY_ABI = [
   {
@@ -38,6 +38,8 @@ const REGISTRY_ABI = [
   { type: "error", name: "InvalidProof", inputs: [] },
 ] as const;
 
+const RECEIPT_TIMEOUT_MS = 45_000;
+
 const REVERT_MESSAGES: Record<string, string> = {
   NullifierAlreadyUsed:
     "This certificate is already linked to a Mingle account. Reset Mingle to start another demo run.",
@@ -46,8 +48,8 @@ const REVERT_MESSAGES: Record<string, string> = {
 };
 
 export type ChainOutcome =
-  | { chain: "sepolia"; txHash: Hex; fallbackReason: null }
-  | { chain: "off"; txHash: null; fallbackReason: string | null };
+  | { chain: "sepolia"; txHash: Hex; chainNote: string | null }
+  | { chain: "off"; txHash: null; chainNote: string | null };
 
 function config() {
   const chain = Number(process.env.CHAIN_ID ?? sepolia.id) === foundry.id ? foundry : sepolia;
@@ -80,37 +82,53 @@ async function toCalldata(presentation: Presentation): Promise<readonly [Pair, r
   return [pair(a), [pair(b[0]), pair(b[1])], pair(c), pub.map(BigInt) as unknown as Signals10];
 }
 
+// A revert is the registry saying no: report it, never downgrade it.
+function throwIfRevert(error: unknown): void {
+  const revert = error instanceof BaseError ? error.walk((e) => e instanceof ContractFunctionRevertedError) : null;
+  if (revert instanceof ContractFunctionRevertedError) {
+    const name = revert.data?.errorName ?? "";
+    throw new ProofError(REVERT_MESSAGES[name] ?? `The registry rejected the proof (${name || "no reason"}).`);
+  }
+}
+
 export async function recordOnChain(presentation: Presentation): Promise<ChainOutcome> {
   if (getModes().chain !== "sepolia" || presentation.prover !== "groth16") {
-    return { chain: "off", txHash: null, fallbackReason: null };
+    return { chain: "off", txHash: null, chainNote: null };
   }
   const { chain, rpcUrl, registry, account } = config();
-  const args = await toCalldata(presentation);
+  const client = publicClient();
+  const call = { address: registry, abi: REGISTRY_ABI, functionName: "record", args: await toCalldata(presentation), account } as const;
 
+  let txHash: Hex;
   try {
-    const { request } = await publicClient().simulateContract({
-      address: registry,
-      abi: REGISTRY_ABI,
-      functionName: "record",
-      args,
-      account,
-    });
-    const wallet = createWalletClient({ account, chain, transport: http(rpcUrl) });
-    const txHash = await wallet.writeContract(request);
-    return { chain: "sepolia", txHash, fallbackReason: null };
+    const { request } = await client.simulateContract(call);
+    txHash = await createWalletClient({ account, chain, transport: http(rpcUrl) }).writeContract(request);
   } catch (error) {
-    // A revert is the registry saying no: report it, never downgrade it.
-    const revert = error instanceof BaseError ? error.walk((e) => e instanceof ContractFunctionRevertedError) : null;
-    if (revert instanceof ContractFunctionRevertedError) {
-      const name = revert.data?.errorName ?? "";
-      throw new ProofError(REVERT_MESSAGES[name] ?? `The registry rejected the proof (${name || "no reason"}).`);
-    }
+    throwIfRevert(error);
     // Anything else is the network or the relayer (for example, no gas).
     console.error("Recording on-chain failed", error);
     return {
       chain: "off",
       txHash: null,
-      fallbackReason: "Sepolia could not be reached, so Mingle checked the proof off-chain only.",
+      chainNote: "Sepolia could not be reached, so Mingle checked the proof off-chain only.",
     };
   }
+
+  const receipt = await client
+    .waitForTransactionReceipt({ hash: txHash, timeout: RECEIPT_TIMEOUT_MS })
+    .catch((error: unknown) => {
+      console.error("Waiting for the Sepolia receipt failed", error);
+      return null;
+    });
+  if (receipt?.status === "reverted") {
+    // The simulation passed but another transaction for the same nullifier
+    // was mined first. Simulate again against the new state to get the reason.
+    await client.simulateContract(call).catch(throwIfRevert);
+    throw new ProofError("The registry rejected the proof when it was mined.");
+  }
+  return {
+    chain: "sepolia",
+    txHash,
+    chainNote: receipt ? null : "Sepolia has not confirmed the transaction yet. The link shows its status.",
+  };
 }

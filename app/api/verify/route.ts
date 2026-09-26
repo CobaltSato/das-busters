@@ -11,6 +11,9 @@ import { checkAgainstRequest } from "@/lib/verifier";
 
 const RESULT_TTL_SECONDS = 24 * 60 * 60;
 
+// Proving is done by now, but recording waits for a Sepolia block.
+export const maxDuration = 60;
+
 // Mingle's verifier. It receives only the proof and its public signals, never
 // the certificate.
 export async function POST(request: Request) {
@@ -31,7 +34,7 @@ export async function POST(request: Request) {
       prover: body.presentation.prover,
       chain: onChain.chain,
       txHash: onChain.txHash,
-      fallbackReason: onChain.fallbackReason,
+      chainNote: onChain.chainNote,
     };
     const { token } = await signToken("result", result, RESULT_TTL_SECONDS);
     return NextResponse.json({ result, resultToken: token });

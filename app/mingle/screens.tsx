@@ -175,7 +175,7 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
           </dd>
         </div>
       </dl>
-      {verification.fallbackReason && <p className="mingle-proof-note">{verification.fallbackReason}</p>}
+      {verification.chainNote && <p className="mingle-proof-note">{verification.chainNote}</p>}
       <p className="mingle-proof-note">Mingle never received your name, birth date or address.</p>
       <button type="button" className="mingle-view" onClick={() => go("profile")}>
         View on profile
