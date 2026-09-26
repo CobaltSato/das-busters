@@ -18,7 +18,7 @@ DAS Busters は、マッチングアプリの利用者と、戸籍の情報を�
 
 1. 発行窓口で、区役所が証明書に署名します。証明書は、あなたの保有者鍵のコミットメントに結びついています。保有者鍵は、Google に紐づく Privy のウォレットが1回署名して作ります。証明書も鍵もスマホに残ります。
 2. マッチングアプリ（サンプルの Mingle）が証明を求めます。共有する項目は本人が選びます。独身であること（必須）、東京在住（任意）、30代（任意。1987〜1996年生まれという意味）です。生まれ年そのものは隠れたままです。
-3. スマホがブラウザの中で Groth16 の証明を作ります。nullifier は、Mingle に何度証明しても同じで、ほかのアプリでは別の値になります。
+3. スマホがブラウザの中で Groth16 の証明を作ります。nullifier は Mingle の同じ scope で証明するかぎり毎回同じで、ほかのアプリでは別の値になります。デモでは Mingle を開いたブラウザごとに scope が決まり、リセットすると変わります。
 4. Mingle のサーバーが証明をリクエストと照らして確認し、relayer が nullifier を Ethereum Sepolia に記録します。レジストリはそこで証明をもう一度検証し、記録済みの nullifier を拒否します。そのアプリの scope の中では証明書1枚につき1アカウントになり、それを誰でも確かめられます。
 5. 任意で、ウォレットは World ID の proof of human の確認を足せます。Mingle は、ある人が World ID のリクエストを承認したことも受け取ります。
 
@@ -79,7 +79,7 @@ API ルートとサーバーでの予備の証明まで入れた全体の流れ�
 - 証明はスマホの snarkjs で作ります（wasm 2.7 MB と zkey 5.0 MB。共有画面を開いた時点で取りに行く）。`/api/prove` は予備で、使ったときはボタンに出ます（[lib/deviceProver.ts](lib/deviceProver.ts)）。
 - 回路は、隠した項目を 0 に、開示フラグを 0 か 1 に固定します。Mingle の検証も同じことをもう一度確かめます（[lib/verifier.ts](lib/verifier.ts)）。
 - レジストリは発行者の鍵、nullifier、`verifyProof` の順に確かめ、nullifier だけを保存します。relayer は先にシミュレーションし、receipt を最大45秒待ちます。revert は失敗として画面に出し、オフチェーンの確認に切り替えるのは RPC か relayer の問題のときだけで、そのときも画面にそう出します（[lib/chain.ts](lib/chain.ts)）。
-- モードはすべてサーバーが env から決めます。Mingle はサーバーが動かしている方式の証明しか受け付けないので、クライアントがモックに格下げすることはできません（[lib/modes.ts](lib/modes.ts)）。
+- モードはすべてサーバーが env から決めます。Mingle はサーバーが動かしている方式の証明しか受け付けないので、クライアントがモックに格下げすることはできません（[lib/modes.ts](lib/modes.ts)、[lib/prover.ts](lib/prover.ts) の `verifyProof`）。
 - 保有者鍵は、Privy の埋め込みウォレットが固定のメッセージに署名した値の SHA-256 を、BN254 のスカラー体に収まるよう31バイトに切ったものです（[lib/privy.ts](lib/privy.ts)）。
 - World ID は IDKit 4 の `proofOfHuman` プリセットを使います。私たちのサーバーがリクエストに署名し、結果を staging の Developer Portal の `/api/v4/verify` に転送します（[World ID](docs/technical.ja.md#world-id)、[FEEDBACK.ja.md](FEEDBACK.ja.md)）。
 
@@ -112,7 +112,7 @@ BASE_URL=https://das-busters.vercel.app npm run smoke # API を端から端ま�
 
 - Trusted setup は各フェーズ1回ずつのローカルの contribution です。イベント中は Hermez の ptau のミラーが 403 を返したためです。
 - 有効期限と失効は確認していません。発行日は署名の対象に入っていますが、確かめるには回路の鍵の作り直しと再デプロイが要ります。
-- scope はアプリが決め、レジストリは scope を見ません。デモではリセットすると Mingle の epoch が変わり、nullifier も新しくなります。
+- scope はアプリが決め、レジストリは scope を見ません。デモでは Mingle がブラウザごとに epoch を乱数で決めるので、別のブラウザで開いたりリセットしたりすると nullifier も新しくなります。
 - World ID は証明書にも証明にも結びついておらず、World ID の nullifier の重複も確認していません。
 - 区役所の署名鍵はデモ用サーバーにあり、1つの `TOKEN_SECRET` がすべての役割のトークンに署名しています。
 - 窓口は、QR を読み取った人なら誰にでもサンプルの証明書を渡します。本物の区役所なら、先に本人確認をします。

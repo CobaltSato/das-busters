@@ -18,7 +18,7 @@ DAS Busters is for people on dating apps, and for apps that want checked single 
 
 1. At the issuing counter, the city office signs a certificate bound to a commitment to your holder key. The key comes from one signature by your Google-linked Privy wallet, and the certificate and key stay on your phone.
 2. A dating app (Mingle, our sample) asks for proof. You pick what to share: single (required), and optionally lives in Tokyo and in your 30s, meaning born 1987–1996. The birth year itself stays hidden.
-3. Your phone makes a Groth16 proof in the browser. Its nullifier is the same every time you prove to Mingle and different at any other app.
+3. Your phone makes a Groth16 proof in the browser. Its nullifier is the same every time you prove in Mingle's scope and different at any other app. In the demo, each browser that opens Mingle gets its own scope, and Reset starts a new one.
 4. Mingle's server checks the proof against its request. Its relayer then records the nullifier on Ethereum Sepolia, where the registry verifies the proof again and refuses a nullifier it has seen. One certificate backs one account in that app's scope, and anyone can check.
 5. Optionally, the wallet adds a World ID proof-of-human check, so Mingle also learns that a person approved a World ID request.
 
@@ -79,7 +79,7 @@ The hub shows four badges for the parts that can run as a stand-in. On the live 
 - Proving runs on the phone with snarkjs (2.7 MB wasm and 5.0 MB zkey, fetched when the share screen opens). `/api/prove` is a fallback, and the button names it ([lib/deviceProver.ts](lib/deviceProver.ts)).
 - Hidden fields are forced to 0 and disclosure flags to 0 or 1, in the circuit and again in Mingle's verifier ([lib/verifier.ts](lib/verifier.ts)).
 - The registry checks the issuer key, then the nullifier, then `verifyProof`, and stores only the nullifier. The relayer simulates first and waits up to 45 s for the receipt. A revert is shown as a failure; only RPC or relayer trouble falls back to a labelled off-chain check ([lib/chain.ts](lib/chain.ts)).
-- The server picks every mode from env, and Mingle accepts only the prover the server runs, so a client cannot downgrade to the mock ([lib/modes.ts](lib/modes.ts)).
+- The server picks every mode from env, and Mingle accepts only the prover the server runs, so a client cannot downgrade to the mock ([lib/modes.ts](lib/modes.ts), `verifyProof` in [lib/prover.ts](lib/prover.ts)).
 - The holder key is the SHA-256 of a Privy embedded-wallet signature over a fixed message, cut to 31 bytes to stay below the BN254 field ([lib/privy.ts](lib/privy.ts)).
 - World ID uses IDKit 4's `proofOfHuman` preset. Our server signs each request and forwards each result to the Developer Portal's `/api/v4/verify` on staging ([World ID](docs/technical.md#world-id), [FEEDBACK.md](FEEDBACK.md)).
 
@@ -112,7 +112,7 @@ BASE_URL=https://das-busters.vercel.app npm run smoke # the API end to end
 
 - The trusted setup has one local contribution per phase, because the Hermez ptau mirrors returned 403 at the event.
 - Freshness and revocation are not checked. The issue date is signed into the certificate, but checking it needs a new circuit key and a redeploy.
-- The app chooses its scope, and the registry does not check it. In the demo, Reset gives Mingle a new epoch and so a new nullifier.
+- The app chooses its scope, and the registry does not check it. In the demo, Mingle picks a random epoch per browser, so another browser or Reset gives a new epoch and so a new nullifier.
 - World ID is not bound to the certificate or the proof, and its nullifier is not checked for repeats.
 - The city office's signing key sits on the demo server, and one `TOKEN_SECRET` signs the tokens of every role.
 - The counter hands the sample certificate to anyone who scans. A real city office would check ID first.
