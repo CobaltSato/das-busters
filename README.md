@@ -62,7 +62,7 @@ The proof shows the fact and keeps the signature and the values hidden, and each
 
 ## Why a blockchain
 
-Mingle's server checks each proof first, for a fast answer and a clear error. The registry contract then checks it again in public and refuses a nullifier it has already recorded. So "one account per certificate per app" is something anyone can check, and Mingle cannot delete a record afterwards. The limit is that the app chooses its scope: the registry does not check which scope a proof was made for, so an app that changes its scope gets new nullifiers. In the demo, Reset does exactly that.
+Mingle's server checks each proof first, for a fast answer and a clear error. The registry contract then checks it again in public and refuses a nullifier it has already recorded. So "one account per certificate per app" is something anyone can check, and Mingle cannot delete a record afterwards. The limit is that the app chooses its scope: the registry does not check which scope a proof was made for, so an app that changes its scope gets new nullifiers. In the demo, Reset does this.
 
 ## Japan already has a digital route
 
@@ -294,7 +294,13 @@ Demo shortcuts that a real deployment would not have:
 - **A relayer pays gas.** Users need no ETH and never send a transaction themselves. Trade-off: one funded demo key pays for everyone ([docs/setup.md](docs/setup.md#relayer-gas)).
 - **Holder key from a Privy embedded-wallet signature.** Signing one fixed message gives a secret tied to the Google account, with no seed phrase to write down. The SHA-256 of the signature is cut to 31 bytes so it stays below the BN254 field; the prototype's 256-bit secret overflowed it. The stored value is treated as authoritative in case signatures are not deterministic. Trade-off: the key depends on Privy and the Google account ([lib/privy.ts](lib/privy.ts), [app/wallet/_components/holderKey.ts](app/wallet/_components/holderKey.ts)).
 - **Stateless signed tokens.** Offers, requests, results and human checks are short-lived HS256 tokens, so the server needs no database on Vercel. Trade-off: a request is not marked used ([lib/token.ts](lib/token.ts)).
-- **Lessons from the pre-event spike** ([docs/plan.md](docs/plan.md), section "プロトタイプの穴を繰り返さない"): the client could bypass the human check; reverts were rounded into success; the issuer seed was committed (now only the public key is in the repository, [lib/zk/issuer-public.json](lib/zk/issuer-public.json)); results were not tied to a request (now a nonce is); the holder secret overflowed the field; and the UI said data stayed on the device while the server made the proof.
+- **Lessons from the pre-event spike** ([docs/plan.md](docs/plan.md), section "プロトタイプの穴を繰り返さない"). The prototype had these holes:
+  - The client could bypass the human check.
+  - Reverts were rounded into success.
+  - The issuer seed was committed. Now only the public key is in the repository ([lib/zk/issuer-public.json](lib/zk/issuer-public.json)).
+  - Results were not tied to a request. Now a nonce ties them.
+  - The holder secret overflowed the field.
+  - The UI said data stayed on the device while the server made the proof.
 
 ## What we tested
 
