@@ -1,4 +1,5 @@
-import { poseidon1, poseidon2 } from "poseidon-lite";
+import { poseidon1 } from "poseidon-lite/poseidon1";
+import { poseidon2 } from "poseidon-lite/poseidon2";
 
 // Field helpers shared by the browser and the server. Every value that goes
 // into the circuit is a BN254 field element written as a decimal string.
