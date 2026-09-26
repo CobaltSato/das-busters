@@ -28,7 +28,10 @@ function Term({ term, labels, picture, children }: TermProps) {
       <div className="hiw-term-text">
         <h3>{term.title}</h3>
         <p>
-          <strong>{term.analogy}</strong> <Rich text={term.body} />
+          <strong>{term.analogy}</strong>
+          {/* Japanese needs no space after 。 */}
+          {/[、。]$/.test(term.analogy) ? "" : " "}
+          <Rich text={term.body} />
         </p>
         <p className="hiw-term-why">
           <span className="hiw-term-label">{labels.why}</span>
