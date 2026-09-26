@@ -2,14 +2,14 @@ import { Fragment } from "react";
 import { ModeBadges } from "@/components/ModeBadges";
 import type { StoryCopy } from "@/lib/i18n/how-it-works/story.en";
 import type { Modes } from "@/lib/modes";
-import { Rich } from "../_components/Rich";
 import { Envelope } from "../_diagrams/Envelope";
+import { PitchStrip } from "../_diagrams/PitchStrip";
 
-type HeroProps = { copy: StoryCopy["hero"]; modes: Modes };
+type HeroProps = { copy: StoryCopy["hero"]; strip: StoryCopy["why"]["diagram"]; modes: Modes };
 
-// The thesis, a pitch the reader can say aloud, and what this deployment
-// actually runs, so nothing below reads as live when it is a mock.
-export function Hero({ copy, modes }: HeroProps) {
+// The thesis, the pitch in three frames, and what this deployment actually
+// runs, so nothing below reads as live when it is a mock.
+export function Hero({ copy, strip, modes }: HeroProps) {
   const notices = [
     modes.prover !== "groth16" ? copy.notice.mockProver : null,
     modes.chain !== "sepolia" ? copy.notice.offChain : null,
@@ -34,11 +34,8 @@ export function Hero({ copy, modes }: HeroProps) {
       </div>
       <section className="hiw-pitch" aria-labelledby="pitch-title">
         <h2 id="pitch-title">{copy.pitchTitle}</h2>
-        {copy.pitch.map((paragraph) => (
-          <p key={paragraph}>
-            <Rich text={paragraph} />
-          </p>
-        ))}
+        <PitchStrip copy={copy.pitch} strip={strip} />
+        <p className="hiw-pitch-note">{copy.pitchNote}</p>
       </section>
       <section className="hiw-status" aria-labelledby="status-title">
         <h2 id="status-title">{copy.statusTitle}</h2>

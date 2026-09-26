@@ -485,3 +485,86 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Where your data lives */
+
+.hiw-subhead-lede {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.hiw-datamap {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.hiw-datamap-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.hiw-datamap-col h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.hiw-datamap-col ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hiw-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.hiw-chip.is-holds {
+  background: var(--green-bg);
+  color: var(--green-ink);
+}
+
+.hiw-chip.is-never {
+  background: var(--surface);
+  color: #8b909a;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.hiw-datamap-col p {
+  margin-top: auto;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .hiw-datamap {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .hiw-datamap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -46,7 +46,7 @@
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   grid-template-areas:
     "text art"
-    "pitch art"
+    "pitch pitch"
     "status status";
   gap: 28px 48px;
   margin-top: 40px;
@@ -100,10 +100,11 @@
   text-transform: uppercase;
 }
 
-.hiw-pitch p {
-  margin-top: 10px;
-  font-size: 15px;
-  line-height: 1.65;
+.hiw-pitch-note {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .hiw-status {
@@ -278,8 +279,11 @@
 
 .hiw-toc {
   position: sticky;
-  top: 0;
+  top: var(--app-nav-h, 0px);
   z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin: 48px calc(var(--hiw-gutter) * -1) 0;
   padding: 10px var(--hiw-gutter);
   border-bottom: 1px solid var(--line);
@@ -289,7 +293,9 @@
 
 .hiw-toc ul {
   display: flex;
+  flex: 1;
   gap: 4px;
+  min-width: 0;
   margin: 0;
   padding: 0;
   overflow-x: auto;
@@ -316,7 +322,7 @@
 
 .hiw-section {
   margin-top: 88px;
-  scroll-margin-top: 72px;
+  scroll-margin-top: calc(72px + var(--app-nav-h, 0px));
 }
 
 .hiw-section > h2 {
@@ -532,7 +538,166 @@ html[lang="ja"] .hiw-section > h2 {
   .hiw-p-dot,
   .hiw-p-out,
   .hiw-roles-token,
-  .hiw-zk-glow {
+  .hiw-zk-glow,
+  .hiw-sa-fly {
     display: none;
+  }
+}
+
+/* Reading level: plain view hides the Engineer-only parts. Everything
+   stays in the HTML, so printing and searching still find it. */
+
+.hiw-level {
+  display: flex;
+  flex: none;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+.hiw-level button {
+  padding: 5px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hiw-level button[aria-pressed="true"] {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.hiw[data-level="plain"] .hiw-tech {
+  display: none !important;
+}
+
+.hiw[data-level="tech"] .hiw-plain-only {
+  display: none;
+}
+
+.hiw-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* The pitch in three frames */
+
+.hiw-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: frame;
+}
+
+.hiw-strip-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.hiw-strip-art {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  margin: 0 auto 4px;
+}
+
+.hiw-strip-frame h3 {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.hiw-strip-frame h3::before {
+  margin-right: 8px;
+  color: var(--blue);
+  font: 600 12px var(--hiw-mono);
+  content: counter(frame);
+  counter-increment: frame;
+}
+
+.hiw-strip-frame p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Why: the picture with one caption and one fact */
+
+.hiw-figure.is-why {
+  max-width: 720px;
+  margin: 24px auto 0;
+}
+
+.hiw-figure figcaption {
+  margin-top: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.hiw-fact {
+  max-width: 44em;
+  margin: 18px auto 0;
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* Small pictures inside the basics cards */
+
+.hiw-mini {
+  margin: 4px 0 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.hiw-mini-art {
+  display: block;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  margin: 0 auto;
+}
+
+@media (max-width: 700px) {
+  .hiw-strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hiw-strip-frame {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .hiw-strip-art {
+    flex: 0 0 120px;
+    margin: 0;
+  }
+
+  .hiw-strip-frame h3 {
+    flex: 1;
+  }
+
+  .hiw-strip-frame p {
+    flex-basis: 100%;
   }
 }

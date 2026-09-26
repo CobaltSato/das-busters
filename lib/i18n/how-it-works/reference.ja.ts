@@ -5,8 +5,18 @@ import type { ReferenceCopy } from "./reference.en";
 
 const referenceJa: ReferenceCopy = {
   tech: {
-    title: "技術詳細",
-    lede: "審査員とエンジニア向けです。数字はすべてリポジトリのコードから取っています。",
+    title: "内部の数字",
+    lede: "数字はすべてコードから取っています。技術者向け表示にすると、回路、コントラクトの判定、トークン、モードが出ます。",
+    numbers: [
+      { value: "9,921", label: "回路の制約の数" },
+      { value: "10", label: "Mingle が見る公開値" },
+      { value: "1", label: "証明1件でチェーンに残る数" },
+      { value: "0", label: "チェーンに載る氏名と生年月日" },
+      { value: "1〜4秒", label: "証明を作る時間" },
+      { value: "約12秒", label: "Sepolia に記録する時間" },
+    ],
+    plainOnly: "回路、コントラクトの判定、トークン、モードは技術者向け表示にあります。",
+    plainSwitch: "技術者向け表示にする",
     certificate: {
       title: "証明書と署名",
       body: "証明書はスマホに保存した JSON です。数値の項目を保有者のコミットメントと一緒に Poseidon で1つのメッセージにまとめ、区役所がそのメッセージに署名します。",
@@ -57,9 +67,9 @@ const referenceJa: ReferenceCopy = {
     proving: {
       title: "証明の作成",
       body: [
-        "証明はサーバーの `/api/prove` で、snarkjs の Groth16（BN254 曲線）を使って作ります。Vercel で1〜4秒かかります。回路ファイルは `single_proof.wasm`（2.7 MB）と `single_proof.zkey`（5.0 MB）です。",
-        "ハッカソンでは、メンターの助言に従ってサーバーで証明を作ることにしました。どのスマホでもデモが動くからです。その代わり、証明サーバーはリクエスト1回の間だけ証明書と保有者鍵を見ます。何も保存せず、アプリの画面でも「データは端末から出ない」とは書いていません。スマホ上での証明が次の課題です。",
-        "Groth16 には trusted setup が必要です。今回はイベント中に公開のファイルに接続できなかったため、2つの段階（powers of tau 2^14 と回路の鍵）それぞれをローカルで1回ずつ実施しました。デモには十分ですが、本番には使えません。",
+        "証明はサーバーの `/api/prove` で、snarkjs の Groth16（BN254）で作ります。Vercel で1〜4秒。ファイルは `single_proof.wasm`（2.7 MB）と `single_proof.zkey`（5.0 MB）です。",
+        "サーバーで作るのはメンターの助言による選択で、どのスマホでもデモが動きます。証明サーバーはリクエスト1回の間だけ証明書と保有者鍵を見て、何も保存しません。アプリでも「データは端末から出ない」とは書いていません。スマホ上での証明が次の課題です。",
+        "trusted setup は、イベント中に公開のファイルに接続できなかったため、2つの段階（powers of tau 2^14 と回路の鍵）をローカルで1回ずつ実施しました。デモには十分ですが、本番には使えません。",
       ],
     },
     verification: {
@@ -156,7 +166,7 @@ const referenceJa: ReferenceCopy = {
 
   built: {
     title: "作ったもの",
-    lede: "リポジトリの中身は、すべて ETHGlobal Tokyo 2026 の期間中に書きました。イベント前にあったのは、アイデア、ピッチ、Figma のデザイン、circom のローカル検証、ブランド素材で、README に一覧があります。",
+    lede: "コードはすべて ETHGlobal Tokyo 2026 の期間中に書きました。イベント前にあったのはアイデア、ピッチ、Figma のデザイン、circom のローカル検証、ブランド素材で、README に一覧があります。",
     doneTitle: "動いているもの",
     done: [
       "3分ごとに QR コードが変わる発行窓口",
@@ -201,7 +211,7 @@ const referenceJa: ReferenceCopy = {
 
   check: {
     title: "自分で確かめる",
-    lede: "このページの説明は、どれもここにあるリンクから確かめられます。",
+    lede: "このページの説明は、どれもリンク先を開いて確かめられます。",
     demoTitle: "デモを触る",
     demo: {
       hub: { label: "デモのハブ", note: "ここから始めます。窓口は PC で、ほかはスマホで開きます。" },
@@ -235,17 +245,17 @@ const referenceJa: ReferenceCopy = {
     },
     recipeTitle: "3分で確かめる",
     recipe: [
-      "PC でデモのハブを開き、「発行窓口」を押します。スマホで QR コードを読み取り、証明書を保存します。Google アカウントはどれでも使えます。",
-      "スマホで Mingle を開き、「本人確認と証明」→「DAS Busters で確認」と進んで共有します。",
-      "バッジが出たら「本人確認と証明」を開き、「Sepolia に記録済み」を押します。Etherscan に SingleProofRegistry への record の呼び出しが表示されます。",
-      "トランザクションの Logs を開くと、SingleStatusVerified イベントが1つあり、中身は nullifierHash、scopeHash、requestHash だけです。氏名も生年月日もありません。",
-      "ブラウザの戻るボタンで「共有する情報を選ぶ」に戻り、もう一度共有します。同じ証明書で同じアプリなら nullifier も同じなので、レジストリが拒否し、Mingle にエラーが出ます。",
+      "PC でハブを開き「発行窓口」を押します。スマホで QR コードを読み、証明書を保存します。Google アカウントはどれでも使えます。",
+      "スマホで Mingle を開き、「本人確認と証明」から「DAS Busters で確認」へ進んで共有します。",
+      "バッジが出たら「Sepolia に記録済み」を押します。Etherscan に SingleProofRegistry への record の呼び出しが出ます。",
+      "トランザクションの Logs を開くと SingleStatusVerified イベントが1つあり、中身は nullifierHash、scopeHash、requestHash だけです。氏名も生年月日もありません。",
+      "戻るボタンで「共有する情報を選ぶ」に戻り、もう一度共有します。同じ証明書なら nullifier も同じなので、レジストリが拒否して Mingle にエラーが出ます。",
     ],
   },
 
   qa: {
     title: "審査員によく聞かれること",
-    lede: "口頭で言える短い答えと、その下に詳細と限界をまとめました。",
+    lede: "質問を開くと、口頭で言える短い答えと、その下に詳細と限界があります。",
     say: "短い答え",
     details: "詳細",
     groups: [

@@ -101,7 +101,7 @@ export function SequencePlayer({ label, steps, actors, phases, controls }: Playe
           </p>
           <h3>{step.title}</h3>
           <p>{step.body}</p>
-          <dl>
+          <dl className="hiw-tech">
             <div>
               <dt>{controls.tech}</dt>
               <dd className="is-tech">{step.tech}</dd>

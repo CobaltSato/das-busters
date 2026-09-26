@@ -8,8 +8,18 @@ type ModeText<K extends keyof Modes> = Record<Modes[K], string>;
 
 const referenceEn = {
   tech: {
-    title: "Technical deep dive",
-    lede: "For judges and engineers. Every number here comes from the code in the repository.",
+    title: "Under the hood",
+    lede: "Numbers straight from the code. Engineer view adds the circuit, the contract checks, tokens and modes.",
+    numbers: [
+      { value: "9,921", label: "constraints in the circuit" },
+      { value: "10", label: "public numbers Mingle sees" },
+      { value: "1", label: "number stored on-chain per proof" },
+      { value: "0", label: "names or birth dates on-chain" },
+      { value: "1–4 s", label: "to make a proof" },
+      { value: "~12 s", label: "to record on Sepolia" },
+    ],
+    plainOnly: "The circuit, the contract checks, tokens and modes are in Engineer view.",
+    plainSwitch: "Show Engineer view",
     certificate: {
       title: "Certificate and signature",
       body: "The certificate is JSON on the phone. Its numeric fields are hashed together with the holder's commitment into one Poseidon message, and the city office signs that message.",
@@ -60,9 +70,9 @@ const referenceEn = {
     proving: {
       title: "Proving",
       body: [
-        "The proof is made on the server, in `/api/prove`, with snarkjs Groth16 on the BN254 curve. It takes 1–4 s on Vercel. The circuit files are `single_proof.wasm` (2.7 MB) and `single_proof.zkey` (5.0 MB).",
-        "We chose server-side proving for the hackathon, on mentor advice, so the demo runs on any phone. The trade-off: the prover sees the certificate and the secret for one request. It keeps nothing, and the app never claims the data stays on the device. Proving on the phone is the next step.",
-        "Groth16 needs a trusted setup. Ours has one local contribution to each phase (powers of tau at 2^14, then the circuit key) because the public files were unreachable at the event. Fine for a demo, not for production.",
+        "Made on the server in `/api/prove` with snarkjs Groth16 on BN254: 1–4 s on Vercel. Files: `single_proof.wasm` (2.7 MB) and `single_proof.zkey` (5.0 MB).",
+        "Server-side by choice, on mentor advice, so the demo runs on any phone. The prover sees the certificate and the secret for one request and keeps nothing; the app never claims the data stays on the device. Proving on the phone is the next step.",
+        "Trusted setup: one local contribution to each phase (powers of tau at 2^14, then the circuit key), because the public files were unreachable at the event. Fine for a demo, not for production.",
       ],
     },
     verification: {
@@ -159,7 +169,7 @@ const referenceEn = {
 
   built: {
     title: "What we built",
-    lede: "Everything in the repository was written during ETHGlobal Tokyo 2026. Before the event we had the idea, the pitch, Figma designs, a local circom spike and the brand assets; the README lists them.",
+    lede: "All code was written during ETHGlobal Tokyo 2026. Before it: the idea, the pitch, Figma designs, a local circom spike and the brand assets, listed in the README.",
     doneTitle: "Working",
     done: [
       "Issuing counter with a QR code that refreshes every three minutes",
@@ -204,7 +214,7 @@ const referenceEn = {
 
   check: {
     title: "Check it yourself",
-    lede: "Each claim on this page can be checked from one of these links.",
+    lede: "Every claim on this page links to something you can open.",
     demoTitle: "Try the demo",
     demo: {
       hub: { label: "Demo hub", note: "Start here. Open the counter on a laptop and the rest on a phone." },
@@ -238,17 +248,17 @@ const referenceEn = {
     },
     recipeTitle: "A three-minute check",
     recipe: [
-      "Open the demo hub on a laptop and click Issuing counter. Scan the QR code with your phone and save the certificate. Any Google account works.",
-      "Open Mingle on the phone, tap Identity & verification, then Verify with DAS Busters, and share.",
-      "When the badge appears, open Identity & verification and tap Recorded on Sepolia. Etherscan shows a record call to SingleProofRegistry.",
+      "Laptop: open the hub, click Issuing counter. Phone: scan the QR code and save the certificate. Any Google account works.",
+      "Phone: open Mingle, tap Identity & verification, then Verify with DAS Busters, and share.",
+      "When the badge appears, tap Recorded on Sepolia. Etherscan shows a record call to SingleProofRegistry.",
       "Open the transaction's Logs: one SingleStatusVerified event with nullifierHash, scopeHash and requestHash. No name, no birth date.",
-      "Press the browser's Back button to return to Choose what to share, and share again. The same certificate at the same app gives the same nullifier, so the registry refuses it and Mingle shows an error.",
+      "Press Back to Choose what to share and share again. Same certificate, same nullifier, so the registry refuses it and Mingle shows an error.",
     ],
   },
 
   qa: {
     title: "Questions judges ask",
-    lede: "A short answer you can say out loud, then the details and the limits.",
+    lede: "Open a question for the short answer to say out loud, then the details and the limits.",
     say: "Short answer",
     details: "Details",
     groups: [

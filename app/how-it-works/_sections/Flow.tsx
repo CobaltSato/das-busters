@@ -30,7 +30,7 @@ export function Flow({ copy }: { copy: Copy }) {
                 </span>
               </p>
               <p>{step.body}</p>
-              <p className="hiw-steps-tech">{step.tech}</p>
+              <p className="hiw-steps-tech hiw-tech">{step.tech}</p>
             </li>
           ))}
         </ol>

@@ -28,18 +28,18 @@ export function ArchitectureMap({ copy, worldId }: { copy: Copy; worldId: Modes[
           <div className="hiw-arch-box">
             <ActorIcon actor="counter" size={20} />
             <strong>{copy.browser.counter}</strong>
-            <code>/counter</code>
+            <code className="hiw-tech">/counter</code>
           </div>
           <div className="hiw-arch-box">
             <ActorIcon actor="phone" size={20} />
             <strong>{copy.browser.wallet}</strong>
-            <code>/wallet</code>
+            <code className="hiw-tech">/wallet</code>
             <span>{copy.browser.storage}</span>
           </div>
           <div className="hiw-arch-box">
             <ActorIcon actor="mingle" size={20} />
             <strong>{copy.browser.mingle}</strong>
-            <code>/mingle</code>
+            <code className="hiw-tech">/mingle</code>
           </div>
         </div>
       </div>
@@ -50,7 +50,7 @@ export function ArchitectureMap({ copy, worldId }: { copy: Copy; worldId: Modes[
           {SERVER_ROLES.map((role) => (
             <div key={role} className="hiw-arch-box">
               <strong>{copy.server[role].name}</strong>
-              <code>{copy.server[role].routes}</code>
+              <code className="hiw-tech">{copy.server[role].routes}</code>
               <span>{copy.server[role].key}</span>
             </div>
           ))}

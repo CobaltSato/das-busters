@@ -1,0 +1,523 @@
+/* How it works: the small pictures in the pitch strip (hiw-sa-*) and the
+   basics cards (hiw-ma-*). Motion is transform and opacity only; the
+   reduced-motion rules live in how-it-works.css. */
+
+/* Shared */
+
+.hiw-strip-art,
+.hiw-mini-art {
+  color: var(--ink);
+}
+
+.hiw-sa-paper,
+.hiw-ma-paper {
+  fill: #ffffff;
+  stroke: var(--line);
+}
+
+.hiw-sa-wire,
+.hiw-ma-wire {
+  fill: none;
+  stroke: var(--hiw-wire);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hiw-sa-dot,
+.hiw-ma-dot {
+  fill: var(--blue);
+}
+
+/* Pitch strip */
+
+.hiw-sa-bar.is-leak {
+  fill: #e9b3ad;
+}
+
+.hiw-sa-fly {
+  animation: hiw-sa-fly 6s ease-in-out infinite both;
+}
+
+.hiw-sa-fly.is-leak,
+.hiw-sa-arrive.is-leak {
+  fill: var(--alert);
+}
+
+.hiw-sa-fly.is-safe,
+.hiw-sa-arrive.is-safe {
+  fill: var(--green-ink);
+}
+
+.hiw-sa-fly.is-safe {
+  animation-name: hiw-sa-fly-safe;
+}
+
+.hiw-sa-arrive {
+  animation: hiw-sa-arrive 6s ease infinite both;
+}
+
+.hiw-sa-arrive.is-safe {
+  animation-name: hiw-sa-arrive-safe;
+}
+
+.hiw-sa-seal {
+  fill: var(--ink);
+  animation: hiw-sa-seal 6s ease infinite both;
+}
+
+.hiw-sa-seal-lock {
+  color: #ffffff;
+}
+
+.hiw-sa-dot {
+  animation: hiw-sa-dot 6s ease-in-out infinite both;
+}
+
+.hiw-sa-number {
+  animation: hiw-sa-pop 6s ease infinite both;
+  transform-origin: 39px 58px;
+}
+
+.hiw-sa-number rect {
+  fill: #ffffff;
+  stroke: var(--blue);
+}
+
+.hiw-sa-number text {
+  fill: var(--blue);
+  font: 500 9px var(--hiw-mono);
+}
+
+.hiw-sa-struck rect {
+  fill: var(--surface);
+}
+
+.hiw-sa-struck text {
+  fill: #9aa0aa;
+  font-size: 9px;
+}
+
+@keyframes hiw-sa-fly {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  5% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(90px);
+  }
+  34%,
+  100% {
+    opacity: 0;
+    transform: translateX(90px);
+  }
+}
+
+@keyframes hiw-sa-arrive {
+  0%,
+  30% {
+    opacity: 0.15;
+  }
+  36%,
+  92% {
+    opacity: 1;
+  }
+  98%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes hiw-sa-dot {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  4% {
+    opacity: 1;
+  }
+  18% {
+    opacity: 1;
+    transform: translateX(16px);
+  }
+  22%,
+  100% {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+@keyframes hiw-sa-seal {
+  0%,
+  20%,
+  40%,
+  100% {
+    fill: var(--ink);
+  }
+  30% {
+    fill: var(--blue);
+  }
+}
+
+@keyframes hiw-sa-fly-safe {
+  0%,
+  34% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  38% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  58% {
+    opacity: 1;
+    transform: translateX(48px);
+  }
+  62%,
+  100% {
+    opacity: 0;
+    transform: translateX(48px);
+  }
+}
+
+@keyframes hiw-sa-arrive-safe {
+  0%,
+  58% {
+    opacity: 0.15;
+  }
+  64%,
+  92% {
+    opacity: 1;
+  }
+  98%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes hiw-sa-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  10%,
+  90% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* Basics: signature */
+
+.hiw-ma-title {
+  fill: var(--muted);
+  font-size: 7.5px;
+  font-weight: 600;
+}
+
+.hiw-ma-bar {
+  fill: #d9dce2;
+}
+
+.hiw-ma-edited {
+  fill: var(--hiw-leak-bg);
+}
+
+.hiw-ma-edited-text {
+  fill: var(--alert);
+  font-size: 6.5px;
+  font-weight: 700;
+}
+
+.hiw-ma-stamp {
+  animation: hiw-ma-stamp 6s ease-out infinite both;
+}
+
+.hiw-ma-stamp circle {
+  fill: rgba(180, 35, 24, 0.06);
+  stroke: var(--alert);
+  stroke-width: 1.5;
+}
+
+.hiw-ma-stamp text {
+  fill: var(--alert);
+  font-size: 6.5px;
+  font-weight: 700;
+}
+
+.hiw-ma-pill {
+  animation: hiw-ma-fade 6s ease infinite both;
+}
+
+.hiw-ma-pill rect {
+  fill: var(--surface);
+}
+
+.hiw-ma-pill text {
+  fill: var(--muted);
+  font-size: 8.5px;
+  font-weight: 700;
+}
+
+.hiw-ma-pill.is-ok rect {
+  fill: var(--green-bg);
+}
+
+.hiw-ma-pill.is-ok text {
+  fill: var(--green-ink);
+}
+
+.hiw-ma-pill.is-broken rect {
+  fill: var(--hiw-leak-bg);
+}
+
+.hiw-ma-pill.is-broken text {
+  fill: var(--alert);
+}
+
+/* Basics: hash */
+
+.hiw-ma-chip {
+  fill: #ffffff;
+  stroke: var(--line);
+}
+
+.hiw-ma-chip-text {
+  fill: var(--ink);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.hiw-ma-machine {
+  fill: var(--ink);
+}
+
+.hiw-ma-machine-text {
+  fill: #ffffff;
+  font: 700 9.5px var(--hiw-mono);
+}
+
+.hiw-ma-out {
+  animation: hiw-ma-out 5s ease infinite both;
+}
+
+.hiw-ma-out rect {
+  fill: #ffffff;
+  stroke: var(--blue);
+}
+
+.hiw-ma-out text {
+  fill: var(--blue);
+  font: 500 9px var(--hiw-mono);
+}
+
+.hiw-ma-dot {
+  animation: hiw-ma-dot 5s ease-in-out infinite both;
+}
+
+.hiw-ma-dot.is-long {
+  animation-name: hiw-ma-dot-long;
+}
+
+/* Basics: chain */
+
+.hiw-ma-block rect {
+  fill: #ffffff;
+  stroke: var(--line);
+}
+
+.hiw-ma-block-label {
+  fill: var(--muted);
+  font-size: 6.5px;
+  font-weight: 600;
+}
+
+.hiw-ma-block-number {
+  fill: var(--ink);
+  font: 500 8px var(--hiw-mono);
+}
+
+.hiw-ma-block.is-yours {
+  animation: hiw-ma-slide 6s ease-out infinite both;
+}
+
+.hiw-ma-block.is-yours rect {
+  fill: #e8f2ff;
+  stroke: var(--blue);
+}
+
+.hiw-ma-block.is-yours .hiw-ma-block-label,
+.hiw-ma-block.is-yours .hiw-ma-block-number {
+  fill: var(--blue);
+}
+
+/* Basics: World ID and wallet */
+
+.hiw-ma-caption {
+  fill: var(--muted);
+  font-size: 8px;
+}
+
+.hiw-ma-strong {
+  fill: var(--ink);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.hiw-ma-label {
+  fill: var(--ink);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.hiw-ma-human {
+  fill: var(--green-bg);
+}
+
+.hiw-ma-human-icon {
+  color: var(--green-ink);
+}
+
+.hiw-ma-check {
+  fill: var(--green-ink);
+}
+
+.hiw-ma-check-mark {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hiw-ma-node {
+  fill: #ffffff;
+  stroke: var(--line);
+}
+
+.hiw-ma-node.is-secret {
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+
+.hiw-ma-lock {
+  color: #ffffff;
+}
+
+.hiw-ma-wallet {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.8;
+}
+
+.hiw-ma-wallet-clasp {
+  fill: var(--ink);
+}
+
+@keyframes hiw-ma-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.6) rotate(-8deg);
+  }
+  12%,
+  88% {
+    opacity: 1;
+    transform: scale(1) rotate(-8deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1) rotate(-8deg);
+  }
+}
+
+@keyframes hiw-ma-fade {
+  0%,
+  14% {
+    opacity: 0;
+  }
+  22%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hiw-ma-dot {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  5% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+    transform: translateX(104px);
+  }
+  50%,
+  100% {
+    opacity: 0;
+    transform: translateX(104px);
+  }
+}
+
+@keyframes hiw-ma-dot-long {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  5% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(128px);
+  }
+  65%,
+  100% {
+    opacity: 0;
+    transform: translateX(128px);
+  }
+}
+
+@keyframes hiw-ma-out {
+  0%,
+  45% {
+    opacity: 0.15;
+  }
+  52%,
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes hiw-ma-slide {
+  0%,
+  20% {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  32%,
+  90% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}

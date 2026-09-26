@@ -1,5 +1,6 @@
 import type { ReferenceCopy } from "@/lib/i18n/how-it-works/reference.en";
 import type { Modes } from "@/lib/modes";
+import { LevelSwitch } from "../_components/Level";
 import { Rich } from "../_components/Rich";
 import { Section } from "../_components/Section";
 import { CircuitMap } from "../_diagrams/CircuitMap";
@@ -18,6 +19,20 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
       <h3>{title}</h3>
       {children}
     </div>
+  );
+}
+
+// Six figures anyone can read, shown in both views.
+function Numbers({ items }: { items: Copy["numbers"] }) {
+  return (
+    <ul className="hiw-numbers">
+      {items.map((item) => (
+        <li key={item.label}>
+          <strong>{item.value}</strong>
+          <span>{item.label}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -114,61 +129,68 @@ function ModesTable({ copy, modes }: { copy: Copy["modes"]; modes: Modes }) {
   );
 }
 
+// Plain view: the numbers and a way to switch. Engineer view: everything.
 export function Tech({ copy, modes }: { copy: Copy; modes: Modes }) {
   const { certificate, holderKey, circuit, proving, verification } = copy;
   return (
     <Section id="tech" title={copy.title} lede={copy.lede} wide>
-      <Block title={certificate.title}>
-        <p>{certificate.body}</p>
-        <pre className="hiw-code">{certificate.code}</pre>
-        <p className="hiw-note">{certificate.note}</p>
-      </Block>
-      <Block title={holderKey.title}>
-        <p>{holderKey.body}</p>
-        <pre className="hiw-code">{holderKey.code}</pre>
-      </Block>
-      <Block title={circuit.title}>
-        <p>
-          <Rich text={circuit.lede} />
-        </p>
-        <CircuitMap copy={circuit} />
-        <h4 className="hiw-tech-minor">{circuit.excerptTitle}</h4>
-        <pre className="hiw-code">{circuit.excerpt}</pre>
-        <Signals circuit={circuit} />
-      </Block>
-      <Block title={proving.title}>
-        {proving.body.map((paragraph) => (
-          <p key={paragraph}>
-            <Rich text={paragraph} />
+      <Numbers items={copy.numbers} />
+      <p className="hiw-plain-only">
+        {copy.plainOnly} <LevelSwitch>{copy.plainSwitch}</LevelSwitch>
+      </p>
+      <div className="hiw-tech">
+        <Block title={certificate.title}>
+          <p>{certificate.body}</p>
+          <pre className="hiw-code">{certificate.code}</pre>
+          <p className="hiw-note">{certificate.note}</p>
+        </Block>
+        <Block title={holderKey.title}>
+          <p>{holderKey.body}</p>
+          <pre className="hiw-code">{holderKey.code}</pre>
+        </Block>
+        <Block title={circuit.title}>
+          <p>
+            <Rich text={circuit.lede} />
           </p>
-        ))}
-      </Block>
-      <Block title={verification.title}>
-        <div className="hiw-verify">
-          <div>
-            <h4 className="hiw-tech-minor">{verification.offchainTitle}</h4>
-            <ol className="hiw-checklist">
-              {verification.offchain.map((item) => (
-                <li key={item}>
-                  <Rich text={item} />
-                </li>
-              ))}
-            </ol>
+          <CircuitMap copy={circuit} />
+          <h4 className="hiw-tech-minor">{circuit.excerptTitle}</h4>
+          <pre className="hiw-code">{circuit.excerpt}</pre>
+          <Signals circuit={circuit} />
+        </Block>
+        <Block title={proving.title}>
+          {proving.body.map((paragraph) => (
+            <p key={paragraph}>
+              <Rich text={paragraph} />
+            </p>
+          ))}
+        </Block>
+        <Block title={verification.title}>
+          <div className="hiw-verify">
+            <div>
+              <h4 className="hiw-tech-minor">{verification.offchainTitle}</h4>
+              <ol className="hiw-checklist">
+                {verification.offchain.map((item) => (
+                  <li key={item}>
+                    <Rich text={item} />
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div>
+              <h4 className="hiw-tech-minor">{verification.treeTitle}</h4>
+              <RegistryTree tree={verification.tree} />
+            </div>
           </div>
-          <div>
-            <h4 className="hiw-tech-minor">{verification.treeTitle}</h4>
-            <RegistryTree tree={verification.tree} />
-          </div>
-        </div>
-        <p className="hiw-rule">{verification.rule}</p>
-      </Block>
-      <Block title={copy.tokens.title}>
-        <Tokens tokens={copy.tokens} />
-      </Block>
-      <Block title={copy.modes.title}>
-        <p>{copy.modes.lede}</p>
-        <ModesTable copy={copy.modes} modes={modes} />
-      </Block>
+          <p className="hiw-rule">{verification.rule}</p>
+        </Block>
+        <Block title={copy.tokens.title}>
+          <Tokens tokens={copy.tokens} />
+        </Block>
+        <Block title={copy.modes.title}>
+          <p>{copy.modes.lede}</p>
+          <ModesTable copy={copy.modes} modes={modes} />
+        </Block>
+      </div>
     </Section>
   );
 }
