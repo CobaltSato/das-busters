@@ -19,7 +19,7 @@ Any Google account works, and there is nothing to install.
 **One device** (a laptop, or a phone on its own):
 
 1. Open [das-busters.vercel.app](https://das-busters.vercel.app) and click **Issuing counter**.
-2. On a laptop, click **No phone? Continue on this computer** at the bottom left. On a phone, tap **Receive it on this phone** under the QR code.
+2. Under the QR code, click **No phone? Continue on this computer** on a laptop, or tap **Receive it on this phone** on a phone.
 3. Tap **Continue with Google**, then **Save certificate**.
 4. Tap **Verify single status on Mingle**. In Mingle, tap **Verify with DAS Busters**, then **Continue**.
 5. Choose what to share and tap **Share selected information**. The proof is made in your browser, then Mingle checks it and records it on Sepolia.

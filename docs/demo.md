@@ -23,7 +23,7 @@ flowchart LR
 | Phone | One phone for both DAS Busters and Mingle, not in private browsing |
 | URL | https://das-busters.vercel.app, on both devices |
 | Google account | Any Google account works; the sign-in app is published. |
-| One device instead | A laptop alone: on the counter, click **No phone? Continue on this computer** at the bottom left, and run every step in that browser. A phone alone: open the counter on the phone and tap **Receive it on this phone** under the QR code. |
+| One device instead | A laptop alone: on the counter, click **No phone? Continue on this computer** under the QR code, and run every step in that browser. A phone alone: open the counter on the phone and tap **Receive it on this phone** under the QR code. |
 
 **Language.** Everything starts in English. The `EN / 日本語` toggle is on the hub, the counter, every DAS Busters screen from pickup to sharing, and Mingle's profile and Settings. Adding `?lang=ja` to any URL also switches to Japanese. The counter's QR code carries its language to the phone, so switching the counter is enough.
 
