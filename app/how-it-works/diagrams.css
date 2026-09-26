@@ -1,0 +1,664 @@
+/* How it works: the diagrams. Motion is transform and opacity only; the
+   reduced-motion rules live in how-it-works.css. */
+
+/* Why: copy vs proof */
+
+.hiw-p-lane {
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.hiw-p-lane.is-leak {
+  fill: var(--alert);
+}
+
+.hiw-p-lane.is-safe {
+  fill: var(--green-ink);
+}
+
+.hiw-p-card {
+  fill: #ffffff;
+  stroke: var(--line);
+}
+
+.hiw-p-card-title {
+  fill: var(--muted);
+  font-size: 9.5px;
+  font-weight: 600;
+}
+
+.hiw-p-row {
+  fill: var(--ink);
+  font-size: 10.5px;
+}
+
+.hiw-p-chip {
+  animation: hiw-p-leak 8s ease-in-out infinite both;
+}
+
+.hiw-p-chip rect,
+.hiw-p-arrive rect {
+  fill: var(--hiw-leak-bg);
+}
+
+.hiw-p-chip text {
+  fill: var(--alert);
+  font-size: 8.5px;
+  font-weight: 600;
+}
+
+.hiw-p-arrive {
+  animation: hiw-p-arrive 8s ease infinite both;
+}
+
+.hiw-p-arrive text {
+  fill: var(--alert);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.hiw-p-arrive.is-safe rect,
+.hiw-p-out rect {
+  fill: var(--green-bg);
+}
+
+.hiw-p-arrive.is-safe text,
+.hiw-p-out text {
+  fill: var(--green-ink);
+}
+
+.hiw-p-arrive.is-late {
+  animation-name: hiw-p-arrive-late;
+}
+
+.hiw-p-hidden rect {
+  fill: var(--surface);
+}
+
+.hiw-p-hidden text {
+  fill: #9aa0aa;
+  font-size: 9.5px;
+  font-style: italic;
+}
+
+.hiw-p-dot {
+  fill: var(--muted);
+  animation: hiw-p-dot 8s ease-in infinite both;
+}
+
+.hiw-p-seal {
+  fill: var(--ink);
+  animation: hiw-p-seal 8s ease infinite both;
+}
+
+.hiw-p-seal-lock {
+  color: #ffffff;
+}
+
+.hiw-p-seal-text {
+  fill: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.hiw-p-out {
+  animation: hiw-p-out 8s ease-in-out infinite both;
+}
+
+.hiw-p-out text {
+  font-size: 9px;
+  font-weight: 700;
+}
+
+@keyframes hiw-p-leak {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  4% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  24% {
+    opacity: 1;
+    transform: translateX(118px);
+  }
+  28%,
+  100% {
+    opacity: 0;
+    transform: translateX(118px);
+  }
+}
+
+@keyframes hiw-p-arrive {
+  0%,
+  24% {
+    opacity: 0.12;
+  }
+  29%,
+  90% {
+    opacity: 1;
+  }
+  97%,
+  100% {
+    opacity: 0.12;
+  }
+}
+
+@keyframes hiw-p-arrive-late {
+  0%,
+  50% {
+    opacity: 0.12;
+  }
+  55%,
+  90% {
+    opacity: 1;
+  }
+  97%,
+  100% {
+    opacity: 0.12;
+  }
+}
+
+@keyframes hiw-p-dot {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  4% {
+    opacity: 1;
+  }
+  22% {
+    opacity: 1;
+    transform: translateX(54px);
+  }
+  25%,
+  100% {
+    opacity: 0;
+    transform: translateX(54px);
+  }
+}
+
+@keyframes hiw-p-seal {
+  0%,
+  28%,
+  46%,
+  100% {
+    fill: var(--ink);
+  }
+  36% {
+    fill: var(--blue);
+  }
+}
+
+@keyframes hiw-p-out {
+  0%,
+  36% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  51% {
+    opacity: 1;
+    transform: translateX(62px);
+  }
+  55%,
+  100% {
+    opacity: 0;
+    transform: translateX(62px);
+  }
+}
+
+/* The idea: four roles and the links between them */
+
+.hiw-roles {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr) 92px minmax(0, 1fr) 92px
+    minmax(0, 1fr) 92px minmax(0, 1fr);
+  margin-top: 28px;
+}
+
+.hiw-roles-step {
+  display: contents;
+}
+
+.hiw-role {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: #ffffff;
+}
+
+.hiw-role.is-chain {
+  background: var(--surface);
+}
+
+.hiw-role-kind {
+  margin-top: 6px;
+  color: var(--blue);
+  font: 600 11px/1.3 var(--hiw-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.hiw-role strong {
+  font-size: 17px;
+}
+
+.hiw-role p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.hiw-roles-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 6px;
+}
+
+.hiw-roles-track {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--hiw-wire) 0 6px, transparent 6px 10px);
+}
+
+.hiw-roles-track::after {
+  position: absolute;
+  top: -4px;
+  right: -2px;
+  border: 5px solid transparent;
+  border-right: 0;
+  border-left-color: var(--hiw-wire);
+  content: "";
+}
+
+.hiw-roles-token {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--blue);
+  animation: hiw-token-x 3.6s ease-in-out infinite both;
+}
+
+.is-certificate .hiw-roles-token {
+  background: var(--hiw-kraft);
+}
+
+.is-record .hiw-roles-token {
+  background: var(--green-ink);
+}
+
+.hiw-roles-label {
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.35;
+  text-align: center;
+}
+
+@keyframes hiw-token-x {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  5% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(70px);
+  }
+  34%,
+  100% {
+    opacity: 0;
+    transform: translateX(70px);
+  }
+}
+
+@keyframes hiw-token-y {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  5% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(54px);
+  }
+  34%,
+  100% {
+    opacity: 0;
+    transform: translateY(54px);
+  }
+}
+
+/* Zero-knowledge machine */
+
+.hiw-zk-head {
+  fill: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.hiw-zk-head.is-public {
+  fill: var(--blue);
+}
+
+.hiw-zk-wire {
+  stroke: var(--hiw-wire);
+  stroke-dasharray: 3 3;
+}
+
+.hiw-zk-in {
+  animation: hiw-zk-in 7s ease-in-out infinite both;
+}
+
+/* Direct child only: the lock glyph inside has its own rect. */
+.hiw-zk-in > rect {
+  fill: #ffffff;
+  stroke: var(--line);
+}
+
+.hiw-zk-in text {
+  fill: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.hiw-zk-lock {
+  color: var(--muted);
+}
+
+.hiw-zk-circuit {
+  fill: var(--ink);
+}
+
+.hiw-zk-glow {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 3;
+  opacity: 0;
+  animation: hiw-zk-glow 7s ease infinite both;
+}
+
+.hiw-zk-circuit-title {
+  fill: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.hiw-zk-circuit-note {
+  fill: rgba(255, 255, 255, 0.72);
+  font: 500 9.5px var(--hiw-mono);
+}
+
+.hiw-zk-out {
+  animation: hiw-zk-out 7s ease-out infinite both;
+}
+
+.hiw-zk-out rect {
+  fill: #ffffff;
+  stroke: var(--blue);
+}
+
+.hiw-zk-out text {
+  fill: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hiw-zk-out.is-yes rect {
+  fill: var(--green-bg);
+  stroke: var(--green-ink);
+}
+
+.hiw-zk-out.is-yes text {
+  fill: var(--green-ink);
+}
+
+@keyframes hiw-zk-in {
+  0%,
+  10% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  26% {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  90% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes hiw-zk-glow {
+  0%,
+  26% {
+    opacity: 0;
+  }
+  34% {
+    opacity: 1;
+  }
+  46%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hiw-zk-out {
+  0%,
+  38% {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  48%,
+  86% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  94%,
+  100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+}
+
+/* Nullifier */
+
+.hiw-n-row {
+  animation: 8s ease-out infinite both;
+}
+
+.hiw-n-row.is-row1 {
+  animation-name: hiw-n-row1;
+}
+
+.hiw-n-row.is-row2 {
+  animation-name: hiw-n-row2;
+}
+
+.hiw-n-row.is-row3 {
+  animation-name: hiw-n-row3;
+}
+
+.hiw-n-input {
+  fill: #ffffff;
+  stroke: var(--line);
+}
+
+.hiw-n-input-title {
+  fill: var(--ink);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.hiw-n-input-note {
+  fill: var(--muted);
+  font-size: 10px;
+}
+
+.hiw-n-arrow {
+  fill: none;
+  stroke: #b5bac3;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hiw-n-number {
+  fill: #ffffff;
+  stroke: var(--blue);
+}
+
+.hiw-n-number-text {
+  fill: var(--blue);
+  font: 500 10px var(--hiw-mono);
+}
+
+.hiw-n-result {
+  fill: #ffffff;
+}
+
+.hiw-n-result-text {
+  fill: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.is-ok .hiw-n-result {
+  fill: var(--green-bg);
+}
+
+.is-ok .hiw-n-result-text {
+  fill: var(--green-ink);
+}
+
+.is-refused .hiw-n-number {
+  stroke: var(--alert);
+}
+
+.is-refused .hiw-n-number-text,
+.is-refused .hiw-n-result-text {
+  fill: var(--alert);
+}
+
+.is-refused .hiw-n-result {
+  fill: var(--hiw-leak-bg);
+}
+
+@keyframes hiw-n-row1 {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  6%,
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hiw-n-row2 {
+  0%,
+  24% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  30%,
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hiw-n-row3 {
+  0%,
+  48% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  54%,
+  88% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+/* Narrow screens */
+
+@media (max-width: 900px) {
+  .hiw-roles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hiw-roles-link {
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 64px;
+    padding: 0 0 0 28px;
+    gap: 16px;
+  }
+
+  .hiw-roles-track {
+    flex: none;
+    width: 2px;
+    height: 100%;
+    background: repeating-linear-gradient(180deg, var(--hiw-wire) 0 6px, transparent 6px 10px);
+  }
+
+  .hiw-roles-track::after {
+    top: auto;
+    right: auto;
+    bottom: -2px;
+    left: -4px;
+    border: 5px solid transparent;
+    border-bottom: 0;
+    border-top-color: var(--hiw-wire);
+  }
+
+  .hiw-roles-token {
+    top: 0;
+    left: -4px;
+    animation-name: hiw-token-y;
+  }
+
+  .hiw-roles-label {
+    text-align: left;
+  }
+}
