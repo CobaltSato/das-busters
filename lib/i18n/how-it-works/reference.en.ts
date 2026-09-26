@@ -17,7 +17,7 @@ const referenceEn = {
       { value: "1", label: "Numbers stored on the blockchain per sign-up" },
       { value: "0", label: "Names or birth dates on the blockchain" },
       { value: "7.7 MB", label: "Circuit files the phone downloads to make a proof" },
-      { value: "about 12 s", label: "Time to record on Sepolia" },
+      { value: "10–20 s", label: "Usual wait to record on Sepolia" },
     ],
     plainOnly: "The circuit, the contract checks, tokens and modes are in Engineer view.",
     plainSwitch: "Show Engineer view",
@@ -470,7 +470,7 @@ const referenceEn = {
           {
             id: "speed",
             q: "How long does it take?",
-            a: "Your phone first downloads 7.7 MB of circuit files, then makes the proof. Recording it on Sepolia takes about 12 seconds.",
+            a: "Your phone first downloads 7.7 MB of circuit files, then makes the proof. Recording it on Sepolia waits for one block, which usually takes 10 to 20 seconds.",
             d: "On a laptop in Chrome the proof itself took under a second once the files were cached. We have not measured phones yet. The server waits up to 45 s for the Sepolia receipt. After that, Mingle shows the badge with a note that the transaction is not confirmed yet, and keeps checking for about two minutes.",
           },
           {
