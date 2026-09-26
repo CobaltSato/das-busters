@@ -334,7 +334,7 @@ const storyEn = {
         arrow: "open DAS Busters",
         title: "Mingle hands over to DAS Busters",
         body: "Mingle opens the share screen with that request and remembers its number.",
-        tech: "/wallet/share?req=… The nonce is saved so Mingle can match the answer later. The share screen starts downloading the circuit files.",
+        tech: "/wallet/share?req=… The nonce is saved so Mingle can match the answer later. The circuit files start downloading on the wallet home after the human check, or on this screen at the latest.",
         data: "The request, inside the URL.",
       },
       choose: {

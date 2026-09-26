@@ -7,13 +7,28 @@ import { buildPublicSignals, circuitInput, type ProveInput } from "./statement";
 const WASM = "/zk/single_proof.wasm";
 const ZKEY = "/zk/single_proof.zkey";
 
-// Starts the 7.7 MB download while the holder is still choosing, so the proof
-// itself only waits for the maths. snarkjs fetches the same URLs again and
-// gets them from the browser cache.
+let warming: Promise<void> | null = null;
+
+// Starts the 7.7 MB download (3.8 MB compressed) before the holder taps Share,
+// so the proof itself only waits for the maths. It runs once per page load,
+// at low priority so the screen's own requests come first, and reads each
+// body so every browser keeps the whole file. snarkjs fetches the same URLs
+// again and gets them from the browser cache. A failed download can start
+// again from the next screen that asks.
 export function prefetchCircuit(): void {
-  for (const url of [WASM, ZKEY]) {
-    fetch(url).catch(() => undefined);
-  }
+  if (warming) return;
+  warming = Promise.all(
+    [WASM, ZKEY].map(async (url) => {
+      const response = await fetch(url, { priority: "low" });
+      if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+      await response.arrayBuffer();
+    }),
+  ).then(
+    () => undefined,
+    () => {
+      warming = null;
+    },
+  );
 }
 
 export async function proveOnDevice(input: ProveInput): Promise<Presentation> {

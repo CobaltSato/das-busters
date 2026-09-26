@@ -134,7 +134,7 @@ One reset clears both apps on the phone: the certificate, the human check, the s
 
 **The Simulator shows its card list.** Its own Cancel (next to **Continue**) or the × at the top of its sheet was tapped, and it will not answer this request. Tap the **×** in the white bar above the Simulator; the card then says "World ID cancelled. Nothing was shared. You can still share your single status without it." Tap **Verify with World ID** again. Left alone, the request gives up after 4 minutes with "World ID did not finish (timeout). Try again."
 
-**The proof is slow on the phone.** The share screen starts downloading the circuit files (7.7 MB) as soon as it opens, so open it on stage Wi-Fi a moment before tapping Share. If the phone cannot finish, the server makes the proof and the first step says so (step 8).
+**The proof is slow on the phone.** The wallet home starts downloading the circuit files (7.7 MB) once the human check is done, and the share screen starts them if the home did not. Doing step 5 on stage Wi-Fi gives the download a head start. If the phone cannot finish, the server makes the proof and the first step says so (step 8).
 
 **Sepolia is slow.** The **Waiting for a Sepolia block** count can reach about 45 seconds. If the block has not arrived by then, Mingle shows its result with the note "Sepolia has not confirmed the transaction yet. The link shows its status." The link text changes to **Recorded on Sepolia, block …** once the block lands.
 

@@ -325,7 +325,7 @@ const storyJa: StoryCopy = {
         arrow: "DAS Busters を開く",
         title: "Mingle が DAS Busters に引き継ぐ",
         body: "Mingle はリクエストを付けて共有画面を開き、その番号を覚えておきます。",
-        tech: "/wallet/share?req=… 。あとで答えと照合するために nonce を保存します。共有画面は回路ファイルのダウンロードを始めます。",
+        tech: "/wallet/share?req=… 。あとで答えと照合するために nonce を保存します。回路ファイルのダウンロードは、人間確認を済ませたウォレットのホームか、遅くともこの画面で始まります。",
         data: "URL に入ったリクエスト。",
       },
       choose: {

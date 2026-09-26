@@ -7,7 +7,8 @@ import { BrandLockup } from "@/components/BrandLockup";
 import { CertificateCard } from "@/components/CertificateCard";
 import { useI18n } from "@/components/I18nProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import type { Modes } from "@/lib/modes";
+import { prefetchCircuit } from "@/lib/deviceProver";
+import type { Modes, ProvingLocation } from "@/lib/modes";
 import {
   humanStore,
   resetDemoData,
@@ -24,9 +25,9 @@ import { useProviderSignOut } from "./_components/holderKey";
 import { HumanCard } from "./_components/HumanCard";
 import { describeShare, SharedList } from "./_components/SharedList";
 
-type Props = { worldId: Modes["worldId"]; prover: Modes["prover"] };
+type Props = { worldId: Modes["worldId"]; prover: Modes["prover"]; proveOn: ProvingLocation };
 
-export function WalletHome({ worldId, prover }: Props) {
+export function WalletHome({ worldId, prover, proveOn }: Props) {
   const { t } = useI18n();
   const home = t.wallet.home;
   const dialog = useRef<HTMLDialogElement>(null);
@@ -45,6 +46,14 @@ export function WalletHome({ worldId, prover }: Props) {
     setShares(sharesStore.get());
     setLoaded(true);
   }, []);
+
+  // After the human check a proof comes next, so start the circuit download
+  // here when this phone will make it (Groth16, not PROVE_ON=server). Not
+  // before: on a slow network it would share the bandwidth with the World ID
+  // request and make it open late.
+  useEffect(() => {
+    if (wallet && human && prover === "groth16" && proveOn === "device") prefetchCircuit();
+  }, [wallet, human, prover, proveOn]);
 
   async function resetDemo() {
     try {
