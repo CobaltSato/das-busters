@@ -66,6 +66,28 @@
   margin-top: 20px;
 }
 
+/* The one-line pointer to the basics page on /how-it-works */
+
+.hiw-pointer {
+  margin-top: 56px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+
+.hiw-pointer a {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.hiw-pointer a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* Hero */
 
 .hiw-hero {

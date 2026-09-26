@@ -1,8 +1,9 @@
 import type { Modes } from "@/lib/modes";
 import type { StepCopy, StepId } from "./flow";
 
-// English copy for the first half of /how-it-works: the problem, the idea,
-// the basics and the walkthrough. This file defines the shape; story.ja.ts
+// English copy for the first half of /how-it-works (the problem, the idea,
+// the walkthrough and the architecture) and for the seven terms on
+// /how-it-works/basics. This file defines the shape; story.ja.ts
 // must match it. `code`, **bold** and {{Engineer-only text}} are rendered
 // by the page (see _components/Rich.tsx). Other Engineer-only text is
 // marked in the components, not here.
@@ -18,7 +19,6 @@ const storyEn = {
     label: "On this page",
     why: "Why",
     idea: "The idea",
-    basics: "Basics",
     flow: "Step by step",
     architecture: "Architecture",
     tech: "Under the hood",
@@ -115,12 +115,15 @@ const storyEn = {
     },
   },
 
-  // /how-it-works/basics: the page around the seven terms below.
+  // /how-it-works/basics: the page around the seven terms below, and the
+  // one-line pointer to it on /how-it-works.
   basicsPage: {
     description:
       "The seven terms DAS Busters uses, each with a picture: digital signature, hash, zero-knowledge proof, nullifier, blockchain, sign-in with Privy and World ID.",
     back: "How it works",
     footer: "Back to How it works",
+    pointer: "New to signatures or zero-knowledge proofs?",
+    pointerLink: "The seven terms this page uses, with pictures",
   },
 
   basics: {

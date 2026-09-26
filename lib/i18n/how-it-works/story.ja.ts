@@ -14,7 +14,6 @@ const storyJa: StoryCopy = {
     label: "このページの内容",
     why: "なぜ",
     idea: "考え方",
-    basics: "基礎",
     flow: "流れ",
     architecture: "構成",
     tech: "内部",
@@ -114,6 +113,8 @@ const storyJa: StoryCopy = {
       "DAS Busters で使う7つの用語を、図で説明します。デジタル署名、ハッシュ、ゼロ知識証明、nullifier、ブロックチェーン、Privy のログイン、World ID です。",
     back: "しくみ",
     footer: "しくみのページに戻る",
+    pointer: "署名やゼロ知識証明が初めてなら、",
+    pointerLink: "このページで使う7つの用語を図で見る",
   },
 
   basics: {

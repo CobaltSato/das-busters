@@ -8,13 +8,12 @@ import { getModes, provingLocation } from "@/lib/modes";
 import { hiwMono } from "./_components/font";
 import { LevelRoot, LevelToggle } from "./_components/Level";
 import { Architecture } from "./_sections/Architecture";
-import { Basics } from "./_sections/Basics";
 import { Built } from "./_sections/Built";
 import { Check } from "./_sections/Check";
 import { Flow } from "./_sections/Flow";
 import { Hero } from "./_sections/Hero";
 import { Qa } from "./_sections/Qa";
-import { Idea, Why } from "./_sections/Story";
+import { BasicsPointer, Idea, Why } from "./_sections/Story";
 import { Tech } from "./_sections/Tech";
 import "./how-it-works.css";
 import "./diagrams.css";
@@ -23,7 +22,7 @@ import "./flow.css";
 import "./reference.css";
 import "./answers.css";
 
-const CONTENTS = ["why", "idea", "basics", "flow", "architecture", "tech", "built", "check", "qa"] as const;
+const CONTENTS = ["why", "idea", "flow", "architecture", "tech", "built", "check", "qa"] as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { story } = howItWorksFor(await getLocale());
@@ -33,7 +32,8 @@ export async function generateMetadata(): Promise<Metadata> {
 // A standalone explainer for newcomers and engineers. The server renders it in
 // the visitor's language and reads the live modes so the page never presents
 // a mock or a simulation as the real thing. Pictures carry the story; the
-// Engineer switch adds the routes, formulas and contract checks.
+// Engineer switch adds the routes, formulas and contract checks. The seven
+// basic terms (signature, hash, ZK proof and so on) are on /how-it-works/basics.
 export default async function HowItWorksPage() {
   const locale = await getLocale();
   const { story, reference } = howItWorksFor(locale);
@@ -60,7 +60,7 @@ export default async function HowItWorksPage() {
       </nav>
       <Why copy={story.why} />
       <Idea copy={story.idea} />
-      <Basics copy={story.basics} worldId={modes.worldId} />
+      <BasicsPointer copy={story.basicsPage} />
       <Flow copy={story.flow} />
       <Architecture copy={story.architecture} worldId={modes.worldId} />
       <Tech copy={reference.tech} modes={modes} proveOn={proveOn} />

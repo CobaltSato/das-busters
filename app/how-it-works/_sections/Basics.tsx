@@ -2,7 +2,6 @@ import { CHAIN_LINKS } from "@/lib/i18n/how-it-works/links";
 import type { StoryCopy } from "@/lib/i18n/how-it-works/story.en";
 import type { Modes } from "@/lib/modes";
 import { Rich } from "../_components/Rich";
-import { Section } from "../_components/Section";
 import { ChainArt, HashArt, HumanArt, StampArt, WalletArt } from "../_diagrams/BasicsArt";
 import { NullifierDiagram } from "../_diagrams/NullifierDiagram";
 import { ZkDiagram } from "../_diagrams/ZkDiagram";
@@ -48,7 +47,7 @@ function Term({ term, labels, picture, children }: TermProps) {
   );
 }
 
-// The seven terms with their pictures. /how-it-works/basics renders them
+// The seven terms with their pictures, rendered by /how-it-works/basics
 // under its own heading.
 export function BasicsTerms({ copy, worldId }: { copy: Copy; worldId: Modes["worldId"] }) {
   const labels = { why: copy.whyLabel, inApp: copy.inApp };
@@ -74,13 +73,5 @@ export function BasicsTerms({ copy, worldId }: { copy: Copy; worldId: Modes["wor
         </p>
       </Term>
     </div>
-  );
-}
-
-export function Basics({ copy, worldId }: { copy: Copy; worldId: Modes["worldId"] }) {
-  return (
-    <Section id="basics" title={copy.title} lede={copy.lede} wide>
-      <BasicsTerms copy={copy} worldId={worldId} />
-    </Section>
   );
 }

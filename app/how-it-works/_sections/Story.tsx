@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { StoryCopy } from "@/lib/i18n/how-it-works/story.en";
 import { Section } from "../_components/Section";
 import { RolesDiagram } from "../_diagrams/RolesDiagram";
@@ -19,5 +20,20 @@ export function Idea({ copy }: { copy: StoryCopy["idea"] }) {
     <Section id="idea" title={copy.title} lede={copy.lede} wide>
       <RolesDiagram copy={copy} />
     </Section>
+  );
+}
+
+// One line in place of the old basics section: the terms and their pictures
+// now live on /how-it-works/basics.
+export function BasicsPointer({ copy }: { copy: StoryCopy["basicsPage"] }) {
+  return (
+    <p className="hiw-pointer">
+      {copy.pointer}
+      {/* Japanese needs no space after 、 or 。 */}
+      {/[、。]$/.test(copy.pointer) ? "" : " "}
+      <Link href="/how-it-works/basics">
+        {copy.pointerLink} <span aria-hidden="true">→</span>
+      </Link>
+    </p>
   );
 }
