@@ -1,4 +1,5 @@
 import type { Credential } from "./credential";
+import type { ProvingLocation } from "./modes";
 import type { HumanCheck, HumanEnvironment, VerificationResult } from "./presentation";
 
 // Browser storage for the demo. The wallet and Mingle share an origin on
@@ -18,6 +19,8 @@ export type ShareRecord = {
   verifier: string;
   sharedAt: string;
   disclosed: VerificationResult["disclosed"];
+  // Missing on records saved before the phone could prove.
+  provedOn?: ProvingLocation;
 };
 export type MingleRecord = {
   epoch: string;

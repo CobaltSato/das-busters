@@ -26,3 +26,14 @@ function worldIdMode(): Modes["worldId"] {
   if (!config) return "simulated";
   return config.environment === "staging" ? "idkit-staging" : "idkit";
 }
+
+// Where the Groth16 proof is made. On the phone by default, so the
+// certificate and the holder secret stay there; PROVE_ON=server moves it to
+// /api/prove for devices that cannot prove. Mingle's checks are the same
+// either way. The mock prover only exists on the server.
+export type ProvingLocation = "device" | "server";
+
+export function provingLocation(): ProvingLocation {
+  if (getModes().prover !== "groth16") return "server";
+  return process.env.PROVE_ON === "server" ? "server" : "device";
+}

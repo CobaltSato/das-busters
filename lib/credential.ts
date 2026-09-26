@@ -33,3 +33,8 @@ export const TOKYO = 13;
 export function birthYear(iso: string): number {
   return Number(iso.slice(0, 4));
 }
+
+// yyyymmdd as one number, the form the circuit signs and compares.
+export function issuedAtNumber(iso: string): number {
+  return Number(iso.replaceAll("-", ""));
+}

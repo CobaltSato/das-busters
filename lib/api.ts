@@ -1,3 +1,4 @@
+import { ProofError } from "./errors";
 import { fill, type Messages } from "./i18n";
 
 // fetch wrapper for the client. Server errors arrive as { error, code }
@@ -38,7 +39,7 @@ export async function postJson<T>(url: string, body: unknown): Promise<T> {
 }
 
 export function errorMessage(error: unknown, t: Messages): string {
-  if (error instanceof ApiError && error.code) {
+  if ((error instanceof ApiError || error instanceof ProofError) && error.code) {
     const template = t.errors[error.code];
     if (template) return fill(template, error.params);
   }

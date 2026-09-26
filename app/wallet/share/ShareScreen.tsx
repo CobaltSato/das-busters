@@ -9,18 +9,20 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { ModeBadges } from "@/components/ModeBadges";
 import { Switch } from "@/components/Switch";
 import { errorMessage, postJson } from "@/lib/api";
+import { prefetchCircuit, proveOnDevice } from "@/lib/deviceProver";
+import { ProofError } from "@/lib/errors";
 import { lookup } from "@/lib/i18n";
 import type { Disclosure } from "@/lib/credential";
-import type { Modes } from "@/lib/modes";
+import type { Modes, ProvingLocation } from "@/lib/modes";
 import type { Presentation, PresentationRequest, VerificationResult } from "@/lib/presentation";
 import { humanStore, sharesStore, walletStore, type HumanRecord, type WalletRecord } from "@/lib/storage";
 import { humanLabel } from "../_components/humanLabel";
 import { Problem } from "../_components/Problem";
 
-type Props = { requestToken: string; request: PresentationRequest; modes: Modes };
-type Step = "idle" | "proving" | "verifying";
+type Props = { requestToken: string; request: PresentationRequest; modes: Modes; proveOn: ProvingLocation };
+type Step = "idle" | "proving" | "proving-device" | "proving-server" | "verifying";
 
-export function ShareScreen({ requestToken, request, modes }: Props) {
+export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   const { t } = useI18n();
   const copy = t.wallet.share;
   const router = useRouter();
@@ -38,6 +40,10 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
     setLoaded(true);
   }, []);
 
+  useEffect(() => {
+    if (proveOn === "device") prefetchCircuit();
+  }, [proveOn]);
+
   if (loaded && !wallet) {
     return (
       <Problem
@@ -54,17 +60,46 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
   const range = t.ageRange(ageRange.label);
   const busy = step !== "idle";
 
+  function proveOnServer(): Promise<Presentation> {
+    if (!wallet) throw new Error("No certificate");
+    return postJson<{ presentation: Presentation }>("/api/prove", {
+      request: requestToken,
+      credential: wallet.credential,
+      holderSecret: wallet.holderSecret,
+      disclose,
+    }).then((body) => body.presentation);
+  }
+
+  // On the phone first. If the phone cannot finish (an old browser, too
+  // little memory), the server makes this one proof and the screen says so.
+  // A broken rule is an answer, not a device problem, so it is not retried.
+  async function makeProof(): Promise<{ presentation: Presentation; provedOn: ProvingLocation }> {
+    if (proveOn === "server" || !wallet) {
+      setStep("proving");
+      return { presentation: await proveOnServer(), provedOn: "server" };
+    }
+    setStep("proving-device");
+    try {
+      const presentation = await proveOnDevice({
+        credential: wallet.credential,
+        holderSecret: wallet.holderSecret,
+        request,
+        disclose,
+      });
+      return { presentation, provedOn: "device" };
+    } catch (e) {
+      if (e instanceof ProofError) throw e;
+      console.warn("Proving on this device failed; using the server", e);
+      setStep("proving-server");
+      return { presentation: await proveOnServer(), provedOn: "server" };
+    }
+  }
+
   async function share() {
     if (!wallet) return;
     setError(null);
-    setStep("proving");
     try {
-      const { presentation } = await postJson<{ presentation: Presentation }>("/api/prove", {
-        request: requestToken,
-        credential: wallet.credential,
-        holderSecret: wallet.holderSecret,
-        disclose,
-      });
+      const { presentation, provedOn } = await makeProof();
       setStep("verifying");
       const { result, resultToken } = await postJson<{ result: VerificationResult; resultToken: string }>(
         "/api/verify",
@@ -75,13 +110,26 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
           humanToken: includeHuman && human?.check === "world-id" ? human.token : undefined,
         },
       );
-      sharesStore.add({ verifier: request.verifierName, sharedAt: result.verifiedAt, disclosed: result.disclosed });
+      sharesStore.add({
+        verifier: request.verifierName,
+        sharedAt: result.verifiedAt,
+        disclosed: result.disclosed,
+        provedOn,
+      });
       router.push(`/mingle?result=${encodeURIComponent(resultToken)}`);
     } catch (e) {
       setError(errorMessage(e, t));
       setStep("idle");
     }
   }
+
+  const stepLabel: Record<Step, string> = {
+    idle: copy.submit,
+    proving: copy.proving,
+    "proving-device": copy.provingDevice,
+    "proving-server": copy.provingServer,
+    verifying: modes.chain === "sepolia" ? copy.recordingSepolia : copy.checkingWith(request.verifierName),
+  };
 
   return (
     <main className="phone">
@@ -165,19 +213,15 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
         </div>
       )}
 
-      <p className="fine-print share-privacy">{copy.privacy}</p>
+      <p className="fine-print share-privacy">
+        {copy.privacy} {proveOn === "device" && copy.provedHere}
+      </p>
 
       <div className="phone-actions">
         {error && <p className="error-banner">{error}</p>}
         <button type="button" className="btn btn-primary" onClick={share} disabled={busy || !wallet}>
           {busy && <span className="spinner" />}
-          {step === "proving"
-            ? copy.proving
-            : step === "verifying"
-              ? modes.chain === "sepolia"
-                ? copy.recordingSepolia
-                : copy.checkingWith(request.verifierName)
-              : copy.submit}
+          {stepLabel[step]}
         </button>
         <Link className="btn btn-text" href="/mingle">
           {t.common.cancel}

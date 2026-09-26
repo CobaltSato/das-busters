@@ -1,64 +1,14 @@
 import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import type { Groth16Proof } from "snarkjs";
-import { birthYear, type Credential, type Disclosure } from "./credential";
-import { holderCommitment, nullifierHash } from "./fields";
 import { fullProve, verifyGroth16 } from "./groth16";
-import { hasValidIssuerSignature, issuedAtNumber } from "./issuer";
+import { hasValidIssuerSignature } from "./issuer";
 import { ProofError } from "./errors";
 import { getModes } from "./modes";
-import {
-  signalsToArray,
-  type Presentation,
-  type PresentationRequest,
-  type PublicSignals,
-} from "./presentation";
+import { signalsToArray, type Presentation, type PublicSignals } from "./presentation";
+import { buildPublicSignals, circuitInput, type ProveInput } from "./statement";
 
-export type ProveInput = {
-  credential: Credential;
-  holderSecret: string;
-  request: PresentationRequest;
-  disclose: Disclosure;
-};
-
-// The rules the circuit enforces, written out in TypeScript. Both provers
-// run them first so a bad input fails with a readable message instead of a
-// witness error.
-export function buildPublicSignals({ credential, holderSecret, request, disclose }: ProveInput): PublicSignals {
-  if (!hasValidIssuerSignature(credential)) {
-    throw new ProofError("The certificate signature is not valid", "bad-signature");
-  }
-  if (holderCommitment(holderSecret) !== credential.holderCommitment) {
-    throw new ProofError("This certificate belongs to someone else", "not-your-certificate");
-  }
-  if (credential.maritalStatus !== "Single") {
-    throw new ProofError("The certificate does not show single status", "not-single");
-  }
-  const { residence, ageRange } = request.asks;
-  if (disclose.residence && credential.residenceCode !== residence.code) {
-    throw new ProofError(`The certificate does not show residence in ${residence.label}`, "not-resident", {
-      place: residence.label,
-    });
-  }
-  const year = birthYear(credential.birthDate);
-  if (disclose.ageRange && (year < ageRange.minBirthYear || year > ageRange.maxBirthYear)) {
-    throw new ProofError(`The birth date is not in the ${ageRange.label} range`, "not-in-age-range", {
-      range: ageRange.label,
-    });
-  }
-  return {
-    nullifierHash: nullifierHash(holderSecret, request.scopeHash),
-    issuerAx: credential.signature.scheme === "eddsa-poseidon" ? credential.signature.Ax : "0",
-    issuerAy: credential.signature.scheme === "eddsa-poseidon" ? credential.signature.Ay : "0",
-    revealResidence: disclose.residence ? "1" : "0",
-    revealAge: disclose.ageRange ? "1" : "0",
-    expectedResidence: disclose.residence ? String(residence.code) : "0",
-    minBirthYear: disclose.ageRange ? String(ageRange.minBirthYear) : "0",
-    maxBirthYear: disclose.ageRange ? String(ageRange.maxBirthYear) : "0",
-    scopeHash: request.scopeHash,
-    requestHash: request.requestHash,
-  };
-}
+export type { ProveInput };
 
 function proofKey(): string {
   const secret = process.env.TOKEN_SECRET;
@@ -74,32 +24,16 @@ function mockMac(signals: PublicSignals): string {
 
 export async function prove(input: ProveInput): Promise<Presentation> {
   const started = Date.now();
+  if (!hasValidIssuerSignature(input.credential)) {
+    throw new ProofError("The certificate signature is not valid", "bad-signature");
+  }
   const expected = buildPublicSignals(input);
-  const mode = getModes().prover;
-  const signature = input.credential.signature;
 
-  if (mode === "mock") {
+  if (getModes().prover === "mock") {
     return { prover: "mock", publicSignals: expected, proof: { scheme: "mock", mac: mockMac(expected) }, provingMs: Date.now() - started };
   }
-  if (signature.scheme !== "eddsa-poseidon") {
-    throw new ProofError(
-      "This certificate was issued before real proofs were switched on. Receive a new one at the counter.",
-      "stale-certificate",
-    );
-  }
 
-  const { credential, holderSecret } = input;
-  const { proof, publicSignals } = await fullProve({
-    isSingle: "1",
-    birthYear: String(birthYear(credential.birthDate)),
-    residenceCode: String(credential.residenceCode),
-    issuedAt: String(issuedAtNumber(credential.issuedAt)),
-    holderSecret,
-    sigR8x: signature.R8x,
-    sigR8y: signature.R8y,
-    sigS: signature.S,
-    ...Object.fromEntries(Object.entries(expected).filter(([name]) => name !== "nullifierHash")),
-  });
+  const { proof, publicSignals } = await fullProve(circuitInput(input, expected));
 
   // Guards against the circuit's signal order drifting from SIGNAL_ORDER.
   if (publicSignals.join() !== signalsToArray(expected).join()) {

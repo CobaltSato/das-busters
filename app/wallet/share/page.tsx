@@ -1,5 +1,5 @@
 import { getMessages } from "@/lib/i18n/server";
-import { getModes } from "@/lib/modes";
+import { getModes, provingLocation } from "@/lib/modes";
 import { TokenError } from "@/lib/token";
 import { readRequest } from "@/lib/tokens";
 import { Problem } from "../_components/Problem";
@@ -21,7 +21,12 @@ export default async function SharePage({ searchParams }: Props) {
     );
   }
   try {
-    return <ShareScreen requestToken={req} request={await readRequest(req)} modes={getModes()} />;
+    return <ShareScreen
+        requestToken={req}
+        request={await readRequest(req)}
+        modes={getModes()}
+        proveOn={provingLocation()}
+      />;
   } catch (error) {
     if (!(error instanceof TokenError)) throw error;
     return (

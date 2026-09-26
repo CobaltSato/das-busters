@@ -2,7 +2,7 @@ import "server-only";
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import { derivePublicKey, signMessage, verifySignature } from "@zk-kit/eddsa-poseidon";
 import { poseidon5 } from "poseidon-lite/poseidon5";
-import { birthYear, type Credential, type CredentialPreview } from "./credential";
+import { birthYear, issuedAtNumber, type Credential, type CredentialPreview } from "./credential";
 import { getModes } from "./modes";
 import issuerPublicKey from "./zk/issuer-public.json";
 
@@ -13,10 +13,6 @@ import issuerPublicKey from "./zk/issuer-public.json";
 export const ISSUER_PUBLIC_KEY = issuerPublicKey as { Ax: string; Ay: string };
 
 type Unsigned = Omit<Credential, "signature">;
-
-export function issuedAtNumber(iso: string): number {
-  return Number(iso.replaceAll("-", ""));
-}
 
 // Must match the message the circuit rebuilds in single_proof.circom.
 export function credentialMessage(c: Unsigned): bigint {
