@@ -81,7 +81,7 @@ const storyEn = {
   why: {
     title: "Why this exists",
     caption: "Send a copy, and Mingle gets every field. Send a proof, and Mingle gets one checked fact.",
-    fact: "The paper version already exists in Japan. The city office of your registered domicile issues a Single Status Certificate (独身証明書) for a few hundred yen, and marriage agencies ask for one issued in the last three months. Sources are under Check it.",
+    fact: "The paper version already exists in Japan. The city office of your registered domicile issues a Single Status Certificate (独身証明書) for a few hundred yen, and marriage agencies ask for one issued in the last three months. A real one lists no address. Our demo certificate adds the prefecture you live in, as a residence certificate (住民票) would, so there is a second fact you can choose to share. Sources are under Check it.",
     diagram: {
       label: "Two ways to prove single status. Sending a copy gives Mingle every field. DAS Busters gives Mingle one checked fact.",
       copyLane: "Send a copy",
