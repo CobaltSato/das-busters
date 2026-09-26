@@ -46,7 +46,7 @@ proof of human を選んだ理由と、Mingle が受け取るものは [README](
 - `@worldcoin/idkit-core/signing` の `signRequest` は、1回の呼び出しで `rp_context` を作れます。
 - v4 の verify の応答に nullifier と環境が入っているので、サーバーは違う環境の証明を拒否できます。
 - Simulator の `connect_url` パラメーターのおかげで、2台目の端末なしにスマホ1台で最後まで通せました。
-- Portal の MCP ツールのおかげで、staging 窓を画面操作ではなくスクリプトで開けました。
+- Portal の MCP ツールで、staging 窓をスクリプトから開けました。
 
 ## やり残したこと
 

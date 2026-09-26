@@ -46,7 +46,7 @@ Time to first success: about 35 minutes of commit time, from adding IDKit (16:29
 - `signRequest` from `@worldcoin/idkit-core/signing` makes the `rp_context` in one call.
 - The v4 verify response carries the nullifier and the environment, so our server can refuse a proof from the wrong environment.
 - The Simulator's `connect_url` parameter let one phone run the whole flow, with no second device.
-- The Portal's MCP tool let us script the staging window instead of clicking through it.
+- The Portal's MCP tool gave us a scriptable way to open the staging window.
 
 ## What we did not finish
 
