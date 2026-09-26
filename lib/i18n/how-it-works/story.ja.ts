@@ -6,7 +6,7 @@ import type { StoryCopy } from "./story.en";
 const storyJa: StoryCopy = {
   meta: {
     title: "しくみ",
-    description: "DAS Busters がゼロ知識証明で独身であることを証明するしくみを、図で、基礎からコントラクトまで説明します。",
+    description: "DAS Busters がゼロ知識証明で独身であることを証明するしくみを、課題からコントラクトまで図で説明します。",
   },
   hubLink: "はじめての方は、まずしくみの説明へ",
   nav: {

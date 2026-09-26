@@ -11,7 +11,7 @@ import type { StepCopy, StepId } from "./flow";
 const storyEn = {
   meta: {
     title: "How it works",
-    description: "How DAS Busters proves single status with a zero-knowledge proof, in pictures, from the basics to the contracts.",
+    description: "How DAS Busters proves single status with a zero-knowledge proof, in pictures, from the problem to the contracts.",
   },
   hubLink: "New here? See how it works",
   nav: {
@@ -127,8 +127,8 @@ const storyEn = {
   },
 
   basics: {
-    title: "The basics",
-    lede: "The seven terms the How it works page uses. For each: what it is, why this app needs it, and how DAS Busters uses it.",
+    title: "Basic terms",
+    lede: "The seven terms used on How it works. For each: what it is, why this app needs it and how DAS Busters uses it.",
     whyLabel: "Why it's needed",
     inApp: "How DAS Busters uses it",
     signature: {
