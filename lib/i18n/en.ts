@@ -406,7 +406,7 @@ const en = {
   reset: {
     title: "Reset demo",
     lede: "Clears DAS Busters and Mingle on this device: the saved certificate, the human check, the share history and Mingle's verification.",
-    note: "Google stays signed in. Proofs already recorded on Sepolia stay there, and Mingle starts a new epoch, so the next proof gets a new nullifier.",
+    note: "Google stays signed in, and proofs already recorded on Sepolia stay there. Mingle starts afresh, so your next proof carries a new anonymous number and is accepted again.",
     done: "Reset. Scan the counter's QR code to start the next run.",
     button: "Reset demo",
     openCounter: "Open the counter",

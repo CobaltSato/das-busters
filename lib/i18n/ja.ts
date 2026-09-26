@@ -403,7 +403,7 @@ const ja: Messages = {
   reset: {
     title: "デモをリセット",
     lede: "この端末の DAS Busters と Mingle のデータを消します。保存した証明書、人間確認、共有履歴、Mingle の確認結果が対象です。",
-    note: "Google のログインはそのまま残ります。Sepolia に記録済みの証明も残りますが、Mingle は新しい epoch で始めるので、次の証明には新しい nullifier が付きます。",
+    note: "Google のログインと、Sepolia に記録済みの証明はそのまま残ります。Mingle は最初からやり直すので、次の証明には新しい匿名の番号が付き、もう一度受け付けられます。",
     done: "リセットしました。窓口の QR コードから次の回を始めてください。",
     button: "デモをリセット",
     openCounter: "窓口画面を開く",
