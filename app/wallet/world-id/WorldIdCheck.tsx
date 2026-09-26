@@ -1,83 +1,19 @@
 "use client";
 
-import type { IDKitResult } from "@worldcoin/idkit";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
 import { useI18n } from "@/components/I18nProvider";
-import { errorMessage, postJson } from "@/lib/api";
 import type { HumanEnvironment } from "@/lib/presentation";
-import { humanStore } from "@/lib/storage";
-import type { SignedRequest } from "./IdkitRequest";
+import { useWorldIdCheck } from "./useWorldIdCheck";
 
-const IdkitRequest = dynamic(() => import("./IdkitRequest"), { ssr: false });
-
-type Phase =
-  | { name: "ready" }
-  | { name: "preparing" }
-  | { name: "request"; signed: SignedRequest }
-  | { name: "verifying" }
-  | { name: "done"; environment: HumanEnvironment };
-
-type Verified = { environment: HumanEnvironment; verifiedAt: string; token: string };
-
-// World ID through IDKit. The server signs the request and checks the answer
-// with the Developer Portal; this screen only carries them back and forth.
+// World ID as a page of its own, for links from outside the wallet. The
+// home screen and the share screen run the same check in place.
 export function WorldIdCheck({ returnTo, environment }: { returnTo: string; environment: HumanEnvironment }) {
   const { t } = useI18n();
   const copy = t.wallet.worldId;
   const router = useRouter();
-  const [phase, setPhase] = useState<Phase>({ name: "ready" });
-  const [error, setError] = useState<string | null>(null);
+  const { phase, error, start, cancel, request } = useWorldIdCheck();
   const staging = environment === "staging";
-
-  async function start() {
-    setError(null);
-    setPhase({ name: "preparing" });
-    try {
-      const signed = await postJson<SignedRequest>("/api/world-id/rp-context", {});
-      setPhase({ name: "request", signed });
-    } catch (e) {
-      setError(errorMessage(e, t));
-      setPhase({ name: "ready" });
-    }
-  }
-
-  const verify = useCallback(
-    async (result: IDKitResult) => {
-      setPhase({ name: "verifying" });
-      try {
-        const verified = await postJson<Verified>("/api/world-id/verify", result);
-        const saved = humanStore.set({
-          check: "world-id",
-          verifiedAt: verified.verifiedAt,
-          environment: verified.environment,
-          token: verified.token,
-        });
-        if (!saved) {
-          setError(copy.storeFailed);
-          setPhase({ name: "ready" });
-          return;
-        }
-        setPhase({ name: "done", environment: verified.environment });
-      } catch (e) {
-        setError(errorMessage(e, t));
-        setPhase({ name: "ready" });
-      }
-    },
-    [copy, t],
-  );
-
-  const cancel = useCallback(() => setPhase({ name: "ready" }), []);
-
-  const fail = useCallback(
-    (code: string) => {
-      setError(copy.failed(code));
-      setPhase({ name: "ready" });
-    },
-    [copy],
-  );
 
   const header = (
     <div className="phone-top">
@@ -98,7 +34,7 @@ export function WorldIdCheck({ returnTo, environment }: { returnTo: string; envi
             ✓
           </div>
           <h1>{copy.complete}</h1>
-          <p>{phase.environment === "production" ? copy.completeBody : copy.completeBodyStaging}</p>
+          <p>{phase.record.environment === "production" ? copy.completeBody : copy.completeBodyStaging}</p>
         </section>
         <div className="phone-actions">
           <button type="button" className="btn btn-primary" onClick={() => router.push(returnTo)}>
@@ -116,9 +52,7 @@ export function WorldIdCheck({ returnTo, environment }: { returnTo: string; envi
         <h1 className="screen-title">{copy.title}</h1>
         <p>{staging ? copy.subtitleStaging : copy.subtitle}</p>
       </div>
-      {phase.name === "request" ? (
-        <IdkitRequest signed={phase.signed} onResult={verify} onFailed={fail} onCancel={cancel} />
-      ) : (
+      {request ?? (
         <div className="selfie-copy">
           <p>{copy.intro}</p>
           {staging && (
@@ -135,7 +69,7 @@ export function WorldIdCheck({ returnTo, environment }: { returnTo: string; envi
       )}
       <div className="phone-actions">
         {error && <p className="error-banner">{error}</p>}
-        {phase.name === "request" ? (
+        {request ? (
           <button type="button" className="btn btn-text" onClick={cancel}>
             {copy.cancel}
           </button>

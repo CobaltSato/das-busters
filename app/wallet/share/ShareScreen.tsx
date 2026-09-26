@@ -25,6 +25,7 @@ import {
 } from "@/lib/storage";
 import { humanLabel } from "../_components/humanLabel";
 import { Problem } from "../_components/Problem";
+import { WorldIdButton } from "../world-id/WorldIdButton";
 
 type Props = { requestToken: string; request: PresentationRequest; modes: Modes; proveOn: ProvingLocation };
 type Step = "idle" | "proving" | "proving-device" | "proving-server" | "verifying";
@@ -136,6 +137,12 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
     }
   }
 
+  // World ID passed on this screen: include it unless the holder unticks it.
+  function humanAdded(record: HumanRecord) {
+    setHuman(record);
+    setIncludeHuman(true);
+  }
+
   // The registry already holds this certificate's number for Mingle's
   // current scope. Clearing only Mingle's record gives it a new scope, so the
   // certificate stays and the next proof gets a new number.
@@ -231,9 +238,13 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
             <strong>{copy.addHuman}</strong>
             <small>{modes.worldId === "simulated" ? copy.simulatedOptional : copy.worldIdOptional}</small>
           </span>
-          <Link className="check-now" href={`/wallet/world-id?return=${encodeURIComponent(here)}`}>
-            {copy.checkNow}
-          </Link>
+          {modes.worldId === "simulated" ? (
+            <Link className="check-now" href={`/wallet/world-id?return=${encodeURIComponent(here)}`}>
+              {copy.checkNow}
+            </Link>
+          ) : (
+            <WorldIdButton className="check-now" label={copy.checkNow} onDone={humanAdded} />
+          )}
         </div>
       )}
 

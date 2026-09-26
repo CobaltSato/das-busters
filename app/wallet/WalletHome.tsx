@@ -21,7 +21,7 @@ import {
 } from "@/lib/storage";
 import { errorMessage } from "@/lib/api";
 import { useProviderSignOut } from "./_components/holderKey";
-import { humanLabel } from "./_components/humanLabel";
+import { HumanCard } from "./_components/HumanCard";
 import { describeShare, SharedList } from "./_components/SharedList";
 
 type Props = { worldId: Modes["worldId"]; prover: Modes["prover"] };
@@ -73,8 +73,6 @@ export function WalletHome({ worldId, prover }: Props) {
   }
 
   const mingle = shares.find((share) => share.verifier === "Mingle");
-  // In simulated mode no World ID check runs, so the card must not offer one.
-  const simulated = worldId === "simulated";
 
   return (
     <main className="phone">
@@ -95,13 +93,6 @@ export function WalletHome({ worldId, prover }: Props) {
 
       <h1 className="screen-title wallet-home-title">{home.title}</h1>
       {loaded && wallet && <CertificateCard certificate={wallet.credential} showTitle />}
-      {/* With a certificate and nothing shared yet, the next step is Mingle. */}
-      {loaded && wallet && shares.length === 0 && (
-        <Link className="btn btn-primary wallet-next" href="/mingle?screen=verification">
-          {home.proveOnMingle}
-        </Link>
-      )}
-      {loaded && shares.length > 0 && <SharedList shares={shares} prover={prover} />}
       {loaded && !wallet && (
         <div className="wallet-empty">
           {home.empty}
@@ -109,32 +100,14 @@ export function WalletHome({ worldId, prover }: Props) {
           <Link href="/counter">{t.common.openCounter}</Link>
         </div>
       )}
-
-      <section className="human-card" aria-labelledby="human-title">
-        <div className="human-heading">
-          <div>
-            <h2 id="human-title">{home.humanTitle}</h2>
-            <p>{{ idkit: home.worldId, "idkit-staging": home.worldIdStaging, simulated: home.worldIdSimulated }[worldId]}</p>
-          </div>
-          <span className={human ? "status-chip is-done" : "status-chip"}>{human ? home.done : home.optional}</span>
-        </div>
-        {human ? (
-          <div className="human-done">
-            <i aria-hidden="true">✓</i>
-            <span>
-              <strong>{home.humanComplete}</strong>
-              <small>{humanLabel(t, human)}</small>
-            </span>
-          </div>
-        ) : (
-          <>
-            <p>{simulated ? home.humanPitchSimulated : home.humanPitch}</p>
-            <Link className="btn btn-primary" href="/wallet/world-id?return=/wallet">
-              {simulated ? home.startSimulatedCheck : home.verifyWorldId}
-            </Link>
-          </>
-        )}
-      </section>
+      {loaded && <HumanCard worldId={worldId} human={human} onVerified={setHuman} />}
+      {/* With a certificate and nothing shared yet, the next step is Mingle. */}
+      {loaded && wallet && shares.length === 0 && (
+        <Link className="btn btn-primary wallet-next" href="/mingle?screen=verification">
+          {home.proveOnMingle}
+        </Link>
+      )}
+      {loaded && shares.length > 0 && <SharedList shares={shares} prover={prover} />}
 
       <dialog
         ref={dialog}
