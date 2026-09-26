@@ -245,6 +245,9 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
       {verification.chainNote && (
         <p className="mingle-proof-note">{lookup(t.mingle.chainNotes, verification.chainNote)}</p>
       )}
+      {verification.humanNote && (
+        <p className="mingle-proof-note">{lookup(t.mingle.humanNotes, verification.humanNote)}</p>
+      )}
       <h3 className="mingle-proof-subhead">{p.notReceived}</h3>
       <p className="mingle-proof-note">{p.neverReceived}</p>
       <button type="button" className="mingle-view" onClick={() => go("profile")}>

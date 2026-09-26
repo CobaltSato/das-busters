@@ -362,6 +362,11 @@ const en = {
         "Mingle's relayer, which pays the Sepolia fee, ran out of test ETH, so Mingle checked the proof off-chain only.",
       unconfirmed: "Sepolia has not confirmed the transaction yet. The link shows its status.",
     } as Lookup,
+    // Keyed by the humanNote app/api/verify/route.ts puts in the result.
+    humanNotes: {
+      "simulated-ignored":
+        "DAS Busters sent a simulated human check. This server uses World ID for the human check, so Mingle did not accept it.",
+    } as Lookup,
   },
 
   privacy: {

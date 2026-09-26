@@ -358,6 +358,10 @@ const ja: Messages = {
         "Sepolia の手数料を払う Mingle の relayer がテスト用 ETH を使い切ったため、Mingle はオフチェーンでのみ証明を検証しました。",
       unconfirmed: "Sepolia でトランザクションがまだ確定していません。リンク先で状況を確認できます。",
     },
+    humanNotes: {
+      "simulated-ignored":
+        "DAS Busters からシミュレーションの人間確認が届きました。このサーバーは人間確認に World ID を使うので、Mingle は受け付けていません。",
+    },
   },
 
   privacy: {

@@ -39,6 +39,7 @@ export async function POST(request: Request) {
       chain: onChain.chain,
       txHash: onChain.txHash,
       chainNote: onChain.chainNote,
+      humanNote: body.humanCheck !== humanCheck ? "simulated-ignored" : null,
     };
     const { token } = await signToken("result", result, RESULT_TTL_SECONDS);
     return NextResponse.json({ result, resultToken: token });
@@ -49,7 +50,8 @@ export async function POST(request: Request) {
 
 // The simulated check carries no evidence, so Mingle takes it only while this
 // server itself runs the simulated human check. Otherwise it is dropped, not
-// refused, so an old record in the wallet cannot fail a share on stage.
+// refused, so an old record in the wallet cannot fail a share on stage; the
+// result's humanNote tells Mingle's screen why the badge is missing.
 function acceptedHumanCheck(check: HumanCheck | null): HumanCheck | null {
   if (check === "simulated" && getModes().worldId !== "simulated") return null;
   return check;
