@@ -81,7 +81,7 @@ forge verify-contract 0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8 \
 続けて `POST https://sourcify.dev/server/v2/verify/11155111/<アドレス>` に、`stdJsonInput`（上のファイル）、`compilerVersion`（`0.8.37+commit.f401782d`）、`contractIdentifier`（`src/Groth16Verifier.sol:Groth16Verifier`）、任意で `contracts/broadcast/Deploy.s.sol/11155111/run-latest.json` の `creationTransactionHash` を JSON で送ります。レジストリは `src/SingleProofRegistry.sol:SingleProofRegistry` とレジストリのアドレスで同じことをします。結果は `GET https://sourcify.dev/server/v2/contract/11155111/<アドレス>` で確かめられます。
 
 - 検証の前に `.sol` のファイルを書き換えないでください。コメント1行でもメタデータのハッシュが変わり、exact match になりません。
-- Blockscout ではレジストリの検証済みソースが見られ、呼び出しとイベントもデコードされます。9月26日 19:10 JST に確かめた時点では、検証器のほうはまだ Blockscout で検証済みになっていませんでした。
+- Blockscout には別に提出しなくても、両方のコントラクトが検証済みとして表示されます。レジストリの呼び出しとイベントもデコードされます。
 - Etherscan ではまだ検証していません。`ETHERSCAN_API_KEY`（`.env.local` にだけ置く）があれば、次のコマンドで検証できます。
 
 ```sh

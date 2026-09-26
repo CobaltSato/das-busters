@@ -81,7 +81,7 @@ forge verify-contract 0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8 \
 Then `POST https://sourcify.dev/server/v2/verify/11155111/<address>` with a JSON body of `stdJsonInput` (that file), `compilerVersion` (`0.8.37+commit.f401782d`), `contractIdentifier` (`src/Groth16Verifier.sol:Groth16Verifier`) and, optionally, `creationTransactionHash` from `contracts/broadcast/Deploy.s.sol/11155111/run-latest.json`. Do the same for `src/SingleProofRegistry.sol:SingleProofRegistry` at the registry address. `GET https://sourcify.dev/server/v2/contract/11155111/<address>` shows the match.
 
 - Do not edit any `.sol` file before verifying: even a comment changes the metadata hash, and the exact match fails.
-- Blockscout shows the registry's verified source and decodes its calls and events. When we checked at 19:10 JST on 26 September, Blockscout did not yet show the verifier as verified.
+- Blockscout shows both contracts as verified without a separate submission, and decodes the registry's calls and events.
 - Etherscan is not verified yet. It needs `ETHERSCAN_API_KEY` (in `.env.local` only):
 
 ```sh

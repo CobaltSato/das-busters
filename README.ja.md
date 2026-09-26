@@ -226,7 +226,7 @@ flowchart LR
 | SingleProofRegistry | [0xDc813EC37A689e9927A9AA35203EdACC4822c217](https://sepolia.etherscan.io/address/0xDc813EC37A689e9927A9AA35203EdACC4822c217) | [Sourcify（exact match）](https://repo.sourcify.dev/11155111/0xDc813EC37A689e9927A9AA35203EdACC4822c217) · [Blockscout](https://eth-sepolia.blockscout.com/address/0xDc813EC37A689e9927A9AA35203EdACC4822c217) |
 | Groth16Verifier（snarkjs が生成） | [0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8](https://sepolia.etherscan.io/address/0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8) | [Sourcify（exact match）](https://repo.sourcify.dev/11155111/0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8) · [Blockscout](https://eth-sepolia.blockscout.com/address/0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8) |
 
-- **ソースの検証**：どちらも Sourcify で [contracts/src/](contracts/src/) のソースと完全に一致しています。Blockscout ではレジストリのソースが見られ、`record` の呼び出しと `SingleStatusVerified` のイベントがデコードされて表示されます。Etherscan での検証はまだなので、Etherscan では16進数のままです。
+- **ソースの検証**：どちらも Sourcify で [contracts/src/](contracts/src/) のソースと完全に一致しています。Blockscout では両方のソースが見られ、レジストリの `record` の呼び出しと `SingleStatusVerified` のイベントがデコードされて表示されます。Etherscan での検証はまだなので、Etherscan では16進数のままです。
 - **記録するもの**：Mingle が証明を確認したあと、relayer が `record` を呼びます。レジストリは区役所の鍵と nullifier が未使用かを確認し、証明を検証して、nullifier だけを保存します。イベントには nullifier、scope hash、request hash を出します。
 - **scope ごとに証明書1枚につき1アカウント**：同じ nullifier で2回目の記録をすると revert します。デモでは scope を決める epoch を Mingle のブラウザが持っているので、リセットすると新しくなります。本物の Mingle なら scope を固定します。
 - **nullifier を自分で確かめる**：nullifier はイベントの最初の indexed topic で、16進数でも10進数でも渡せます。たとえば次のコマンドは `true` を返します。
