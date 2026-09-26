@@ -55,11 +55,21 @@ export function createRpContext(config: WorldIdConfig): RpContext {
 
 export type VerifiedHuman = { nullifier: string; environment: WorldIdEnvironment };
 
-// The IDKit result goes to the Portal as it is. The action and environment
-// are checked against ours first, because the browser could send any.
-export async function verifyWithPortal(config: WorldIdConfig, result: { action?: string; environment: string }): Promise<VerifiedHuman> {
+// We ask for Proof of Human (IdkitRequest.tsx), but the browser picks the
+// preset, so the server checks the credential too. "orb" is the same
+// credential answered as a legacy 3.0 proof.
+const PROOF_OF_HUMAN = new Set(["proof_of_human", "orb"]);
+
+type WorldIdResult = { action?: string; environment: string; responses: Array<Record<string, unknown>> };
+
+// The IDKit result goes to the Portal as it is. The action, environment and
+// credential are checked against ours first, because the browser could send any.
+export async function verifyWithPortal(config: WorldIdConfig, result: WorldIdResult): Promise<VerifiedHuman> {
   if (result.action !== config.action || result.environment !== config.environment) {
     throw new ProofError("This World ID proof was made for a different request", "world-id-mismatch");
+  }
+  if (!result.responses.length || !result.responses.every((item) => PROOF_OF_HUMAN.has(String(item.identifier)))) {
+    throw new ProofError("This World ID proof is not a Proof of Human", "world-id-credential");
   }
   const headers: Record<string, string> = { "content-type": "application/json" };
   if (config.environment === "staging" && config.stagingToken) {

@@ -183,7 +183,7 @@ How the integration went, what slowed us down and what would help: [FEEDBACK.md]
 
 ### Why proof of human
 
-We request IDKit's `proofOfHuman` preset ([app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)). The certificate already covers civil status, residence and age, so World ID only has to add personhood. Proof of human shares nothing else: no name, face or ID number. We wanted its Orb-backed uniqueness for one person per account. World rates the selfie check as medium assurance: it checks liveness and facial similarity with the device camera and returns a sybil score the app has to interpret ([World docs](https://docs.world.org/world-id/idkit/credentials)). A passport or document credential would repeat what the certificate proves and ask the user for more.
+We request IDKit's `proofOfHuman` preset ([app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)). The browser picks the preset, so the server checks the credential too and refuses any other ([lib/worldid.ts](../lib/worldid.ts)). The certificate already covers civil status, residence and age, so World ID only has to add personhood. Proof of human shares nothing else: no name, face or ID number. We wanted its Orb-backed uniqueness for one person per account. World rates the selfie check as medium assurance: it checks liveness and facial similarity with the device camera and returns a sybil score the app has to interpret ([World docs](https://docs.world.org/world-id/idkit/credentials)). A passport or document credential would repeat what the certificate proves and ask the user for more.
 
 ### What Mingle receives
 

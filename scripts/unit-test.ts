@@ -14,6 +14,7 @@ import {
 } from "../lib/presentation";
 import { buildPublicSignals, circuitInput, type ProveInput } from "../lib/statement";
 import { checkAgainstRequest } from "../lib/verifier";
+import { verifyWithPortal } from "../lib/worldid";
 
 // The rules the wallet applies before proving (lib/statement.ts) and the
 // checks Mingle applies to the public signals after the proof verifies
@@ -251,5 +252,36 @@ describe("public signal order", () => {
 
   test("arrayToSignals refuses the wrong number of values", () => {
     assert.throws(() => arrayToSignals(["1", "2"]), /Expected 10 public signals/);
+  });
+});
+
+describe("World ID", () => {
+  const config = {
+    appId: "app_test" as const,
+    rpId: "rp_test",
+    signingKey: "0".repeat(64),
+    action: "das-busters-human",
+    environment: "staging" as const,
+    stagingToken: null,
+  };
+  const result = (identifier: string) => ({ action: config.action, environment: "staging", responses: [{ identifier }] });
+
+  // Refused before the Developer Portal is asked, so no network is needed.
+  test("refuses a credential other than Proof of Human", async () => {
+    await assert.rejects(verifyWithPortal(config, result("device")), refusedWith("world-id-credential"));
+    await assert.rejects(verifyWithPortal(config, result("selfie")), refusedWith("world-id-credential"));
+  });
+
+  // 4.0 sends "proof_of_human"; the Simulator's legacy 3.0 proof sends "orb".
+  test("passes Proof of Human on to the Developer Portal", async () => {
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = async () => Response.json({ success: true, nullifier: "0x2a", environment: "staging" });
+    try {
+      for (const identifier of ["proof_of_human", "orb"]) {
+        assert.deepEqual(await verifyWithPortal(config, result(identifier)), { nullifier: "42", environment: "staging" });
+      }
+    } finally {
+      globalThis.fetch = realFetch;
+    }
   });
 });

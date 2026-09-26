@@ -446,9 +446,9 @@ const referenceEn = {
               simulated:
                 "The camera opens for five seconds and no World ID proof is made. The World ID integration is built: it runs on World ID staging when its keys are set and the staging window is open. World ID adds “a person approved this request”, which a certificate alone cannot show.",
               "idkit-staging":
-                "Our server signs each IDKit request and forwards the result to World's Developer Portal. Mingle counts the check only with the signed token our server issues after that. Limits: that token travels next to the ZK proof, not inside it, lasts seven days and is not yet tied to the certificate, and the World ID nullifier is not yet checked for repeats.",
+                "Our server signs each IDKit request and forwards the result to World's Developer Portal. The server accepts only a Proof of Human credential. Mingle counts the check only with the signed token our server issues after that. Limits: that token travels next to the ZK proof, not inside it, lasts seven days and is not yet tied to the certificate, and the World ID nullifier is not yet checked for repeats.",
               idkit:
-                "Our server signs each IDKit request and forwards the result to World's Developer Portal. Mingle counts the check only with the signed token our server issues after that. Limits: that token travels next to the ZK proof, not inside it, lasts seven days and is not yet tied to the certificate, and the World ID nullifier is not yet checked for repeats.",
+                "Our server signs each IDKit request and forwards the result to World's Developer Portal. The server accepts only a Proof of Human credential. Mingle counts the check only with the signed token our server issues after that. Limits: that token travels next to the ZK proof, not inside it, lasts seven days and is not yet tied to the certificate, and the World ID nullifier is not yet checked for repeats.",
             } satisfies Record<Modes["worldId"], string>,
           },
           {
