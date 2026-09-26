@@ -89,6 +89,21 @@ async function main() {
   const replay = await post("/api/verify", { request: otherReq.data.request, presentation, humanCheck: null });
   check("a proof cannot be replayed on another request", replay.status === 422, replay.data.error);
 
+  // The browser cannot claim a World ID check; only the token /api/world-id/verify signs counts.
+  const humanReq = await post("/api/request", { epoch: String(Date.now() + 1) });
+  const humanProof = await post("/api/prove", { request: humanReq.data.request, credential, holderSecret: secret, disclose });
+  const claimed = await post("/api/verify", {
+    request: humanReq.data.request,
+    presentation: humanProof.data.presentation,
+    humanCheck: "world-id",
+    humanToken: "forged",
+  });
+  check(
+    "a World ID claim without the server's token is refused",
+    claimed.status === 422 && claimed.data.code === "world-id-unconfirmed",
+    claimed.data.error,
+  );
+
   const fakeQr = await post("/api/credential", { offer: "not-a-token", holderCommitment: holderCommitment(secret) });
   check("a fake QR code is rejected", fakeQr.status === 400, fakeQr.data.error);
 
