@@ -2,13 +2,27 @@
 
 [English](README.md) | 日本語
 
-マッチングアプリに「独身であること」だけを見せるアプリです。
+**DAS は Dating App Scam（マッチングアプリ詐欺）の略です。** DAS Busters を使うと、マッチングアプリに「独身であること」だけを見せられます。氏名も生年月日も本籍も見せません。
 
 ETHGlobal Tokyo 2026 で作りました。英語版の [README.md](README.md) が正本で、このページはその日本語訳です。**デモ**：[das-busters.vercel.app](https://das-busters.vercel.app)、**図で見るしくみ**：[/how-it-works](https://das-busters.vercel.app/how-it-works)（右上で日本語に切り替え）、**デモの手順**：[docs/demo.ja.md](docs/demo.ja.md)
 
-独身証明書は、本籍のある市区町村が数百円で発行している書類です。氏名、生年月日、本籍が載り、民法第732条（重婚の禁止）に抵触しないことを証明します（[江東区](https://www.city.koto.lg.jp/060303/dokusinsyoumei.html)）。結婚相談所や婚活向けのマッチングサービスは、いまもこれを求めています。ユーブライドは発行から3か月以内の証明書を、見切れや隠しのない写真で出すよう求めています（[ユーブライドのヘルプ](https://support.youbride.jp/hc/ja/articles/7335924102809)）。IBJ は3か月以内の原本です（[IBJ](https://www.ibjapan.com/marriage/p_6101/)）。利用者の側も証明を望んでいて、タップルが2024年に5,429人に聞いた調査では、相手が独身だと何かしらの形で証明してほしいと答えたのが男性で83.8%、女性で97.4%でした（[デジタル庁](https://digital-agency-news.digital.go.jp/articles/2025-10-17)）。警察庁が2025年に把握した SNS 型ロマンス詐欺5,645件のうち、最初の接触がマッチングアプリだったのは1,846件（32.7%）で、経路の中でいちばん多い数字です（[警察庁](https://www.npa.go.jp/bureau/safetylife/sos47/new-topics/260605/01.html)）。
+## ひと目でわかる特徴
+
+- **証明はスマホの中で作ります。** circom の回路（Groth16、制約 9,921 個）のゼロ知識証明をブラウザの中で作るので、証明書も鍵もスマホから出ません（[lib/deviceProver.ts](lib/deviceProver.ts)）。スマホで作りきれないときだけ、その1回分をサーバーが作り、画面にそう出します。
+- **証明書1枚につき1アカウント。アプリをまたいだ追跡はできません。** アプリごとに別の匿名の番号（nullifier）が出ます。Ethereum Sepolia のコントラクトは同じ番号を2回は受け付けず、別のアプリには別の番号が見えます。コントラクトは2つとも [Sourcify でソース検証済み](#sepolia-のコントラクト)（exact match）です。
+- **実在の書類が土台です。** 結婚相談所やマッチングサービスが、いまも紙面全体の写真で提出を求めている独身証明書をデジタルにしています。
+- **大事なところをテストしています。** 回路のテスト23件で、改ざんした証明書、他人の鍵、隠したはずの欄に値が入った入力を、回路そのものが拒否することを確かめています。ほかに単体テスト24件、本物の証明を使う Foundry のテスト13件、API を端から端まで通すスモークテストがあります。[テストしたこと](#テストしたこと) を見てください。
+- **どこがデモかを隠しません。** ハブ、共有画面、Mingle のバッジに、本物と代役のどちらで動いているかが出ます。限界と実運用での構成も書いてあります：[セキュリティモデルと限界](#セキュリティモデルと限界)、[デモの構成と実運用の構成](#デモの構成と実運用の構成)。
+
+## 何が問題か
+
+独身証明書は、本籍のある市区町村が数百円で発行している書類です。氏名、生年月日、本籍が載り、民法第732条（重婚の禁止）に抵触しないことを証明します（[江東区](https://www.city.koto.lg.jp/060303/dokusinsyoumei.html)）。結婚相談所や婚活向けのマッチングサービスは、いまもこれを求めています。ユーブライドは発行から3か月以内の証明書を、見切れや隠しのない写真で出すよう求めています（[ユーブライドのヘルプ](https://support.youbride.jp/hc/ja/articles/7335924102809)）。IBJ は3か月以内の原本です（[IBJ](https://www.ibjapan.com/marriage/p_6101/)）。
+
+利用者の側も証明を望んでいて、タップルが2024年に5,429人に聞いた調査では、相手が独身だと何かしらの形で証明してほしいと答えたのが男性で83.8%、女性で97.4%でした（[デジタル庁](https://digital-agency-news.digital.go.jp/articles/2025-10-17)）。警察庁が2025年に把握した SNS 型ロマンス詐欺5,645件のうち、最初の接触がマッチングアプリだったのは1,846件（32.7%）で、経路の中でいちばん多い数字です（[警察庁](https://www.npa.go.jp/bureau/safetylife/sos47/new-topics/260605/01.html)）。
 
 困るのは写真のほうです。独身だと伝えるだけのために、登録したばかりの会社へ氏名も生年月日も本籍も渡すことになります。
+
+## DAS Busters がすること
 
 DAS Busters は、マッチングアプリの利用者と、戸籍の情報を抱えずに独身かどうかを確かめたいアプリのためのものです。区役所が署名したデジタルの証明書をスマホに置き、アプリ（サンプルの Mingle）には「独身である」というゼロ知識証明を渡します。「東京在住」と「30代」は、本人が選んだときだけ足します。ゼロ知識にしたのは、コピーや署名付きの証明書を渡すと、この1つの事実より多くが相手に伝わってしまうからです。アプリは nullifier も受け取ります。同じアプリに何度証明しても同じになる番号で、Ethereum Sepolia のコントラクトが公開の場で記録し、2回目は拒否します。そのアプリの scope の中では証明書1枚につき1アカウントになり、それを誰でも確かめられます。このデモでは区役所と Mingle を私たちのサーバーが演じ、受け取りのたびに架空の住民の証明書を発行します。証明、コントラクト、Google ログイン、World ID のリクエストは本物です。
 
@@ -226,7 +240,7 @@ flowchart LR
 | SingleProofRegistry | [0xDc813EC37A689e9927A9AA35203EdACC4822c217](https://sepolia.etherscan.io/address/0xDc813EC37A689e9927A9AA35203EdACC4822c217) | [Sourcify（exact match）](https://repo.sourcify.dev/11155111/0xDc813EC37A689e9927A9AA35203EdACC4822c217) · [Blockscout](https://eth-sepolia.blockscout.com/address/0xDc813EC37A689e9927A9AA35203EdACC4822c217) |
 | Groth16Verifier（snarkjs が生成） | [0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8](https://sepolia.etherscan.io/address/0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8) | [Sourcify（exact match）](https://repo.sourcify.dev/11155111/0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8) · [Blockscout](https://eth-sepolia.blockscout.com/address/0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8) |
 
-- **ソースの検証**：どちらも Sourcify で [contracts/src/](contracts/src/) のソースと完全に一致しています。Blockscout では両方のソースが見られ、レジストリの `record` の呼び出しと `SingleStatusVerified` のイベントがデコードされて表示されます。Etherscan での検証はまだなので、Etherscan では16進数のままです。
+- **ソースの検証**：どちらも Sourcify で [contracts/src/](contracts/src/) のソースと完全に一致しています。Blockscout では両方のソースが見られ、レジストリの `record` の呼び出しと `SingleStatusVerified` のイベントがデコードされて表示されます。Etherscan では同じ内容が16進数のまま表示されるので、読むときは Blockscout を使ってください。
 - **記録するもの**：Mingle が証明を確認したあと、relayer が `record` を呼びます。レジストリは区役所の鍵と nullifier が未使用かを確認し、証明を検証して、nullifier だけを保存します。イベントには nullifier、scope hash、request hash を出します。
 - **scope ごとに証明書1枚につき1アカウント**：同じ nullifier で2回目の記録をすると revert します。デモでは scope を決める epoch を Mingle のブラウザが持っているので、リセットすると新しくなります。本物の Mingle なら scope を固定します。
 - **nullifier を自分で確かめる**：nullifier はイベントの最初の indexed topic で、16進数でも10進数でも渡せます。たとえば次のコマンドは `true` を返します。
@@ -379,6 +393,10 @@ http://localhost:3000 を開いてください。`.env.local` がなければ連
 - **回路**：`circuits/build.sh` で作り直すと setup もやり直しになり、新しい zkey ができます。デプロイ済みの検証器はその証明を受け付けません。`public/zk/`、`lib/zk/verification_key.json`、`contracts/src/Groth16Verifier.sol` も上書きされます。
 
 デプロイ、外部サービス（Vercel、Google Cloud、Privy、World ID）、relayer のガス代は [docs/setup.ja.md](docs/setup.ja.md) にまとめています。
+
+## ライセンス
+
+GPL-3.0 です（[LICENSE](LICENSE)）。Groth16 の検証器と証明の生成には GPL-3.0 の snarkjs を使っています。MIT のレジストリのように、ファイルごとに SPDX の表記があるものはそのままにしています。書き換えると、Sourcify で検証済みのソースと一致しなくなるためです。
 
 ## AI の利用
 

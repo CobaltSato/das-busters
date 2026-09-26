@@ -2,13 +2,27 @@
 
 English | [日本語](README.ja.md)
 
-Show a dating app that you are single, and nothing else.
+**DAS stands for Dating App Scam.** DAS Busters lets you show a dating app that you are single, and nothing else: not your name, not your birth date, not your 本籍 (registered domicile).
 
 Built at ETHGlobal Tokyo 2026. **Live demo**: [das-busters.vercel.app](https://das-busters.vercel.app) · **Explainer with diagrams**: [/how-it-works](https://das-busters.vercel.app/how-it-works) · **Demo script**: [docs/demo.md](docs/demo.md)
 
-In Japan, the city office that keeps your family register issues a Single Status Certificate (独身証明書) for a few hundred yen. It lists your name, birth date and registered domicile (本籍), and states that you can marry without breaching the Civil Code's ban on bigamy ([Koto City](https://www.city.koto.lg.jp/060303/dokusinsyoumei.html)). Marriage agencies and marriage-focused dating services ask for it today. youbride wants a photo of the whole certificate with nothing hidden, issued in the last 3 months ([youbride help](https://support.youbride.jp/hc/ja/articles/7335924102809)); IBJ wants the original, also from the last 3 months ([IBJ](https://www.ibjapan.com/marriage/p_6101/)). Users want the check: in a 2024 Tapple survey of 5,429 users, 83.8% of men and 97.4% of women wanted some proof that the other person is single ([Digital Agency](https://digital-agency-news.digital.go.jp/articles/2025-10-17)). Of the 5,645 social-media romance scams the National Police Agency counted in 2025, 1,846 (32.7%) started on a matching app, more than on any other channel ([NPA](https://www.npa.go.jp/bureau/safetylife/sos47/new-topics/260605/01.html)).
+## At a glance
+
+- **The proof is made on your phone.** A zero-knowledge proof from a circom circuit (Groth16, 9,921 constraints) runs in the browser, so the certificate and your key stay on the phone ([lib/deviceProver.ts](lib/deviceProver.ts)). If a phone cannot finish, our server makes that one proof and the screen says so.
+- **One account per certificate, and no tracking across apps.** Each app gets its own anonymous number, the nullifier. A contract on Ethereum Sepolia refuses the same number twice, and another app sees a different one. Both contracts are [source verified on Sourcify](#contracts-on-sepolia) (exact match).
+- **Built on a real document.** Japan's 独身証明書, which marriage agencies and dating services already ask for today, as a photo of the whole page.
+- **Tested where it counts.** 23 circuit tests show the circuit itself refusing a tampered certificate, someone else's key and values in hidden fields. There are also 24 unit tests, 13 Foundry tests against a real proof, and an end-to-end smoke test. See [What we tested](#what-we-tested).
+- **Clear about what is a demo.** Badges on the hub, the share screen and Mingle say which parts are real and which are stand-ins. The limits and the intended real deployment are written down: [Security model and limits](#security-model-and-limits), [Demo setup vs a real deployment](#demo-setup-vs-a-real-deployment).
+
+## The problem
+
+In Japan, the city office that keeps your family register issues a Single Status Certificate (独身証明書) for a few hundred yen. It lists your name, birth date and registered domicile (本籍), and states that you can marry without breaching the Civil Code's ban on bigamy ([Koto City](https://www.city.koto.lg.jp/060303/dokusinsyoumei.html)). Marriage agencies and marriage-focused dating services ask for it today. youbride wants a photo of the whole certificate with nothing hidden, issued in the last 3 months ([youbride help](https://support.youbride.jp/hc/ja/articles/7335924102809)); IBJ wants the original, also from the last 3 months ([IBJ](https://www.ibjapan.com/marriage/p_6101/)).
+
+Users want the check: in a 2024 Tapple survey of 5,429 users, 83.8% of men and 97.4% of women wanted some proof that the other person is single ([Digital Agency](https://digital-agency-news.digital.go.jp/articles/2025-10-17)). Of the 5,645 social-media romance scams the National Police Agency counted in 2025, 1,846 (32.7%) started on a matching app, more than on any other channel ([NPA](https://www.npa.go.jp/bureau/safetylife/sos47/new-topics/260605/01.html)).
 
 The catch is the photo: to show one fact, you hand a company you just joined your full name, birth date and 本籍.
+
+## What DAS Busters does about it
 
 DAS Busters is for people on dating apps, and for apps that want checked single status without keeping family-register data. The city office signs a digital certificate that stays on your phone. The app (Mingle, our sample) gets a zero-knowledge proof that you are single, plus "lives in Tokyo" or "in your 30s" only if you choose to share them. Zero-knowledge, because a copy or a signed credential would give away more than that one fact. The app also gets a nullifier, a number that is the same each time you prove to that app. A contract on Ethereum Sepolia records it in public and refuses it a second time, so one certificate backs one account in that app's scope, and anyone can check. In this demo our server plays the city office and Mingle, and every pickup issues the certificate of a fictional resident; the proof, the contracts, Google sign-in and the World ID request are real.
 
@@ -226,7 +240,7 @@ The public signals come out as `nullifierHash` followed by the nine public input
 | SingleProofRegistry | [0xDc813EC37A689e9927A9AA35203EdACC4822c217](https://sepolia.etherscan.io/address/0xDc813EC37A689e9927A9AA35203EdACC4822c217) | [Sourcify (exact match)](https://repo.sourcify.dev/11155111/0xDc813EC37A689e9927A9AA35203EdACC4822c217) · [Blockscout](https://eth-sepolia.blockscout.com/address/0xDc813EC37A689e9927A9AA35203EdACC4822c217) |
 | Groth16Verifier (generated by snarkjs) | [0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8](https://sepolia.etherscan.io/address/0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8) | [Sourcify (exact match)](https://repo.sourcify.dev/11155111/0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8) · [Blockscout](https://eth-sepolia.blockscout.com/address/0x0400a2Ab2F4F3b13Bfe08FF3e063107DfF31D4E8) |
 
-- **Source verification**: both contracts match the source in [contracts/src/](contracts/src/) exactly on Sourcify. Blockscout shows the source of both contracts and decodes the registry's `record` calls and `SingleStatusVerified` events. Etherscan verification is pending, so Etherscan still shows raw hex.
+- **Source verification**: both contracts match the source in [contracts/src/](contracts/src/) exactly on Sourcify. Blockscout shows the source of both contracts and decodes the registry's `record` calls and `SingleStatusVerified` events. Etherscan shows the same data as raw hex, so use Blockscout for a readable view.
 - **What gets recorded**: after Mingle checks a proof, its relayer calls `record`. The registry checks the city office key, checks that the nullifier is unused, verifies the proof, and stores only the nullifier. It emits the nullifier, the scope hash and the request hash.
 - **One account per certificate per scope**: a second record with the same nullifier reverts. In the demo, Mingle's browser keeps the epoch that sets the scope, so Reset starts a new one; a real Mingle would fix its scope.
 - **Check a nullifier yourself**: the nullifier is the first indexed topic of the event, in hex or decimal. For example, this returns `true`:
@@ -379,6 +393,10 @@ Open http://localhost:3000. With no `.env.local`, every integration runs as a mo
 - **The circuit**: rebuilding it with `circuits/build.sh` runs a new setup and makes a new zkey, which the deployed verifier rejects. It also overwrites `public/zk/`, `lib/zk/verification_key.json` and `contracts/src/Groth16Verifier.sol`.
 
 Deployment, the outside services (Vercel, Google Cloud, Privy, World ID) and the relayer's gas are covered in [docs/setup.md](docs/setup.md).
+
+## License
+
+GPL-3.0: see [LICENSE](LICENSE). The Groth16 verifier and the prover come from snarkjs, which is GPL-3.0. Files with their own SPDX header, such as the MIT registry contract, keep it, so the source stays identical to what is verified on Sourcify.
 
 ## AI usage
 
