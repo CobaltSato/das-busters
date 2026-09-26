@@ -453,3 +453,9 @@ a.mingle-outline {
   color: #90959e;
   font-size: 12px;
 }
+
+.mingle-header-side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

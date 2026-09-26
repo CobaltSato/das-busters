@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
 import { useI18n } from "@/components/I18nProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { ModeBadges } from "@/components/ModeBadges";
 import { Switch } from "@/components/Switch";
 import { errorMessage, postJson } from "@/lib/api";
@@ -89,7 +90,7 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
           ‹
         </Link>
         <BrandLockup small />
-        <span style={{ width: 36 }} />
+        <LanguageToggle />
       </div>
 
       <section className="share-intro">

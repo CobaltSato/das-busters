@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { BrandLockup } from "@/components/BrandLockup";
 import { CertificateCard } from "@/components/CertificateCard";
 import { useI18n } from "@/components/I18nProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { SuccessMark } from "@/components/SuccessMark";
 import { errorMessage, postJson } from "@/lib/api";
 import type { Credential, CredentialPreview } from "@/lib/credential";
@@ -67,6 +68,7 @@ export function SaveScreen({ offer, preview }: Props) {
     <main className="phone">
       <div className="phone-top">
         <BrandLockup />
+        <LanguageToggle />
       </div>
       <p className="signed-in">
         <SuccessMark size={40} />

@@ -69,9 +69,12 @@ export function ProfileScreen({ error, verification, go }: Shared) {
     <main className="mingle">
       <header className="mingle-header">
         <span className="mingle-wordmark">mingle</span>
-        <button type="button" className="mingle-icon-button" aria-label={m.settings} onClick={() => go("settings")}>
-          <SlidersIcon />
-        </button>
+        <div className="mingle-header-side">
+          <LanguageToggle />
+          <button type="button" className="mingle-icon-button" aria-label={m.settings} onClick={() => go("settings")}>
+            <SlidersIcon />
+          </button>
+        </div>
       </header>
       <Messages error={error} />
       <section className="mingle-person">
