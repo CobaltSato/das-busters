@@ -40,7 +40,7 @@ flowchart LR
 ### 2. Scan the QR code
 
 - **Do**: scan the QR code with the phone's camera and open the link.
-- **They see**: **Receive your certificate**, with Ken's full name, date of birth and marital status, and a note that every pickup issues this sample certificate.
+- **They see**: **Receive your certificate**, with Ken's full name, residence, date of birth and marital status, and a note that every pickup issues this sample certificate.
 - **Say**: "This is what a dating app would get if Ken sent a copy. Mingle will never see any of it."
 
 ### 3. Sign in with Google
