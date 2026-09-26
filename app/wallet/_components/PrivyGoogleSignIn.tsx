@@ -47,8 +47,9 @@ export function PrivyGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
     onError: (code) => setError(`Google sign-in did not finish (${code}). Try again.`),
   });
 
-  function proceed(signedIn: User) {
-    if (continued.current) return;
+  function proceed(signedIn: User, tapped = false) {
+    // A tap always retries; the automatic path runs once.
+    if (continued.current && !tapped) return;
     if (!remember(signedIn)) {
       setError("This browser blocked storage. Turn off private browsing and try again.");
       return;
@@ -57,9 +58,11 @@ export function PrivyGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
     onSignedIn();
   }
 
-  // Back from Google: carry on without another tap.
+  // Back from Google: carry on without another tap, but only after Privy has
+  // removed its OAuth parameters from the URL, or the two navigations race.
   useEffect(() => {
     if (!ready || !authenticated || !user) return;
+    if (window.location.search.includes("privy_oauth")) return;
     if (state.status === "done" || isPending()) {
       markPending(false);
       proceed(user);
@@ -69,7 +72,7 @@ export function PrivyGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
   async function start() {
     setError(null);
     if (authenticated && user) {
-      proceed(user);
+      proceed(user, true);
       return;
     }
     try {
