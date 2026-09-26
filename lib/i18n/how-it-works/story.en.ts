@@ -388,7 +388,7 @@ const storyEn = {
         title: "Mingle shows the badge",
         body: "Mingle checks the result answers its own request and shows “Single status verified”.",
         tech: "/mingle?result=… is checked on the server, and its nonce must equal the one Mingle saved. Identity & verification links to the transaction on Etherscan.",
-        data: "What Mingle keeps: single yes, the facts you chose, the nullifier.",
+        data: "What Mingle keeps: single yes, the facts you chose, the nullifier, the city office key.",
       },
     } satisfies Record<StepId, StepCopy>,
   },
@@ -489,8 +489,8 @@ const storyEn = {
       },
       {
         place: "Mingle",
-        note: "Tokyo and 30s only if you chose them.",
-        holds: ["Single ✓", "Tokyo", "30s", "Nullifier", "Transaction link"],
+        note: "Tokyo, 30s and the human check only if you chose them. The city office key shows which office signed.",
+        holds: ["Single ✓", "Tokyo", "30s", "Human check", "Nullifier", "City office key", "Transaction link"],
         never: ["Name", "Birth date", "Certificate"],
       },
       {

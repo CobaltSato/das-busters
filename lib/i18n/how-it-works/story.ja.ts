@@ -382,7 +382,7 @@ const storyJa: StoryCopy = {
         title: "Mingle がバッジを出す",
         body: "Mingle は結果が自分のリクエストへの答えだと確かめ、「独身証明済み」を表示します。",
         tech: "/mingle?result=… はサーバーで確認し、nonce が Mingle の保存した値と一致する必要があります。Etherscan へのリンクは「本人確認と証明」の画面にあります。",
-        data: "Mingle に残るのは、独身であること、選んだ事実、nullifier。",
+        data: "Mingle に残るのは、独身であること、選んだ事実、nullifier、区役所の公開鍵。",
       },
     },
   },
@@ -483,8 +483,8 @@ const storyJa: StoryCopy = {
       },
       {
         place: "Mingle",
-        note: "東京と30代は、選んだときだけ。",
-        holds: ["独身 ✓", "東京", "30代", "nullifier", "トランザクションへのリンク"],
+        note: "東京、30代、人間確認は、選んだときだけ。区役所の公開鍵から、どの区役所が署名したかがわかります。",
+        holds: ["独身 ✓", "東京", "30代", "人間確認", "nullifier", "区役所の公開鍵", "トランザクションへのリンク"],
         never: ["氏名", "生年月日", "証明書"],
       },
       {
