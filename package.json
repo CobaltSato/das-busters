@@ -11,8 +11,9 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "smoke": "tsx scripts/smoke.ts",
-    "test": "npm run test:unit",
-    "test:unit": "tsx --conditions=react-server scripts/unit-test.ts"
+    "test": "npm run test:unit && npm run test:circuit",
+    "test:unit": "tsx --conditions=react-server scripts/unit-test.ts",
+    "test:circuit": "tsx --conditions=react-server scripts/circuit-test.ts"
   },
   "dependencies": {
     "@privy-io/react-auth": "3.45.0",
