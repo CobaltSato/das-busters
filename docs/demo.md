@@ -56,8 +56,8 @@ flowchart LR
 
 ### 5. Human check (optional)
 
-- **Do**: on the home screen, tap **Verify with World ID**, then **Verify with World ID** again, then **Open in World ID Simulator**. In the Simulator tab, tap **Continue**. Switch back to DAS Busters and tap **Continue**.
-- **They see**: a QR code, then **Human check complete**: "World ID staging confirmed the request. The identity came from the Simulator, so this is a test, not a real person."
+- **Do**: on the home screen, tap **Verify with World ID**, then **Verify with World ID** again. The World ID Simulator opens over the screen; tap **Continue** in it. When it shows Presented, it closes by itself. Tap **Continue**.
+- **They see**: the Simulator, then **Human check complete**: "World ID staging confirmed the request. The identity came from the Simulator, so this is a test, not a real person."
 - **Say**: "This is a real World ID request through IDKit, checked by World's Developer Portal. On staging the World ID Simulator stands in for World App, and the app says so. Mingle only learns that a unique human is behind the wallet."
 - **If it falls back**: the staging window lasts 24 hours. When it has closed, the hub shows `Human check: simulated` and this step opens the camera instead (five seconds, then **Continue**). To reopen it, run `npx tsx --env-file=.env.local scripts/world-staging.ts` and copy `WORLDID_STAGING_TOKEN` and `WORLDID_STAGING_EXPIRES_AT` to Vercel, then redeploy.
 

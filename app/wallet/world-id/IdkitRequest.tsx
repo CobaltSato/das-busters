@@ -6,10 +6,6 @@ import { useI18n } from "@/components/I18nProvider";
 import { QrCode } from "@/components/QrCode";
 import type { HumanEnvironment } from "@/lib/presentation";
 
-// The Simulator opens a request passed as connect_url, so a phone can run the
-// whole staging flow without a second device.
-const SIMULATOR_URL = "https://simulator.worldcoin.org/";
-
 export type SignedRequest = {
   appId: `app_${string}`;
   action: string;
@@ -21,15 +17,20 @@ type Props = {
   signed: SignedRequest;
   onResult: (result: IDKitResult) => void;
   onFailed: (code: string) => void;
+  onCancel: () => void;
 };
 
-// One World ID request: shows the connector link as a QR code and waits for
-// World App (or the Simulator on staging) to answer. Loaded only in the
-// browser, because IDKit brings its own WASM.
-export default function IdkitRequest({ signed, onResult, onFailed }: Props) {
+// The Simulator opens a request passed as connect_url. On staging it opens over
+// this screen rather than in another tab: a phone that switches tabs may freeze
+// or reload this one, and then the answer never arrives. The Simulator can read
+// a request only once, so closing it cancels, and the next try signs a new one.
+const SIMULATOR_URL = "https://simulator.worldcoin.org/";
+
+// One World ID request. Loaded only in the browser, because IDKit brings its
+// own WASM.
+export default function IdkitRequest({ signed, onResult, onFailed, onCancel }: Props) {
   const { t } = useI18n();
   const copy = t.wallet.worldId;
-  const staging = signed.environment === "staging";
   const flow = useIDKitRequest({
     app_id: signed.appId,
     action: signed.action,
@@ -67,10 +68,36 @@ export default function IdkitRequest({ signed, onResult, onFailed }: Props) {
     }
   }
 
+  if (signed.environment === "staging") {
+    return (
+      <div className="worldid-request">
+        <p className="worldid-status" role="status">
+          <span className="spinner is-dark" />
+          {copy.openingSimulator}
+        </p>
+        {connectorURI && (
+          <div className="simulator-sheet" role="dialog" aria-modal="true" aria-label={copy.simulatorTitle}>
+            <div className="simulator-bar">
+              <strong>{copy.simulatorTitle}</strong>
+              <button type="button" aria-label={copy.cancel} onClick={onCancel}>
+                ×
+              </button>
+            </div>
+            <p className="simulator-hint">{copy.simulatorHint}</p>
+            <iframe
+              src={`${SIMULATOR_URL}?connect_url=${encodeURIComponent(connectorURI)}`}
+              title={copy.simulatorTitle}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="worldid-request">
-      <h2>{staging ? copy.scanTitleStaging : copy.scanTitle}</h2>
-      <p>{staging ? copy.scanBodyStaging : copy.scanBody}</p>
+      <h2>{copy.scanTitle}</h2>
+      <p>{copy.scanBody}</p>
       {connectorURI ? (
         <QrCode value={connectorURI} label={copy.qrLabel} />
       ) : (
@@ -80,17 +107,7 @@ export default function IdkitRequest({ signed, onResult, onFailed }: Props) {
         <span className="spinner is-dark" />
         {flow.isAwaitingUserConfirmation ? copy.confirming : copy.waiting}
       </p>
-      {connectorURI && staging && (
-        <a
-          className="btn btn-primary"
-          href={`${SIMULATOR_URL}?connect_url=${encodeURIComponent(connectorURI)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {copy.openSimulator}
-        </a>
-      )}
-      {connectorURI && !staging && (
+      {connectorURI && (
         <a className="btn btn-primary" href={connectorURI}>
           {copy.openWorldApp}
         </a>

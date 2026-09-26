@@ -69,6 +69,8 @@ export function WorldIdCheck({ returnTo, environment }: { returnTo: string; envi
     [copy, t],
   );
 
+  const cancel = useCallback(() => setPhase({ name: "ready" }), []);
+
   const fail = useCallback(
     (code: string) => {
       setError(copy.failed(code));
@@ -115,17 +117,26 @@ export function WorldIdCheck({ returnTo, environment }: { returnTo: string; envi
         <p>{staging ? copy.subtitleStaging : copy.subtitle}</p>
       </div>
       {phase.name === "request" ? (
-        <IdkitRequest signed={phase.signed} onResult={verify} onFailed={fail} />
+        <IdkitRequest signed={phase.signed} onResult={verify} onFailed={fail} onCancel={cancel} />
       ) : (
         <div className="selfie-copy">
           <p>{copy.intro}</p>
-          {staging && <p>{copy.introStaging}</p>}
+          {staging && (
+            <>
+              <p>{copy.introStaging}</p>
+              <ol className="worldid-steps">
+                {copy.stagingSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+            </>
+          )}
         </div>
       )}
       <div className="phone-actions">
         {error && <p className="error-banner">{error}</p>}
         {phase.name === "request" ? (
-          <button type="button" className="btn btn-text" onClick={() => setPhase({ name: "ready" })}>
+          <button type="button" className="btn btn-text" onClick={cancel}>
             {copy.cancel}
           </button>
         ) : (
