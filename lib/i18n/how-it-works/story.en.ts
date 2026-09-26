@@ -192,7 +192,7 @@ const storyEn = {
       body: "Records go into blocks, and each block carries the fingerprint (hash) of the block before. Changing an old record would break every later link, so nobody can quietly edit or erase it. A smart contract is a program stored on the chain that runs exactly as written.",
       why: "If Mingle kept the used numbers in its own database, it could delete or change them and nobody outside could check. On a public chain anyone can look them up.",
       inApp: "After Mingle's server checks the proof, it sends it to our contract{{ (SingleProofRegistry)}} on **Sepolia**, Ethereum's public test network. The contract checks the proof again, adds the nullifier to its used list and refuses the same number next time. Our demo server pays the fee, so you need no crypto.",
-      link: "See every record on Blockscout",
+      link: "See every record on Blockscout, a public blockchain explorer",
       art: {
         block: "Block",
         link: "each block holds the fingerprint of the one before",
@@ -436,7 +436,7 @@ const storyEn = {
         {
           part: "City office (issuer)",
           demo: "Part of the demo server. The signing key is a Vercel environment variable, a setting on the server.",
-          real: "Run by the municipality, or through the national family-register system or Mynaportal. The signing key never leaves the office's own key-safe hardware{{ (an HSM)}}, and its public key is published in a list of trusted issuers.",
+          real: "Run by the municipality, or through the national family-register system or Mynaportal, the government's online portal. The signing key never leaves the office's own key-safe hardware{{ (an HSM)}}, and its public key is published in a list of trusted issuers.",
         },
         {
           part: "Wallet (DAS Busters)",
@@ -460,7 +460,7 @@ const storyEn = {
         },
         {
           part: "Human check",
-          demo: "World ID staging with the Simulator, or simulated when staging is off.",
+          demo: "World ID's test environment (staging), with the World ID Simulator standing in for World App. Simulated when staging is off.",
           real: "World ID in production (World App), bound to this proof, with its nullifier checked for repeats.",
         },
         {
