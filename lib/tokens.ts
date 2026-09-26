@@ -2,7 +2,7 @@ import "server-only";
 import { findResident } from "./registry";
 import { TokenError, verifyToken } from "./token";
 import type { CredentialPreview } from "./credential";
-import type { PresentationRequest, VerificationResult } from "./presentation";
+import type { HumanEnvironment, PresentationRequest, VerificationResult } from "./presentation";
 
 // Readers for each token kind, so pages and routes decode them the same way.
 
@@ -26,4 +26,11 @@ export async function readRequest(token: string): Promise<PresentationRequest> {
 
 export async function readResult(token: string): Promise<VerificationResult> {
   return stripJwtFields(await verifyToken<VerificationResult & JwtFields>("result", token));
+}
+
+// Issued by /api/world-id/verify after the Developer Portal accepted a proof.
+export type HumanClaims = { environment: HumanEnvironment; nullifier: string; verifiedAt: string };
+
+export async function readHuman(token: string): Promise<HumanClaims> {
+  return stripJwtFields(await verifyToken<HumanClaims & JwtFields>("human", token));
 }

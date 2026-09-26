@@ -3,7 +3,7 @@ import { SignJWT, jwtVerify, errors } from "jose";
 
 // Short-lived signed tokens carry state between the counter, the wallet and
 // Mingle, so the server stays stateless on Vercel.
-export type TokenKind = "offer" | "request" | "result" | "presentation";
+export type TokenKind = "offer" | "request" | "result" | "presentation" | "human";
 
 export class TokenError extends Error {
   constructor(

@@ -1,4 +1,5 @@
 import "server-only";
+import { worldIdConfig } from "./worldid";
 
 // Every integration has a mock and a real implementation. The server picks
 // one from env so a missing key falls back to mock instead of breaking the
@@ -7,7 +8,8 @@ export type Modes = {
   auth: "mock" | "privy";
   prover: "mock" | "groth16";
   chain: "off" | "sepolia";
-  worldId: "simulated" | "idkit";
+  // Staging proofs come from the World ID Simulator, so they get their own label.
+  worldId: "simulated" | "idkit-staging" | "idkit";
 };
 
 export function getModes(): Modes {
@@ -15,6 +17,12 @@ export function getModes(): Modes {
     auth: process.env.NEXT_PUBLIC_PRIVY_APP_ID ? "privy" : "mock",
     prover: process.env.PROVER_MODE === "groth16" ? "groth16" : "mock",
     chain: process.env.CHAIN_MODE === "sepolia" ? "sepolia" : "off",
-    worldId: process.env.WORLDID_MODE === "idkit" ? "idkit" : "simulated",
+    worldId: worldIdMode(),
   };
+}
+
+function worldIdMode(): Modes["worldId"] {
+  const config = worldIdConfig();
+  if (!config) return "simulated";
+  return config.environment === "staging" ? "idkit-staging" : "idkit";
 }

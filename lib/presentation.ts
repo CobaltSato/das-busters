@@ -42,6 +42,8 @@ export type Presentation = {
 };
 
 export type HumanCheck = "simulated" | "world-id";
+// Staging proofs come from the World ID Simulator, not a real person's World App.
+export type HumanEnvironment = "production" | "staging";
 
 export type VerificationResult = {
   nonce: string;
@@ -52,6 +54,7 @@ export type VerificationResult = {
     ageRange: string | null;
   };
   humanCheck: HumanCheck | null;
+  humanEnvironment: HumanEnvironment | null;
   nullifierHash: string;
   prover: ProverMode;
   chain: ChainMode;

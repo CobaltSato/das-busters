@@ -63,4 +63,17 @@ export const VerifyBody = z.object({
   request: z.string().min(1),
   presentation: PresentationSchema,
   humanCheck: z.enum(["simulated", "world-id"]).nullable(),
+  humanToken: z.string().min(1).max(2000).optional(),
 });
+
+// An IDKit result is forwarded to the Developer Portal as it is; only the
+// fields we check here are pinned down.
+export const WorldIdResultBody = z
+  .object({
+    protocol_version: z.enum(["3.0", "4.0"]),
+    nonce: z.string().min(1).max(200),
+    action: z.string().min(1).max(100),
+    environment: z.string().min(1).max(20),
+    responses: z.array(z.record(z.string(), z.unknown())).min(1).max(8),
+  })
+  .loose();
