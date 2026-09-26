@@ -17,7 +17,7 @@ Users want the check: in a 2024 Tapple survey of 5,429 users, 83.8% of men and 9
 DAS Busters is for people on dating apps, and for apps that want checked single status without keeping family-register data.
 
 1. At the issuing counter, the city office signs a certificate bound to a commitment to your holder key. The key comes from one signature by your Google-linked Privy wallet, and the certificate and key stay on your phone.
-2. A dating app (Mingle, our sample) asks for proof. You pick what to share: single (required), lives in Tokyo, and in your 30s, meaning born 1987–1996. The birth year itself stays hidden.
+2. A dating app (Mingle, our sample) asks for proof. You pick what to share: single (required), and optionally lives in Tokyo and in your 30s, meaning born 1987–1996. The birth year itself stays hidden.
 3. Your phone makes a Groth16 proof in the browser. Its nullifier is the same every time you prove to Mingle and different at any other app.
 4. Mingle's server checks the proof against its request. Its relayer then records the nullifier on Ethereum Sepolia, where the registry verifies the proof again and refuses a nullifier it has seen. One certificate backs one account in that app's scope, and anyone can check.
 5. Optionally, the wallet adds a World ID proof-of-human check, so Mingle also learns that a person approved a World ID request.
