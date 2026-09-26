@@ -136,10 +136,14 @@ const ja: Messages = {
       sharedTitle: "共有履歴",
       provedOnDevice: "このスマホで証明",
       provedOnServer: "サーバーで証明",
+      provedMock: "モック証明 · 本物の証明ではありません",
       humanComplete: "人間確認が完了しました",
       humanPitch:
         "World ID の確認を通ったことを、アプリに示せます。この確認はまだ証明書とは結び付いていません。渡すかどうかは毎回あなたが決めます。",
+      humanPitchSimulated:
+        "シミュレーションの人間確認を追加できます。このモードでは World ID の証明は作りません。渡すかどうかは毎回あなたが決めます。",
       verifyWorldId: "World ID で確認",
+      startSimulatedCheck: "シミュレーションの確認を始める",
       account: "アカウント",
       notSignedIn: "ログインしていません",
       signedInGoogle: "Google でログイン中",
@@ -218,6 +222,7 @@ const ja: Messages = {
       includeHuman: "人間確認も含める",
       addHuman: "人間確認を追加",
       worldIdOptional: "World ID · 任意",
+      simulatedOptional: "シミュレーション · 任意",
       checkNow: "今すぐ確認",
       privacy: "Mingle には、氏名、生年月日、証明書は渡りません。",
       proving: "証明を作成中…",

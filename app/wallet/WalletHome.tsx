@@ -24,7 +24,9 @@ import { useProviderSignOut } from "./_components/holderKey";
 import { humanLabel } from "./_components/humanLabel";
 import { describeShare, SharedList } from "./_components/SharedList";
 
-export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
+type Props = { worldId: Modes["worldId"]; prover: Modes["prover"] };
+
+export function WalletHome({ worldId, prover }: Props) {
   const { t } = useI18n();
   const home = t.wallet.home;
   const dialog = useRef<HTMLDialogElement>(null);
@@ -71,6 +73,8 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
   }
 
   const mingle = shares.find((share) => share.verifier === "Mingle");
+  // In simulated mode no World ID check runs, so the card must not offer one.
+  const simulated = worldId === "simulated";
 
   return (
     <main className="phone">
@@ -97,7 +101,7 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
           {home.proveOnMingle}
         </Link>
       )}
-      {loaded && shares.length > 0 && <SharedList shares={shares} />}
+      {loaded && shares.length > 0 && <SharedList shares={shares} prover={prover} />}
       {loaded && !wallet && (
         <div className="wallet-empty">
           {home.empty}
@@ -124,9 +128,9 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
           </div>
         ) : (
           <>
-            <p>{home.humanPitch}</p>
+            <p>{simulated ? home.humanPitchSimulated : home.humanPitch}</p>
             <Link className="btn btn-primary" href="/wallet/world-id?return=/wallet">
-              {home.verifyWorldId}
+              {simulated ? home.startSimulatedCheck : home.verifyWorldId}
             </Link>
           </>
         )}

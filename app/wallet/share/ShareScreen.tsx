@@ -229,7 +229,7 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
         <div className="human-consent is-missing">
           <span>
             <strong>{copy.addHuman}</strong>
-            <small>{copy.worldIdOptional}</small>
+            <small>{modes.worldId === "simulated" ? copy.simulatedOptional : copy.worldIdOptional}</small>
           </span>
           <Link className="check-now" href={`/wallet/world-id?return=${encodeURIComponent(here)}`}>
             {copy.checkNow}

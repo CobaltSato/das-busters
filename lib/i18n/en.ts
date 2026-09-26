@@ -137,10 +137,14 @@ const en = {
       sharedTitle: "Shared",
       provedOnDevice: "Proved on this phone",
       provedOnServer: "Proved on the server",
+      provedMock: "Mock proof · not a real proof",
       humanComplete: "Human check complete",
       humanPitch:
         "Add proof that a person passed a World ID check. It is not tied to this certificate yet. You choose each time whether to share it.",
+      humanPitchSimulated:
+        "Add a simulated human check. No World ID proof is made in this mode. You choose each time whether to share it.",
       verifyWorldId: "Verify with World ID",
+      startSimulatedCheck: "Start the simulated check",
       account: "Account",
       notSignedIn: "Not signed in",
       signedInGoogle: "Signed in with Google",
@@ -219,6 +223,7 @@ const en = {
       includeHuman: "Include human check",
       addHuman: "Add a human check",
       worldIdOptional: "World ID · optional",
+      simulatedOptional: "Simulated · optional",
       checkNow: "Check now",
       privacy: "Mingle won’t receive your name, date of birth or the certificate.",
       proving: "Creating proof…",
