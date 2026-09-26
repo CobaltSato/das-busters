@@ -103,7 +103,7 @@ UI は英語が既定です。ハブ、窓口画面、ウォレットのホー�
 | Sepolia でのオンチェーン検証 | 完了 |
 | Privy 経由の Google ログインと、埋め込みウォレットからの保有者鍵 | 完了 |
 | 英語と日本語の UI | 完了 |
-| World ID | 予定 |
+| World ID（IDKit 4、World ID Simulator を使う staging） | 完了 |
 
 ## イベント前に作ったもの
 

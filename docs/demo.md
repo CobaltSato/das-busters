@@ -26,7 +26,7 @@ flowchart LR
 
 **Language.** Everything starts in English. The `EN / 日本語` toggle is on the hub, the counter, every DAS Busters screen from pickup to sharing, and Mingle's profile and Settings. Adding `?lang=ja` to any URL also switches to Japanese. The counter's QR code carries its language to the phone, so switching the counter is enough.
 
-**Check before going on stage.** The hub (`/`) shows four mode badges. For the full demo they read `Sign-in: Google via Privy`, `Proof: Groth16` and `Recorded on Sepolia`. `Human check: simulated` is expected. See [Mode badges](#mode-badges) if any of them says mock or off-chain.
+**Check before going on stage.** The hub (`/`) shows four mode badges. For the full demo they read `Sign-in: Google via Privy`, `Proof: Groth16` and `Recorded on Sepolia`. `Human check: World ID staging` is expected until the Portal's staging window closes (see step 5); after that it falls back to `Human check: simulated`. See [Mode badges](#mode-badges) if any of them says mock or off-chain.
 
 ## The run
 
@@ -56,9 +56,10 @@ flowchart LR
 
 ### 5. Human check (optional)
 
-- **Do**: on the home screen, tap **Verify with World ID**, then **Open camera**. After five seconds, tap **Continue**.
-- **They see**: **Human check complete**, labelled as simulated.
-- **Say**: "This World ID check is simulated for the demo, and the app says so."
+- **Do**: on the home screen, tap **Verify with World ID**, then **Verify with World ID** again, then **Open in World ID Simulator**. In the Simulator tab, tap **Continue**. Switch back to DAS Busters and tap **Continue**.
+- **They see**: a QR code, then **Human check complete**: "World ID staging confirmed the request. The identity came from the Simulator, so this is a test, not a real person."
+- **Say**: "This is a real World ID request through IDKit, checked by World's Developer Portal. On staging the World ID Simulator stands in for World App, and the app says so. Mingle only learns that a unique human is behind the wallet."
+- **If it falls back**: the staging window lasts 24 hours. When it has closed, the hub shows `Human check: simulated` and this step opens the camera instead (five seconds, then **Continue**). To reopen it, run `npx tsx --env-file=.env.local scripts/world-staging.ts` and copy `WORLDID_STAGING_TOKEN` and `WORLDID_STAGING_EXPIRES_AT` to Vercel, then redeploy.
 
 ### 6. Mingle asks
 
@@ -136,4 +137,5 @@ Each integration has a real mode and a stand-in, chosen by the server. The badge
 | `Recorded on Sepolia` | The relayer records each verification in SingleProofRegistry |
 | `Verified off-chain` | Mingle checks the proof itself; nothing goes on-chain |
 | `Human check: simulated` | The camera opens for five seconds. No World ID proof is made. |
-| `Human check: World ID` | A real World ID check (not built yet) |
+| `Human check: World ID staging` | A World ID request through IDKit 4, approved in the World ID Simulator and verified by the Developer Portal |
+| `Human check: World ID` | The same with World App on production (not set up) |

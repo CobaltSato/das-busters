@@ -103,7 +103,7 @@ Live demo: https://single-proof.vercel.app
 | On-chain verification on Sepolia | done |
 | Google sign-in through Privy, holder key from the embedded wallet | done |
 | English and Japanese UI | done |
-| World ID | planned |
+| World ID (IDKit 4, staging with the World ID Simulator) | done |
 
 ## Made before the event
 
