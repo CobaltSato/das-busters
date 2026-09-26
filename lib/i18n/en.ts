@@ -167,7 +167,8 @@ const en = {
 
     google: {
       continueWith: "Continue with Google",
-      continueAs: (name: string) => `Continue as ${name}`,
+      saveCertificate: "Save certificate",
+      signedInAs: (name: string) => `Signed in with Google as ${name}`,
       connecting: "Connecting…",
       dialogLabel: "Sign in with Google",
       signingIn: "Signing in…",
@@ -188,13 +189,16 @@ const en = {
     },
 
     save: {
-      signedInAs: (name: string) => `Signed in as ${name}`,
-      signedIn: "Signed in",
       title: "Save to this device",
-      lede: ["Access and present your certificate", "anytime in DAS Busters."],
-      preparingKey: "Preparing your key…",
-      saving: "Saving…",
-      save: "Save certificate",
+      savingTitle: "Saving your certificate",
+      steps: {
+        account: "Signed in with Google",
+        key: "Your key",
+        keyDetail: "Made and kept on this phone",
+        issue: "City office signature",
+        issueDetail: "Bound to your key, so only you can use the certificate",
+      },
+      tryAgain: "Try again",
       finePrint: "Stored only on this device.",
       storeFailed: "This browser would not let us store the certificate. Turn off private browsing and try again.",
       keyTimeout: "Setting up your key took too long. Check your connection and try again.",

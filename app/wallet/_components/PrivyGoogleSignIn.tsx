@@ -90,12 +90,29 @@ export function PrivyGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
   const busy = !ready || state.status === "loading";
   const name = authenticated ? (user?.google?.name ?? user?.google?.email) : null;
 
+  // Already signed in (a second run, or back from Google before the page
+  // moved on): the next step is saving, so the button says that.
+  if (name && !busy) {
+    return (
+      <>
+        {error && <p className="error-banner">{error}</p>}
+        <button type="button" className="btn btn-primary" onClick={start}>
+          {g.saveCertificate}
+        </button>
+        <p className="signed-in-as">
+          <Image src="/brand/google-g.svg" alt="" width={14} height={14} />
+          {g.signedInAs(name)}
+        </p>
+      </>
+    );
+  }
+
   return (
     <>
       {error && <p className="error-banner">{error}</p>}
       <button type="button" className="google-button" onClick={start} disabled={busy}>
         <Image src="/brand/google-g.svg" alt="" width={20} height={20} />
-        <span>{busy ? g.connecting : name ? g.continueAs(name) : g.continueWith}</span>
+        <span>{busy ? g.connecting : g.continueWith}</span>
       </button>
     </>
   );

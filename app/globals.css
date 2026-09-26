@@ -653,3 +653,78 @@ body:has(.app-nav) .mingle {
 body:has(.app-nav) .counter {
   min-height: calc(100vh - var(--app-nav-h));
 }
+
+/* Step-by-step progress for work that takes a few seconds */
+
+.progress-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.progress-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.progress-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1.5px solid #d7d9df;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.progress-icon .spinner {
+  width: 24px;
+  height: 24px;
+}
+
+.is-active .progress-icon {
+  border: 0;
+}
+
+.is-done .progress-icon {
+  border-color: var(--green-bg);
+  background: var(--green-bg);
+  color: var(--green-ink);
+}
+
+.is-failed .progress-icon {
+  border-color: #fdecea;
+  background: #fdecea;
+  color: var(--alert);
+}
+
+.progress-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 2px;
+}
+
+.progress-text strong {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.is-todo .progress-text strong {
+  color: #9aa0a8;
+  font-weight: 500;
+}
+
+.progress-text small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 17px;
+}

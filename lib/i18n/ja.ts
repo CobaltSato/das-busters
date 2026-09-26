@@ -166,7 +166,8 @@ const ja: Messages = {
 
     google: {
       continueWith: "Google で続ける",
-      continueAs: (name) => `${name} として続ける`,
+      saveCertificate: "証明書を保存",
+      signedInAs: (name) => `Google で ${name} としてログインしています`,
       connecting: "接続中…",
       dialogLabel: "Google でログイン",
       signingIn: "ログイン中…",
@@ -187,13 +188,16 @@ const ja: Messages = {
     },
 
     save: {
-      signedInAs: (name) => `${name} としてログイン中`,
-      signedIn: "ログイン中",
       title: "この端末に保存",
-      lede: ["DAS Busters から、いつでも", "証明書を確認して提示できます。"],
-      preparingKey: "鍵を準備しています…",
-      saving: "保存中…",
-      save: "証明書を保存",
+      savingTitle: "証明書を保存しています",
+      steps: {
+        account: "Google でログイン済み",
+        key: "あなたの鍵",
+        keyDetail: "このスマホで作り、このスマホに置きます",
+        issue: "区役所の署名",
+        issueDetail: "あなたの鍵に結びつけるので、この証明書を使えるのはあなただけです",
+      },
+      tryAgain: "もう一度試す",
       finePrint: "この端末にだけ保存されます。",
       storeFailed: "このブラウザでは証明書を保存できませんでした。プライベートブラウズをオフにして、もう一度お試しください。",
       keyTimeout: "鍵の準備に時間がかかりすぎています。接続を確認して、もう一度お試しください。",

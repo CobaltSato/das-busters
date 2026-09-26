@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { useCreateWallet, usePrivy, useSignMessage, useWallets, type User } from "@privy-io/react-auth";
 import { randomField } from "@/lib/fields";
@@ -12,6 +13,10 @@ export type HolderStatus = "loading" | "ready" | "signed-out";
 type HolderSecretSource = { status: HolderStatus; create: () => Promise<string> };
 
 const SIGN_TIMEOUT_MS = 30_000;
+// The save screen signs as soon as the key is "ready". Give the embedded
+// wallet this long to load first; after it, signing still creates or finds
+// the wallet itself.
+const WALLET_WAIT_MS = 4_000;
 
 function useRandomSecret(): HolderSecretSource {
   return { status: "ready", create: async () => randomField() };
@@ -43,10 +48,24 @@ function withTimeout<T>(promise: Promise<T>, message: string): Promise<T> {
 function usePrivySecret(): HolderSecretSource {
   const { t } = useI18n();
   const { ready, authenticated, user } = usePrivy();
-  const { wallets } = useWallets();
+  const { wallets, ready: walletsReady } = useWallets();
   const { createWallet } = useCreateWallet();
   const { signMessage } = useSignMessage();
-  const status: HolderStatus = !ready ? "loading" : authenticated ? "ready" : "signed-out";
+  const [waited, setWaited] = useState(false);
+
+  useEffect(() => {
+    if (!ready || !authenticated || walletsReady) return;
+    const timer = setTimeout(() => setWaited(true), WALLET_WAIT_MS);
+    return () => clearTimeout(timer);
+  }, [ready, authenticated, walletsReady]);
+
+  const status: HolderStatus = !ready
+    ? "loading"
+    : !authenticated
+      ? "signed-out"
+      : walletsReady || waited
+        ? "ready"
+        : "loading";
 
   // The wallet is normally created at sign-in, but leaving the page early can
   // cut that short, so create it here if it is still missing.

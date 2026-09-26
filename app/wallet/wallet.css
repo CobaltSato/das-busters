@@ -8,13 +8,17 @@
   margin-top: 24px;
 }
 
-.signed-in {
+.signed-in-as {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 28px;
-  font-size: 14px;
-  font-weight: 500;
+  justify-content: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.wallet-card + .progress-steps {
+  margin-top: 24px;
 }
 
 .saved-hero {
