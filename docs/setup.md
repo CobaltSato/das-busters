@@ -27,7 +27,7 @@ Google sign-in works only on the origins above. A laptop address such as `http:/
 1. **Vercel**: add the new domain to the project, then set the old one to redirect to it.
 2. **Privy**: add the new origin to Allowed origins. Without it, sign-in fails before Google opens.
 3. **Google Cloud**: add the domain to Authorised domains and the origin to the client's JavaScript origins, and point the home page and privacy policy links at it.
-4. **Code**: `SITE_HOST` in `lib/i18n/how-it-works/links.ts`, both READMEs and both demo guides.
+4. **Code**: `SITE_HOST` in `lib/i18n/how-it-works/links.ts`, both READMEs, both technical docs (`docs/technical.md`, `docs/technical.ja.md`) and both demo guides.
 5. **GitHub**: point the repository homepage (the link in the About box) at the new URL: `gh repo edit CobaltSato/das-busters --homepage <new URL>`.
 6. World ID and Sepolia do not depend on the domain.
 7. Browser storage belongs to one origin. A certificate saved on the old URL does not show on the new one, so issue a new one.

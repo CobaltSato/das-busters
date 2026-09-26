@@ -13,7 +13,7 @@ An optional human check in the DAS Busters wallet, shared with the dating app Mi
 - A verified check comes back to the wallet as a token our server signs, and Mingle counts the check only with that token.
 - Staging only, with the World ID Simulator. Production is not set up.
 
-Why proof of human, and what Mingle receives, are in the [README](README.md#world-id).
+Why proof of human, and what Mingle receives, are in [docs/technical.md](docs/technical.md#world-id).
 
 ## Timeline
 

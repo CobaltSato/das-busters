@@ -10,7 +10,7 @@ export type PhaseId = (typeof PHASES)[number];
 
 type StepShape = { id: string; phase: PhaseId; from: ActorId; to: ActorId };
 
-// Mirrors the sequence diagram in README.md and the API routes it names.
+// Mirrors the sequence diagram in docs/technical.md and the API routes it names.
 // The proof is made on the phone by default, so both proving steps stay
 // there; the server fallback is described in the step's tech text.
 export const STEPS = [

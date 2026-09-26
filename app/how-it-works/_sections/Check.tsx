@@ -95,6 +95,7 @@ function Group({ title, links }: { title: string; links: LinkCard[] }) {
 export function Check({ copy, locale }: { copy: Copy; locale: Locale }) {
   const docs = {
     readme: DOC_LINKS.readme[locale],
+    technical: DOC_LINKS.technical[locale],
     demo: DOC_LINKS.demo[locale],
     aiUsage: DOC_LINKS.aiUsage[locale],
   };

@@ -1,0 +1,328 @@
+# 技術的な詳細
+
+[English](technical.md) | 日本語
+
+[README](../README.ja.md) に入りきらない詳しい話をまとめたページです。設計の理由、データの行き先、回路、レジストリ、セキュリティモデル、テスト、ローカルでの動かし方を書いています。英語版の [technical.md](technical.md) が正本です。コントラクトのアドレスは README の [Sepolia のコントラクト](../README.ja.md#sepolia-のコントラクト) にあります。
+
+## 3つの画面
+
+- 発行窓口（PC か iPad）。区役所の窓口画面に QR コードが出ます。読み取ると、区役所の署名が付いた独身証明書がスマホに入ります。
+- DAS Busters（スマホ）。証明書を保管するウォレットです。アプリに求められたら、何を証明するかを自分で選びます。独身であること（必須）、東京在住であること（任意）、30代であること（任意）の3つで、30代は1987〜1996年生まれという意味です。生まれ年そのものは隠れたままです。
+- Mingle（スマホ）。サンプルのマッチングアプリです。会員はプロフィールに住んでいる街と年齢を自分で書いていて、Mingle はその裏付けをウォレットに求めます（[lib/mingle.ts](../lib/mingle.ts)）。証明を検証してプロフィールに **✓ 独身証明済み** を出し、relayer が nullifier を Ethereum Sepolia に記録します。
+
+## ゼロ知識にした理由
+
+- 証明書のコピーを送ると、1つの事実を伝えるだけのために氏名、生年月日、本籍が渡ります。
+- 区役所がアプリごとに「独身です」と署名する方式だと、どのアプリを使っているかが区役所に知られます。署名した文面から、アプリをまたいで同じ人だと結びつけられるおそれもあります。
+- 選択的開示の付いた署名付き証明書（SD-JWT など）は他の項目を隠せます。それでも発行者の署名はどのアプリにも同じものが見えるので、そこから人を結びつけられます。「1987〜1996年生まれ」も、生年月日を見せずには示せません。
+
+ゼロ知識証明なら事実だけを示し、署名と値は隠したままです。nullifier もアプリごとに別になります。
+
+## ブロックチェーンを使う理由
+
+まず Mingle のサーバーが証明を確認し、早く答えを返して、失敗なら理由を出します。そのあとレジストリのコントラクトが公開の場でもう一度確認し、記録済みの nullifier を拒否します。「アプリごとに証明書1枚で1アカウント」を誰でも確かめられ、Mingle があとから記録を消すこともできません。限界は、scope をアプリが決めることです。レジストリは証明がどの scope で作られたかを見ないので、scope を変えたアプリには新しい nullifier が届きます。デモでは Mingle を開いたブラウザごとに epoch を乱数で決め、リセットすると決め直します。
+
+## マイナンバーカードでの独身証明との違い
+
+マッチングアプリのタップルは2025年4月から「かんたん独身証明」を提供しています。マイナンバーカードの券面から氏名、住所、性別を読んでアカウントと照合し、マイナポータル経由で戸籍から婚姻関係の情報を取る仕組みです（[デジタル庁](https://digital-agency-news.digital.go.jp/articles/2025-10-17)、[タップルの発表](https://www.cyberagent.co.jp/news/detail/id=31851)）。この方式だと、使ったアプリごとに、確認済みの本人情報と婚姻状況が並んで残ります。
+
+DAS Busters がアプリに渡すのは、確認済みの事実1つと、アプリごとに違う番号だけです。発行者は区役所の窓口でなくてもかまいません。デモの区役所の代わりにマイナポータルが証明書に署名しても、証明の側はそのまま使えます。
+
+## データの置き場所
+
+| 場所 | 置かれるもの |
+|---|---|
+| スマホ | 証明書と保有者鍵。証明もスマホが作る |
+| `/api/prove` | 古いブラウザやメモリ不足でスマホが作りきれなかったときだけ、その1回のための証明書と保有者鍵。ボタンにもそう出て、サーバーは何も保存しない |
+| Mingle | 「独身」という答え、本人が共有を選んだ項目、nullifier、区役所の公開鍵（どの区役所が署名したかがわかる） |
+| Sepolia のストレージ | nullifier |
+| Sepolia のイベントのログ | nullifier、scope hash、request hash |
+| Sepolia のトランザクションの入力 | 証明と10個の公開シグナル。中身は区役所の公開鍵と、共有を選んだときだけの東京のコード（13）と生まれ年の範囲 |
+
+氏名、生年月日、住所はチェーンに載りません。
+
+```mermaid
+flowchart LR
+  subgraph phone["スマホの DAS Busters"]
+    cert["証明書<br/>署名の対象：独身、生まれ年、居住地コード、<br/>発行日、保有者のコミットメント<br/>表示だけ：氏名"]
+    secret["保有者鍵<br/>Google に紐づくウォレットの署名から作る"]
+    prove["ブラウザの中の証明器<br/>snarkjs、Groth16"]
+  end
+  fallback["サーバーの /api/prove<br/>予備。何も保存しない"]
+  subgraph mingle["Mingle"]
+    seen["独身：はい<br/>東京在住と30代：選んだときだけ<br/>nullifier、区役所の公開鍵"]
+  end
+  subgraph chain["Sepolia"]
+    stored["保存するもの：nullifier<br/>イベントのログ：nullifier、scope hash、request hash"]
+  end
+  cert --> prove
+  secret --> prove
+  phone -.->|"スマホで作りきれないときだけ"| fallback
+  prove -- "証明と公開シグナル" --> mingle
+  mingle -- "relayer が record() を呼ぶ" --> chain
+```
+
+## 全体の流れ
+
+3つの画面は、Vercel 上の1つの Next.js アプリで動いています。API ルートが区役所、予備の証明サーバー、Mingle のバックエンドを兼ねています。これはデモのための近道で、次の節で説明します。
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant C as 発行窓口
+  participant W as DAS Busters（スマホ）
+  participant P as Privy（Google）
+  participant S as サーバー API
+  participant M as Mingle
+  participant R as SingleProofRegistry（Sepolia）
+
+  C->>S: POST /api/offer
+  S-->>C: 10分有効の offer トークン。QR は3分ごとに新しくなる
+  C-->>W: スマホで QR を読み取る
+  W->>P: Google で続ける
+  P-->>W: セッションと埋め込みウォレット
+  W->>W: 固定メッセージに署名し、ハッシュして保有者鍵を作る
+  W->>S: POST /api/credential。Poseidon(保有者鍵) だけを送る
+  S-->>W: EdDSA-Poseidon で署名した証明書
+  Note over W: 証明書と保有者鍵はスマホのストレージに残る
+  M->>S: POST /api/request。Mingle の epoch を送る
+  S-->>M: nonce、scope、求める項目を入れた request トークン
+  M->>W: 共有画面を開く
+  W->>W: 本人が共有する項目を選ぶ
+  W->>W: ブラウザの中で snarkjs が Groth16 の証明を作る
+  opt スマホで作りきれないとき
+    W->>S: POST /api/prove。証明書と保有者鍵を送る
+    S-->>W: 証明。サーバーは何も残さない
+  end
+  W->>S: POST /api/verify。証明と公開シグナル10個を送る
+  S->>S: シグナルがリクエストと合うか、区役所の鍵か、証明が正しいかを確認
+  S->>R: relayer が record(証明, 公開シグナル) を呼ぶ
+  R->>R: 区役所の鍵、nullifier 未使用、verifyProof を確認して nullifier を保存
+  R-->>S: receipt（サーバーは最大45秒待つ）
+  S-->>W: 署名付きの結果トークン
+  W->>M: 結果を持って Mingle に戻る
+  Note over M: 「独身証明済み」バッジ
+```
+
+## デモの構成と実運用の構成
+
+デモ用サーバーは発行者の EdDSA 署名鍵を `ISSUER_PRIVATE_KEY` に持っています。区役所、予備の証明サーバー、Mingle のバックエンドのトークンはどれも同じ `TOKEN_SECRET` で署名していて、1つの URL で流れ全体を動かせるようにしています。実運用では、この3者が1つの秘密を共有するほど互いを信頼することはありません。区役所の署名鍵をアプリのサーバーに置くこともありません。
+
+| 部分 | このデモ | 実運用での想定（設計のみで、作っていません） |
+|---|---|---|
+| 区役所（発行者） | デモ用サーバーの API ルート。署名鍵は Vercel の環境変数 | 市区町村が運用する。戸籍の全国システムやマイナポータルを通す形もありうる。署名鍵は役所自身のハードウェアセキュリティモジュール（HSM）から出さず、公開鍵を信頼できる発行者の一覧で公開する |
+| ウォレット（DAS Busters） | Mingle と同じサイトの Web ページ。証明書と保有者鍵はブラウザの localStorage に置く | 独立したアプリか別の origin。鍵はスマホの安全な保存領域に置く |
+| 証明器 | 既定はスマホ。スマホで作れないときだけデモ用サーバーが作る | スマホだけ |
+| Mingle の検証 | 同じサーバーの API ルート。トークンの秘密鍵を他の役割と共有 | Mingle 自身のバックエンドと鍵。scope はアプリごとに固定し、nullifier が変わらないようにする |
+| 記録 | Sepolia テストネット。手数料はデモ用サーバーの relayer が払う | 公開のメインネットか L2。トランザクションは Mingle（またはウォレット）が送る。コントラクトは、信頼できる発行者の一覧に照らして証明を確認する。そのとき集合への所属（たとえば区役所の鍵の Merkle root）として証明し、どの区役所かは明かさない |
+| 人間確認 | World ID の staging と Simulator | 本番の World ID（World App）。この証明に結びつけ、nullifier の重複も確認する |
+| 有効期限と失効 | 確認しない | Mingle が「この日以降の発行」を公開入力として求める。発行者は失効した証明書を公開する |
+
+## 証明の仕組み
+
+回路は [circuits/single_proof.circom](../circuits/single_proof.circom) で、制約は 9,921 個です。回路が確かめるのは次のことです。
+
+- 証明書の値と保有者のコミットメント Poseidon(保有者鍵) に対する、区役所の EdDSA-Poseidon 署名
+- 独身であること
+- 任意で、居住地と生まれ年の範囲
+
+出力は、保有者と検証者の scope ごとに決まる nullifier です。
+
+証明はブラウザの中で作ります。snarkjs と、サーバーと同じ回路のファイル（`single_proof.wasm` 2.7 MB、`single_proof.zkey` 5.0 MB）を使います（[lib/deviceProver.ts](../lib/deviceProver.ts)）。共有画面を開いた時点でダウンロードを始めます。PC の Chrome では、ファイルがキャッシュに入ったあとの証明そのものは1秒かかりませんでした。スマホではまだ測っていません。スマホで作りきれなければ、その1回だけ `/api/prove` が作り、ボタンは「このスマホでは作れませんでした。DAS Busters のサーバーで証明を作成中…」になります。独身でない、他人の証明書、書き換えた証明書など、ルールを満たさない入力はそのままエラーとして出し、サーバーではやり直しません。`PROVE_ON=server` にするとサーバーでの証明に戻ります。モックの証明は常にサーバーで作ります。
+
+Trusted setup は、両フェーズともローカルで1回ずつ contribution しただけです。イベント中は Hermez の ptau のミラーが 403 を返したためです（[circuits/build.sh](../circuits/build.sh)）。デモには足りますが、本番には使えません。PSE の Perpetual Powers of Tau は取得できるので、次はそちらに移します。
+
+```mermaid
+flowchart LR
+  subgraph private["非公開の入力。外に出ない"]
+    fields["isSingle, birthYear,<br/>residenceCode, issuedAt"]
+    hs["holderSecret"]
+    sig["署名 R8x, R8y, S"]
+  end
+  subgraph public["公開の入力"]
+    issuer["issuerAx, issuerAy"]
+    flags["revealResidence, revealAge"]
+    asks["expectedResidence,<br/>minBirthYear, maxBirthYear"]
+    ctx["scopeHash, requestHash"]
+  end
+  checks["回路が確かめること<br/>Poseidon(fields, Poseidon(holderSecret)) への署名<br/>isSingle = 1<br/>居住地が一致する（公開するときだけ）<br/>生まれ年が範囲内（公開するときだけ）<br/>公開しない項目は 0"]
+  out["出力：nullifierHash<br/>= Poseidon(holderSecret, scopeHash)"]
+  private --> checks
+  public --> checks
+  checks --> out
+```
+
+公開シグナルは `nullifierHash` が先頭で、そのあとに9個の公開入力が上の順で並びます。[lib/presentation.ts](../lib/presentation.ts) もレジストリもこの順番を前提にしています。同じ保有者なら、Mingle の同じ scope では nullifier も同じになります。レジストリはこれを使って、1枚の証明書での2つ目のアカウントを拒否します。`requestHash` は証明を Mingle のリクエスト1つに縛るので、別のリクエストには使い回せません。リクエストは使用済みにしていません（[セキュリティモデルと限界](#セキュリティモデルと限界)）。
+
+## レジストリ
+
+Mingle が証明を確認したあと、relayer が [SingleProofRegistry](../contracts/src/SingleProofRegistry.sol) の `record` を呼びます。レジストリは区役所の鍵と nullifier が未使用かを確認し、証明を検証して、nullifier だけを保存します。イベントには nullifier、scope hash、request hash を出します。
+
+```mermaid
+flowchart TD
+  call["record(a, b, c, publicSignals)"] --> k{"発行者の鍵が<br/>区役所の鍵と一致？"}
+  k -- いいえ --> e1["revert UntrustedIssuer"]
+  k -- はい --> n{"nullifier は使用済み？"}
+  n -- はい --> e2["revert NullifierAlreadyUsed"]
+  n -- いいえ --> v{"Groth16Verifier<br/>verifyProof()"}
+  v -- false --> e3["revert InvalidProof"]
+  v -- true --> ok["nullifier を保存<br/>SingleStatusVerified を emit"]
+```
+
+同じ nullifier で2回目の記録をすると revert するので、scope ごとに証明書1枚につき1アカウントになります。デモでは scope を決める epoch を Mingle のブラウザが持っているので、リセットすると新しくなります。本物の Mingle なら scope を固定します。
+
+revert したら、Mingle は失敗として画面に出します。オフチェーンの確認に切り替えるのは、Sepolia に届かない、relayer のテスト用 ETH が尽きたなど、revert 以外の理由で記録できなかったときだけで、そのときも画面にそう書きます。
+
+どちらのコントラクトも Sourcify で [contracts/src/](../contracts/src/) のソースと完全に一致しています。Blockscout では両方のソースが見られ、レジストリの `record` の呼び出しと `SingleStatusVerified` のイベントがデコードされて表示されます。Etherscan では同じ内容が16進数のまま表示されるので、読むときは Blockscout を使ってください。nullifier を自分で確かめるときは、イベントの最初の indexed topic を16進数か10進数で `used(uint256)` に渡します。`cast call` の例は README の [Sepolia のコントラクト](../README.ja.md#sepolia-のコントラクト) にあります。
+
+## World ID
+
+独身証明書で証明できるのは婚姻の状況です。1人が Google アカウントをいくつも使っているかどうかまではわかりません。アカウントごとに保有者鍵が変わるので、nullifier も変わります。しかもこのデモの窓口は、QR を読み取った人なら誰にでも証明書を渡します。World ID は「実在の人がこれを承認した」を足すために入れています。
+
+組み込みの経過、詰まった点、あると助かるものは [FEEDBACK.ja.md](../FEEDBACK.ja.md) に書きました。
+
+### proof of human を選んだ理由
+
+IDKit の `proofOfHuman` プリセットを使っています（[app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)）。婚姻の状況、居住地、年代は証明書が受け持つので、World ID に頼むのは「人であること」だけで済みます。proof of human はそれ以外、つまり名前も顔も ID 番号も渡しません。1人1アカウントのために、Orb に裏付けられた一意性がほしかったのです。セルフィーチェックは、World 自身の説明では中程度の保証です。デバイスのカメラで、その場に本人がいるか（liveness）と顔の類似を確かめて sybil スコアを返し、その判断はアプリに任されます（[World のドキュメント](https://docs.world.org/world-id/idkit/credentials)）。パスポートなどの書類系のクレデンシャルは、区役所の証明書と同じことを重ねて証明するうえに、利用者からもっと多くの情報を取ります。
+
+### Mingle が受け取るもの
+
+World ID の確認が通ると、私たちのサーバーが human トークンに署名します。人間確認を含めて共有すると、ウォレットがこのトークンを Mingle に送ります。Mingle のサーバーはトークンからこのアプリ用の World ID の nullifier を読めますが、残す結果に入るのは、人間確認が通ったこととその種類（World ID、World ID staging、シミュレーション）だけです（[app/api/verify/route.ts](../app/api/verify/route.ts)）。このデモでは、トークンに署名するサーバーが Mingle のバックエンドも兼ねています。
+
+### World ID を使わない場合
+
+人間確認は任意です。Simulator をキャンセルしても、確認自体を飛ばしても、共有は同じように動きます。Mingle には独身証明が出て、人間確認のバッジだけが付きません。この流れは [docs/demo.ja.md](demo.ja.md#5b-world-id-を使わない場合任意) にあります。
+
+### staging と本番
+
+このデプロイは World ID の staging で動いています。私たちのサーバーがリクエストに署名し（`/api/world-id/rp-context`）、結果を Developer Portal に転送します（`/api/world-id/verify`）。承認するのは World ID Simulator のテスト用 ID です。本番なら World App と実在の人になります。コードは `WORLDID_ENVIRONMENT` で切り替わりますが、本番の設定はしていません。どちらで動いたかは画面に出ます。
+
+### staging の窓
+
+Portal が Simulator の証明を受け付けるのは、24時間の staging 窓が開いているあいだだけです。いまの窓は **2026年9月27日 23:53 JST** に閉じます。そのあとはサーバーが人間確認をシミュレーションと表示し、ハブは `人間確認: シミュレーション` になり、人間確認は5秒だけカメラを開く代役に変わります。新しい窓の開き方は [docs/setup.ja.md](setup.ja.md#world-id-の-staging-窓) にあります。
+
+### いまの限界
+
+World ID の証明は、証明書にもゼロ知識証明にも結びついていません（リクエストに signal を入れていないため）。World ID の nullifier の重複も確認していません。いま言えるのは「ある人がこの World ID リクエストを承認した」までで、「1人が1アカウントを持っている」とは言えません。
+
+```mermaid
+sequenceDiagram
+  participant W as DAS Busters（スマホ）
+  participant S as 私たちのサーバー
+  participant Sim as World ID Simulator
+  participant P as World Developer Portal
+  W->>S: POST /api/world-id/rp-context
+  S-->>W: RP 鍵で署名したリクエスト
+  W->>Sim: IDKit のリクエスト（proofOfHuman）を画面の上に開く
+  Sim-->>W: テスト用 ID の証明
+  W->>S: POST /api/world-id/verify
+  S->>P: staging トークン付きで POST /api/v4/verify
+  P-->>S: 成功、nullifier、環境
+  S-->>W: 署名付きの human トークン（7日間）
+  Note over W: 次の共有で一緒に送る。Mingle の結果に残るのは「World ID staging」だけ
+```
+
+## セキュリティモデルと限界
+
+どの確認を誰が受け持っているか、まだ受け持っていないものは何かの一覧です。
+
+| ルール | 受け持つところ |
+|---|---|
+| 区役所がこの値とこの保有者のコミットメントに署名した | 回路（EdDSA-Poseidon） |
+| 署名した鍵が区役所の鍵である | Mingle の検証とレジストリ（`UntrustedIssuer`）。回路は鍵を公開入力として受け取るだけ |
+| 証明書が独身を示している | 回路（`isSingle === 1`） |
+| 証明している人が保有者鍵を持っている | 回路（コミットメントが署名の対象に入っている） |
+| 共有した居住地や生まれ年の範囲が、Mingle の求めたものと合う | 回路。値がリクエストと同じかは Mingle の検証が比べる |
+| 隠した項目は 0 で、開示フラグは 0 か 1 | 回路と Mingle の検証 |
+| 証明がこの Mingle のリクエストへの答えである | Mingle の検証（scope hash と request hash）。レジストリは証明を検証するだけで、scope は見ない |
+| 公開シグナルがどれもスカラー体の法（field modulus）未満である | snarkjs の `verify` と、生成した Solidity の検証器 |
+| nullifier は1回しか記録されない | レジストリ |
+| リクエストに答えられるのは1回だけ | まだ。リクエストは状態を持たないので、10分の有効期間内なら同じ証明がオフチェーンで再び通る。オンチェーンでは nullifier は1回しか記録されない |
+| 証明書が新しい | まだ。IBJ やユーブライドのような実際の確認先は、発行から3か月以内の証明書しか受け付けない。発行日はすでに署名の対象に入っているので、Mingle が「この日以降の発行」を公開入力として送る形にできる。そのためには回路の鍵を作り直してコントラクトをデプロイし直す必要があり、このデモには入れず次の段階とした |
+| 失効 | まだ。発行者が失効した証明書を公開する形になる |
+| アプリごとに scope を固定する | まだ。デモでは epoch を Mingle のブラウザが決めるので、リセットすると epoch も nullifier も新しくなる |
+| World ID をこの証明に結びつけ、重複を確認する | まだ。World ID の証明は証明書にもこの証明にも結びついておらず、nullifier の重複も確認していない |
+| 記録できるのは Mingle の relayer だけ | 制限していない。証明そのものが権限なので `record()` は誰でも呼べる。コピーされた未確定の呼び出しが先に入ると、私たちの relayer のトランザクションが revert し、Mingle はエラーを出す |
+
+実運用なら持たない、デモのための近道です。
+
+- 1つの `TOKEN_SECRET` で、offer、request、結果、人間確認のトークンを全部署名しています（[lib/token.ts](../lib/token.ts)）。
+- ウォレットと Mingle は同じ origin にあり、ブラウザの保存領域を共有しています。キーの接頭辞で分けているだけです（[lib/storage.ts](../lib/storage.ts)）。
+- 窓口は QR を読み取った人なら誰にでも健さんの証明書を渡します。本物の区役所なら、先に本人確認をします。
+- 予備のサーバー証明を使ったときは、その1回のあいだサーバーに証明書と保有者鍵が見えます。モックの証明はいつもサーバーで作ります。
+- Trusted setup は各フェーズ1回ずつのローカルの contribution です（[証明の仕組み](#証明の仕組み) を参照）。
+- 発行者の鍵は公開シグナルに入っています。区役所が1つなら新しくわかることはありませんが、発行する役所が増えると、どこの役所が発行したかがわかってしまいます。信頼できる鍵の集合への所属として証明すれば隠せます。
+- 回路は生まれ年を16ビットに収まるか確かめていますが、範囲の上下限は確かめていません。上下限が自分の求めた値と同じかは、Mingle の検証が確認しています。
+
+## 設計の判断
+
+実装を始める前に書いた計画は [docs/plan.md](plan.md) にあります。
+
+| 判断 | 理由 | 代償 |
+|---|---|---|
+| 証明はスマホで作り、`/api/prove` は使ったときにボタンに出る予備にする（[lib/deviceProver.ts](../lib/deviceProver.ts)、[app/wallet/share/ShareScreen.tsx](../app/wallet/share/ShareScreen.tsx)、[lib/modes.ts](../lib/modes.ts) の `PROVE_ON`） | 計画では、メンターの助言とイベント前のプロトタイプに合わせてサーバーで証明する予定だった。9月26日にブラウザの中へ移し、証明書と保有者鍵がスマホから出ないようにした | 7.7 MB のダウンロードが要る。スマホでの速さはまだ測っていない |
+| `nullifier = Poseidon(holderSecret, scopeHash)`（[lib/fields.ts](../lib/fields.ts)、[circuits/single_proof.circom](../circuits/single_proof.circom)） | 区役所が見るのは `Poseidon(holderSecret)` だけなので、区役所があなたの nullifier を計算して Mingle 上で探すことはできない。このデモでは予備の証明サーバーが同じサーバーで動くので、これが成り立つのはスマホで証明したときだけ | 証明するたびに保有者鍵が要る |
+| 一意性は `used[nullifierHash]` で判定する（[contracts/src/SingleProofRegistry.sol](../contracts/src/SingleProofRegistry.sol)） | Groth16 の証明は改変可能（malleable）なので、証明のハッシュでは一意にならない | scope が変わらない範囲でしか一意にならない |
+| 隠した項目は、回路でも Mingle の検証でも 0 に固定する（[lib/verifier.ts](../lib/verifier.ts)） | 隠した項目に、共有したように読める値を紛れ込ませられない | フラグ自体は公開なので、どの事実を共有したかはトランザクションから見える |
+| モードはすべてサーバーが env から決める（[lib/modes.ts](../lib/modes.ts)、[lib/prover.ts](../lib/prover.ts) の `verifyProof`） | Mingle の検証はサーバーが動かしている方式の証明しか受け付けないので、クライアントがモックに格下げできない | env が抜けるとモックになるので、ハブ、共有画面、Mingle にモードのバッジを出している |
+| revert は失敗として扱う（[lib/chain.ts](../lib/chain.ts)） | relayer は先に `record()` をシミュレーションし、revert（nullifier 使用済み、信頼していない発行者、無効な証明）はエラーとして利用者に出す。オフチェーンの確認に切り替えるのは RPC か relayer の問題のときだけで、画面にもそう出す | トランザクションを送る前に毎回シミュレーションを1回呼ぶ |
+| receipt を最大45秒待つ（[lib/chain.ts](../lib/chain.ts)） | 計画ではトランザクションのハッシュをすぐ返すつもりだった。待てば、あとで revert するトランザクションを「記録済み」と言わずに済む | 共有が Sepolia のブロック1つぶん遅くなる |
+| ガス代は relayer が払う（[docs/setup.ja.md](setup.ja.md#relayer-のガス代)） | 利用者は ETH が要らず、自分でトランザクションを送ることもない | 資金を入れたデモ用の鍵1つが全員の分を払う |
+| 保有者鍵は、Privy の埋め込みウォレットが固定のメッセージに署名した値の SHA-256 を31バイトに切ったもの（[lib/privy.ts](../lib/privy.ts)、[app/wallet/_components/holderKey.ts](../app/wallet/_components/holderKey.ts)） | シードフレーズを書き留める必要がなく、31バイトなら BN254 のスカラー体に収まる。署名が決定的でない場合に備えて、保存した値を正とする | 鍵が Privy と Google アカウントに依存する |
+| offer、request、結果、人間確認は、状態を持たない HS256 のトークンで受け渡す（[lib/token.ts](../lib/token.ts)） | Vercel 上でデータベースを持たずに済む | リクエストを使用済みにできない |
+
+イベント前のプロトタイプにあった穴です（[docs/plan.md](plan.md) の「プロトタイプの穴を繰り返さない」）。
+
+| プロトタイプ | いま |
+|---|---|
+| クライアントが `bypass:true` を送れば人間確認を飛ばせた | モードはサーバーが env から決める |
+| revert を「オフチェーンで成功」に丸めていた | revert はエラーにする。オフチェーンに切り替えるのは RPC か relayer の問題のときだけで、画面にもそう出す |
+| 発行者の seed をコミットしていた | リポジトリには公開鍵だけを置く（[lib/zk/issuer-public.json](../lib/zk/issuer-public.json)） |
+| 結果がリクエストに結びついていなかった | nonce で結びつける |
+| 256ビットの保有者鍵がスカラー体からはみ出していた | 31バイトにして BN254 のスカラー体に収める |
+| サーバーで証明しているのに、UI は端末から出ないと書いていた | 証明はスマホで作り、サーバーの予備を使ったときはボタンに出す |
+
+## テスト
+
+```sh
+npm test                                              # ユニットテストと回路のテスト
+npm run test:circuit                                  # 回路だけ。witness の段階での拒否と、1回の証明と検証
+git submodule update --init && npm run test:contracts # Foundry。本物の証明で動かす
+BASE_URL=https://das-busters.vercel.app npm run smoke # API を端から端まで。拒否のケースも含む
+```
+
+回路のテスト23件のうち13件は、回路そのものが入力を拒否することを確かめるもので、どの制約で落ちたかまで見ています（[scripts/circuit-test.ts](../scripts/circuit-test.ts)）。ほかに単体テスト24件（[scripts/unit-test.ts](../scripts/unit-test.ts)）、生成した本物の検証器と本物の証明で動く Foundry のテスト13件（[contracts/test/SingleProofRegistry.t.sol](../contracts/test/SingleProofRegistry.t.sol)）、API を端から端まで通すスモークテスト（[scripts/smoke.ts](../scripts/smoke.ts)）があります。`CHAIN_MODE=sepolia` のデプロイに smoke を流すと、Sepolia にトランザクションが1つ送られます。そのあと試す2回目はシミュレーションの段階で拒否されるので、送られません。
+
+| 攻撃 | 拒否するところ | テスト |
+|---|---|---|
+| 区役所が「独身でない」として署名した証明書 | 回路（`isSingle === 1`） | circuit-test.ts |
+| 生まれ年や居住地を書き換える | 回路（署名の確認） | circuit-test.ts、smoke の「an edited certificate cannot prove」（サーバーの証明器が署名を先に確認して拒否） |
+| 他人の証明書を使う（保有者鍵が違う） | 回路（保有者のコミットメントへの署名） | circuit-test.ts、smoke の「someone else's secret cannot prove」（証明器の事前確認で拒否） |
+| 証明書に署名していない発行者の鍵 | 回路 | circuit-test.ts |
+| 公開した範囲の外の生まれ年、公開した住所の食い違い | 回路 | circuit-test.ts |
+| 隠した項目に値を入れる、開示フラグを 2 にする | 回路と Mingle の検証 | circuit-test.ts、unit-test.ts |
+| 証明のあとで公開シグナルを変える | Groth16 の検証（オフチェーンとオンチェーン） | circuit-test.ts、`test_RevertWhen_DisclosedValueIsChanged`、smoke の「tampered signals are rejected」（Mingle のリクエスト照合で拒否） |
+| 本物の証明をモックの証明と偽る | Mingle の検証 | circuit-test.ts |
+| 証明の点を変える、または符号を反転する | Solidity の検証器（`InvalidProof`） | `test_RevertWhen_ProofPointIsChanged`、`test_RevertWhen_ProofPointIsNegated` |
+| 公開シグナルに法を足してスカラー体の外に出す（同じ証明書で別の nullifier を得るためなど） | Solidity の検証器（`checkField` で `InvalidProof`）。発行者の公開鍵はその前に `UntrustedIssuer` で止まる | `test_RevertWhen_NullifierIsPushedOutOfTheField`、`test_RevertWhen_AnySignalIsPushedOutOfTheField` |
+| 証明を別のリクエストや別の scope に使い回す | Mingle の検証（`wrong-request`）、レジストリは `verifyProof` を通して | smoke の「a proof cannot be replayed on another request」、`testFuzz_RevertWhen_RequestHashDiffers`、`testFuzz_RevertWhen_ScopeDiffers`（それぞれ fuzz を1,000回） |
+| 同じ証明書と同じ scope で2つ目のアカウントを作る | レジストリ（`NullifierAlreadyUsed`） | `test_RevertWhen_NullifierIsReused`、smoke の「one certificate backs one account per epoch」（Sepolia モードのときだけ） |
+| 失敗した試みで nullifier を使い切らせる | レジストリ（`verifyProof` のあとでしか保存しない） | `test_FailedAttemptDoesNotBurnTheNullifier` |
+| 信頼していない発行者の証明書 | Mingle の検証とレジストリ（`UntrustedIssuer`） | circuit-test.ts、`test_RevertWhen_IssuerIsNotTrusted` |
+| サーバーのトークンなしで World ID の確認を名乗る | `/api/verify` | smoke の「a World ID claim without the server's token is refused」 |
+| 偽の受け取り用 QR コード | `/api/credential` | smoke の「a fake QR code is rejected」 |
+
+## 言語
+
+UI は英語が既定です。ハブ、窓口、受け取りから共有までの DAS Busters の画面、Mingle のプロフィールと設定、しくみの説明、リセット、プライバシーポリシーのページに EN / 日本語 の切り替えがあります。選んだ言語は、そのブラウザのすべてのアプリに効きます。URL に `?lang=ja` を付けても日本語になり、窓口の QR コードは窓口の言語をスマホに引き継ぎます。
+
+## ローカルで動かす
+
+Node 22 以降が要ります。`npm install` のあと `npm run dev` を実行し、http://localhost:3000 を開いてください。`.env.local` がなければ連携はすべてモックで動き、ハブのバッジにもそう出ます（`ログイン: モック`、`証明: モック`、`オフチェーンで検証`、`人間確認: シミュレーション`）。キー名は [.env.example](../.env.example) にあります。
+
+- 本物の証明を使うときは、`TOKEN_SECRET` と `ISSUER_PRIVATE_KEY`（どちらも `openssl rand -hex 32` で作る）と `PROVER_MODE=groth16` を設定し、`ISSUER_PRIVATE_KEY=... npx tsx scripts/issuer-key.ts` を実行します。これで [lib/zk/issuer-public.json](../lib/zk/issuer-public.json) があなたの鍵に書き換わり、デプロイ済みのレジストリとも Foundry のフィクスチャとも合わなくなります。`CHAIN_MODE=off` のままにし、コントラクトのテストの前に `git checkout lib/zk/issuer-public.json` で元に戻してください。
+- コントラクトのテストは、`git submodule update --init` で forge-std を取ってから `npm run test:contracts` を実行します。
+- 同じ Wi-Fi のスマホからは `http://<PCのIP>:3000` で開けます。開発サーバーがすべてのインターフェースで待ち受けるためです。ただしそこでは Google ログインが動きません。そのアドレスは Privy の許可リストになく、http のページには `crypto.subtle` もないからです。LAN で試すときは `NEXT_PUBLIC_PRIVY_APP_ID` を空にしてください。
+- `circuits/build.sh` で回路を作り直すと setup もやり直しになり、新しい zkey ができます。デプロイ済みの検証器はその証明を受け付けません。`public/zk/`、`lib/zk/verification_key.json`、`contracts/src/Groth16Verifier.sol` も上書きされます。
+
+デプロイ、外部サービス（Vercel、Google Cloud、Privy、World ID）、relayer のガス代は [docs/setup.ja.md](setup.ja.md) にまとめています。
