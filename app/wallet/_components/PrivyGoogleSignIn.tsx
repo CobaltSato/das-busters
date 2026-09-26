@@ -16,7 +16,7 @@ function markPending(pending: boolean) {
     if (pending) window.sessionStorage.setItem(OAUTH_PENDING_KEY, "1");
     else window.sessionStorage.removeItem(OAUTH_PENDING_KEY);
   } catch {
-    // Without sessionStorage the user taps "Continue as …" instead.
+    // Without sessionStorage the user taps "Save certificate" instead.
   }
 }
 
