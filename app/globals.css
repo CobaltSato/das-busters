@@ -442,6 +442,18 @@ dd {
   list-style: none;
 }
 
+/* The start order sits right above the cards, so they follow closely. */
+.hub-start {
+  margin-top: 40px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.hub-start + .hub-apps {
+  margin-top: 14px;
+}
+
 .hub-card {
   display: flex;
   flex-direction: column;

@@ -16,7 +16,7 @@ export default async function SharePage({ searchParams }: Props) {
       <Problem
         title={p.noRequest}
         body={p.noRequestBody}
-        action={{ href: "/mingle", label: t.common.openMingle }}
+        action={{ href: "/mingle?screen=verification", label: t.common.openMingle }}
       />
     );
   }
@@ -33,7 +33,7 @@ export default async function SharePage({ searchParams }: Props) {
       <Problem
         title={error.reason === "expired" ? p.requestExpired : p.requestInvalid}
         body={p.requestRetry}
-        action={{ href: "/mingle", label: t.common.backToMingle }}
+        action={{ href: "/mingle?screen=verification", label: t.common.backToMingle }}
       />
     );
   }

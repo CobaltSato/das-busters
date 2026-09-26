@@ -7,7 +7,6 @@ import { BrandLockup } from "@/components/BrandLockup";
 import { CertificateCard } from "@/components/CertificateCard";
 import { useI18n } from "@/components/I18nProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { lookup, type Messages } from "@/lib/i18n";
 import type { Modes } from "@/lib/modes";
 import {
   humanStore,
@@ -23,17 +22,11 @@ import {
 import { errorMessage } from "@/lib/api";
 import { useProviderSignOut } from "./_components/holderKey";
 import { humanLabel } from "./_components/humanLabel";
+import { describeShare, SharedList } from "./_components/SharedList";
 
-function describeShare(t: Messages, share: ShareRecord): string {
-  const home = t.wallet.home;
-  const { residence, ageRange } = share.disclosed;
-  const extras = [residence && home.livesIn(lookup(t.places, residence)), ageRange && t.ageRange(ageRange)]
-    .filter(Boolean)
-    .join(home.listSeparator);
-  return extras ? home.sharedSingleWith(extras) : home.sharedSingle;
-}
+type Props = { worldId: Modes["worldId"]; prover: Modes["prover"] };
 
-export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
+export function WalletHome({ worldId, prover }: Props) {
   const { t } = useI18n();
   const home = t.wallet.home;
   const dialog = useRef<HTMLDialogElement>(null);
@@ -80,6 +73,8 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
   }
 
   const mingle = shares.find((share) => share.verifier === "Mingle");
+  // In simulated mode no World ID check runs, so the card must not offer one.
+  const simulated = worldId === "simulated";
 
   return (
     <main className="phone">
@@ -100,6 +95,13 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
 
       <h1 className="screen-title wallet-home-title">{home.title}</h1>
       {loaded && wallet && <CertificateCard certificate={wallet.credential} showTitle />}
+      {/* With a certificate and nothing shared yet, the next step is Mingle. */}
+      {loaded && wallet && shares.length === 0 && (
+        <Link className="btn btn-primary wallet-next" href="/mingle?screen=verification">
+          {home.proveOnMingle}
+        </Link>
+      )}
+      {loaded && shares.length > 0 && <SharedList shares={shares} prover={prover} />}
       {loaded && !wallet && (
         <div className="wallet-empty">
           {home.empty}
@@ -126,9 +128,9 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
           </div>
         ) : (
           <>
-            <p>{home.humanPitch}</p>
+            <p>{simulated ? home.humanPitchSimulated : home.humanPitch}</p>
             <Link className="btn btn-primary" href="/wallet/world-id?return=/wallet">
-              {home.verifyWorldId}
+              {simulated ? home.startSimulatedCheck : home.verifyWorldId}
             </Link>
           </>
         )}

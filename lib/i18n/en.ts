@@ -29,21 +29,22 @@ const en = {
   hub: {
     title: "DAS Busters demo",
     lede: "Prove you are single to a dating app without handing over your certificate.",
+    start: "Start at the counter. Scan its QR code with your phone, or continue on this computer.",
     apps: {
       counter: {
-        device: "Desktop / iPad",
+        device: "Step 1 · Laptop, iPad or this phone",
         title: "Issuing counter",
-        body: "The city office screen. It shows a QR code for picking up a Single Status Certificate.",
+        body: "The city office screen. Scan its QR code with your phone to pick up a Single Status Certificate.",
       },
       wallet: {
-        device: "Phone",
+        device: "Step 2 · Phone",
         title: "DAS Busters",
-        body: "Keeps the certificate on your phone and shares only the facts you choose.",
+        body: "Sign in with Google and save the certificate on your phone. When an app asks, you choose what to share.",
       },
       mingle: {
-        device: "Phone",
+        device: "Step 3 · Phone",
         title: "Mingle",
-        body: "A dating app that asks for proof of single status before showing the badge.",
+        body: "A dating app. It asks DAS Busters for proof that you are single, then shows a badge on your profile.",
       },
     },
   },
@@ -75,6 +76,7 @@ const en = {
     fullName: "Full name",
     dateOfBirth: "Date of birth",
     maritalStatus: "Marital status",
+    residence: "Residence",
     issuingAuthority: "Issuing authority",
     dateOfIssue: "Date of issue",
     issuedBy: (issuer: string) => `Issued by ${issuer}`,
@@ -91,11 +93,11 @@ const en = {
     demo: "Demo",
     qrLabel: "QR code for receiving a Single Status Certificate",
     qrFailed: "Could not draw the QR code. Reload the page.",
-    validFor: "Valid for 3 minutes",
-    refreshes: "The QR code refreshes automatically when it expires.",
+    validFor: "New code in",
+    refreshes: "A new code every 3 minutes. Each code works for 10 minutes after it appears.",
     issued: (when: string) => `Issued: ${when}`,
     system: "DAS Busters Digital Certificate Issuance System",
-    preview: "Open the phone flow on this device",
+    preview: "No phone? Continue on this computer",
     receiveHere: "Receive it on this phone",
   },
 
@@ -106,11 +108,11 @@ const en = {
         "Your certificate is handed over at the city office. Scan the QR code on the counter screen with your phone’s camera.",
       qrExpired: "This QR code has expired",
       qrInvalid: "This QR code is not valid",
-      qrRetry: "Ask the counter to show a new QR code, then scan it again.",
+      qrRetry: "The counter shows a new code every 3 minutes. Scan the one on its screen now.",
       nothingToSave: "Nothing to save yet",
       nothingToSaveBody: "Scan the QR code at the counter to receive your certificate first.",
       qrExpiredBody:
-        "The pickup QR code is valid for three minutes. Ask the counter for a new one and scan it again.",
+        "A pickup code works for 10 minutes after the counter shows it. Scan the code the counter shows now.",
       noCertificate: "No certificate on this phone",
       noCertificateBody:
         "Receive your Single Status Certificate at the city office counter first, then come back to Mingle.",
@@ -131,9 +133,18 @@ const en = {
       worldIdStaging: "World ID · staging (Simulator)",
       done: "Done",
       optional: "Optional",
+      proveOnMingle: "Prove it on Mingle →",
+      sharedTitle: "Shared",
+      provedOnDevice: "Proved on this phone",
+      provedOnServer: "Proved on the server",
+      provedMock: "Mock proof · not a real proof",
       humanComplete: "Human check complete",
-      humanPitch: "Show apps that a real, unique person holds this certificate. Sharing it is always up to you.",
+      humanPitch:
+        "Add proof that a person passed a World ID check. It is not tied to this certificate yet. You choose each time whether to share it.",
+      humanPitchSimulated:
+        "Add a simulated human check. No World ID proof is made in this mode. You choose each time whether to share it.",
       verifyWorldId: "Verify with World ID",
+      startSimulatedCheck: "Start the simulated check",
       account: "Account",
       notSignedIn: "Not signed in",
       signedInGoogle: "Signed in with Google",
@@ -171,6 +182,9 @@ const en = {
 
     receive: {
       title: ["Receive your", "certificate"],
+      sample: "Demo: every pickup issues the sample certificate of Ken Sato, a fictional resident.",
+      whySignIn:
+        "Signing in with Google makes a key that only you hold, so only you can use this certificate. You need no crypto and pay no fees.",
     },
 
     save: {
@@ -205,17 +219,21 @@ const en = {
       livesIn: (place: string) => `Lives in ${place}`,
       residenceSub: "Verified from residence information",
       ageRange: (range: string) => `Age range: ${range}`,
-      ageSub: "Verified from date of birth",
+      ageSub: (from: number, to: number) => `Checked from birth year (born ${from}–${to})`,
       includeHuman: "Include human check",
       addHuman: "Add a human check",
       worldIdOptional: "World ID · optional",
+      simulatedOptional: "Simulated · optional",
       checkNow: "Check now",
-      privacy: "Your name, date of birth, and original certificate won’t be shared.",
+      privacy: "Mingle won’t receive your name, date of birth or the certificate.",
       proving: "Creating proof…",
       provingDevice: "Creating proof on this phone…",
       provingServer: "This phone could not finish. Creating the proof on the DAS Busters server…",
       provedHere: "The proof is made on this phone.",
+      provedOnServer: "The DAS Busters server makes this proof from your certificate and holder key, and keeps neither.",
       recordingSepolia: "Recording on Sepolia…",
+      waitingBlock: "Waiting for a Sepolia block, usually 10–20 seconds. Keep this screen open.",
+      startMingleOver: "Start Mingle over",
       checkingWith: (verifier: string) => `Checking with ${verifier}…`,
       submit: "Share selected information",
     },
@@ -223,10 +241,12 @@ const en = {
     selfie: {
       storeFailed: "Could not save the result. Turn off private browsing and try again.",
       cameraFailed: "Camera access was not available. Allow camera access and try again.",
+      cameraTimeout: "The camera did not open within 10 seconds. Try again, or complete the check without the camera.",
+      skipCamera: "Complete without camera (simulated)",
       complete: "Human check complete",
       completeBody: "Simulated for the demo. No World ID verification was performed.",
       title: "Human check",
-      subtitle: "World ID Selfie Check · simulated",
+      subtitle: "Human check · simulated",
       lookAtCamera: "Look at the camera",
       ready: "Ready for a quick camera check?",
       closesSoon: "The camera closes by itself in five seconds.",
@@ -242,7 +262,7 @@ const en = {
       title: "Human check",
       subtitle: "World ID",
       subtitleStaging: "World ID · staging",
-      intro: "Show apps that a real, unique person holds this wallet. World ID shares no name, face or ID number.",
+      intro: "World ID shows that a person approved this request. It shares no name, face or ID number.",
       introStaging:
         "This demo uses World ID staging. You approve the request in the World ID Simulator, which stands in for World App with a test identity.",
       start: "Verify with World ID",
@@ -269,7 +289,7 @@ const en = {
       tryAgain: "Try again",
       cancel: "Cancel",
       complete: "Human check complete",
-      completeBody: "World ID confirmed that a unique person approved this request.",
+      completeBody: "World ID confirmed that a person approved this request.",
       completeBodyStaging:
         "World ID staging confirmed the request. The identity came from the Simulator, so this is a test, not a real person.",
       storeFailed: "Could not save the result. Turn off private browsing and try again.",
@@ -349,7 +369,7 @@ const en = {
     title: "Privacy policy",
     updated: "Last updated 26 September 2026",
     intro:
-      "DAS Busters is a demo built at ETHGlobal Tokyo 2026. The certificate, the city office and Mingle are fictional. Please do not upload real personal documents.",
+      "DAS Busters is a demo built at ETHGlobal Tokyo 2026. The certificate and Mingle are made up, and the city office screen only borrows the name Shibuya City for the demo. Please do not upload real personal documents.",
     privyLink: "Privy's privacy policy",
     contactLink: "Open an issue on GitHub",
     sections: {
@@ -359,15 +379,19 @@ const en = {
       },
       certificate: {
         heading: "Certificate and holder key",
-        body: "The demo certificate and your holder key are stored only in this browser. The server reads the certificate for a single proving request and does not keep it.",
+        body: "The demo certificate and your holder key are stored only in this browser, and the proof is made on your phone. The DAS Busters server receives the certificate and holder key only when your phone cannot make the proof, or when the demo runs with mock or server-side proofs. It uses them for that one request and keeps nothing.",
       },
       shared: {
         heading: "What Mingle and the blockchain receive",
-        body: "Mingle receives only that you are single, anything else you choose to share, and a nullifier. The nullifier is recorded on the Ethereum Sepolia test network, which is public and cannot be erased. It does not contain your name, birth date or address.",
+        body: "Mingle receives that you are single, anything else you choose to share, an anonymous number made for Mingle only (a nullifier), and the public key of the city office that signed your certificate, which shows which office issued it. When the demo records on-chain, a transaction on the Ethereum Sepolia test network carries the proof, that number and the city office's public key, plus the Tokyo code and the birth-year range if you chose to share them. Sepolia is public and cannot be erased. Your name, birth date and address never go on-chain.",
+      },
+      worldId: {
+        heading: "World ID",
+        body: "When the human check uses World ID, IDKit passes the request to World App or the World ID Simulator, and World's Developer Portal checks the answer. World receives the World ID proof for that request, not your name, photo or certificate. DAS Busters keeps the result in this browser; our server does not store it.",
       },
       camera: {
         heading: "Camera",
-        body: "The human check opens the front camera for five seconds. Nothing is uploaded or saved.",
+        body: "The simulated human check opens the front camera for five seconds. Nothing is uploaded or saved. This site does not open the camera for the World ID check.",
       },
       hosting: {
         heading: "Hosting and cookies",
@@ -387,7 +411,7 @@ const en = {
   reset: {
     title: "Reset demo",
     lede: "Clears DAS Busters and Mingle on this device: the saved certificate, the human check, the share history and Mingle's verification.",
-    note: "Google stays signed in. Proofs already recorded on Sepolia stay there, and Mingle starts a new epoch, so the next proof gets a new nullifier.",
+    note: "Google stays signed in, and proofs already recorded on Sepolia stay there. Mingle starts afresh, so your next proof carries a new anonymous number and is accepted again.",
     done: "Reset. Scan the counter's QR code to start the next run.",
     button: "Reset demo",
     openCounter: "Open the counter",

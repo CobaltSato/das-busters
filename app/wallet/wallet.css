@@ -242,6 +242,10 @@
   font-weight: 600;
 }
 
+.wallet-next {
+  margin-top: 18px;
+}
+
 .human-card {
   margin-top: 18px;
   padding: 22px 20px;
@@ -330,6 +334,42 @@
 .human-done small {
   color: #517565;
   font-size: 10px;
+}
+
+/* Home: what this wallet has shared */
+
+.shared-list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shared-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 0;
+  border-top: 1px solid #eceef1;
+  font-size: 13px;
+  line-height: 19px;
+}
+
+.shared-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.shared-head strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.shared-head time,
+.shared-list small {
+  color: var(--muted);
+  font-size: 11px;
 }
 
 /* Account dialog */
