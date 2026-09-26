@@ -198,7 +198,7 @@ const referenceEn = {
     next: [
       "Checking how recent the certificate is. Agencies accept only certificates issued in the last three months; the issue date is signed but not checked yet",
       "Revocation: the city office publishing withdrawn certificates",
-      "Running the proof system's one-time setup with many independent people{{ (a multi-party trusted setup, starting from the PSE Perpetual Powers of Tau)}}",
+      "A multi-party trusted setup, starting from the PSE Perpetual Powers of Tau",
       "A World ID check tied to the certificate, with repeat World IDs refused",
       "A real city office key and a real family-register lookup",
       "Separate servers and keys for the city office and Mingle (see Architecture)",

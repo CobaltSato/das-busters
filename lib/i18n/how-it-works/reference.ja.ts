@@ -194,7 +194,7 @@ const referenceJa: ReferenceCopy = {
     next: [
       "証明書がいつ発行されたかの確認。結婚相談所は発行から3か月以内のものしか受け付けない。発行日は署名済みだが、まだ確かめていない",
       "失効。区役所が取り消した証明書を公開するしくみ",
-      "証明のしくみの初期設定を、独立した大勢の参加者で行う{{（multi-party trusted setup。まず PSE の Perpetual Powers of Tau を使う）}}",
+      "独立した大勢の参加者で行う trusted setup（まず PSE の Perpetual Powers of Tau を使う）",
       "証明書と結びついた World ID の確認と、同じ World ID の重複の拒否",
       "本物の区役所の鍵と、本物の戸籍の照会",
       "区役所と Mingle で別々のサーバーと鍵（「全体の構成」を参照）",

@@ -59,11 +59,11 @@ const storyEn = {
       },
       proof: {
         title: "A proof shows one line",
-        body: "Your phone keeps the signed certificate and makes a zero-knowledge proof: maths that says “the city office signed that I'm single”, and nothing else. Mingle gets only the proof.",
+        body: "Your phone keeps the signed certificate and makes a zero-knowledge proof of one statement: “the city office signed that I'm single”. Mingle gets only the proof.",
       },
       record: {
         title: "The chain keeps one number",
-        body: "A program on Sepolia, Ethereum's public test network, checks the proof again and stores one anonymous number, so the same certificate can't back a second Mingle account.",
+        body: "A contract on Sepolia checks the proof again and stores one anonymous number, so the same certificate can't back a second Mingle account.",
       },
     },
     pitchNote: "The proof is made on your phone. If a phone can't finish, our server makes that one proof, keeps nothing, and the screen says so.",
@@ -293,7 +293,7 @@ const storyEn = {
         label: "sign in",
         arrow: "Continue with Google",
         title: "Ken signs in with Google",
-        body: "Privy signs him in and gives his account a wallet, a key that can sign.",
+        body: "Privy signs him in and creates an embedded wallet for his account.",
         tech: "Privy OAuth, Google only. The embedded wallet is created on first sign-in.",
         data: "Google sign-in. Nothing about the certificate.",
       },
@@ -309,7 +309,7 @@ const storyEn = {
         label: "key fingerprint",
         arrow: "Poseidon(secret)",
         title: "The phone asks for the certificate",
-        body: "It sends the ticket and a fingerprint (hash) of the secret key, never the key itself.",
+        body: "It sends the ticket and a hash of the secret key, never the key itself.",
         tech: "POST /api/credential { offer, holderCommitment = Poseidon(holderSecret) }",
         data: "The ticket and one hash.",
       },
@@ -447,12 +447,12 @@ const storyEn = {
       rows: [
         {
           part: "City office (issuer)",
-          demo: "Part of the demo server. The signing key is a Vercel environment variable, a setting on the server.",
-          real: "Run by the municipality, or through the national family-register system or Mynaportal, the government's online portal. The signing key never leaves the office's own key-safe hardware{{ (an HSM)}}, and its public key is published in a list of trusted issuers.",
+          demo: "Part of the demo server. The signing key is a Vercel environment variable.",
+          real: "Run by the municipality, or through the national family-register system or Mynaportal, the government's online portal. The signing key never leaves the office's own HSM, and its public key is published in a list of trusted issuers.",
         },
         {
           part: "Wallet (DAS Busters)",
-          demo: "Web pages on the same site as Mingle. The certificate and secret key sit in the browser's storage{{ (localStorage)}}.",
+          demo: "Web pages on the same site as Mingle. The certificate and secret key sit in the browser's localStorage.",
           real: "Its own app or website. Keys in the phone's secure storage.",
         },
         {
@@ -468,11 +468,11 @@ const storyEn = {
         {
           part: "Recording",
           demo: "Sepolia test network. The demo server's wallet pays the fee.",
-          real: "A public main network, or a cheaper network built on Ethereum (a layer 2). Mingle, or the wallet, sends the transaction. The contract checks that the issuer is on the trusted list without learning which city it is{{ (a set-membership proof, for example against a Merkle root of city keys)}}.",
+          real: "A public mainnet or an Ethereum layer 2. Mingle, or the wallet, sends the transaction. The contract checks that the issuer is on the trusted list without learning which city it is{{ (a set-membership proof, for example against a Merkle root of city keys)}}.",
         },
         {
           part: "Human check",
-          demo: "World ID's test environment (staging), with the World ID Simulator standing in for World App. Simulated when staging is off.",
+          demo: "World ID staging, with the World ID Simulator standing in for World App. Simulated when staging is off.",
           real: "World ID in production (World App), bound to this proof, with its nullifier checked for repeats.",
         },
         {
