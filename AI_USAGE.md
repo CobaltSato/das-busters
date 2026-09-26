@@ -29,6 +29,8 @@ About the skills:
 | Demo hub and placeholder routes | `app/` | Generated from our screen designs |
 | API and mock prover | `app/api/`, `lib/` | Generated from the data flow in the plan |
 | Screens | `app/counter/`, `app/wallet/`, `app/mingle/`, `components/` | Generated from our Figma designs |
+| Circuit and setup | `circuits/`, `public/zk/`, `lib/zk/` | Generated from the rules in the plan; the build script is based on pitfalls from our pre-event spike |
+| Groth16 prover, EdDSA issuer | `lib/prover.ts`, `lib/groth16.ts`, `lib/issuer.ts` | Generated |
 | Smoke test | `scripts/smoke.ts` | Generated, including the refusal cases |
 | Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md` | Drafted; we edited |
 

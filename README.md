@@ -29,8 +29,8 @@ Live demo: https://single-proof.vercel.app
 |---|---|
 | Demo hub and routes | done |
 | Screens and full flow with a mock prover | done |
-| Zero-knowledge proof | in progress |
-| On-chain verification on Sepolia | planned |
+| Zero-knowledge proof (circom, Groth16, proved on the server) | done |
+| On-chain verification on Sepolia | next |
 | Google sign-in through Privy | planned |
 | World ID | planned |
 
@@ -44,6 +44,17 @@ The ETHGlobal rules ask us to separate earlier work from event work. This existe
 - **Brand assets**: the DAS Busters logo, the Mingle icon and the sample profile photo.
 
 None of the earlier code is in this repository. We used the mockups as the visual reference. Everything in this repository was written during the event.
+
+## How the proof works
+
+- **Circuit**: [circuits/single_proof.circom](circuits/single_proof.circom), 9,921 constraints.
+- **What it checks**
+  - The city office's EdDSA-Poseidon signature over the certificate and the holder's commitment.
+  - Single status.
+  - Optionally, residence and a birth-year range.
+- **What it outputs**: a nullifier per holder and verifier scope.
+- **Where the proof is made**: currently on the server (`/api/prove`, about 1 to 4 seconds on Vercel). The phone sends its certificate for that one request; nothing is stored. Moving the prover onto the phone is the next step for privacy.
+- **Trusted setup**: one local contribution, because the public ptau mirrors were unavailable. This is fine for a demo, not for production.
 
 ## AI usage
 
