@@ -98,10 +98,11 @@ flowchart LR
 
 ### 10. Sepolia のエクスプローラーで見る
 
-- **操作**：**Sepolia に記録済み（ブロック …） ↗** を押す。Etherscan でトランザクションが開きます。続けてアドレスバーの `sepolia.etherscan.io` を `eth-sepolia.blockscout.com` に書き換えます（`/tx/…` のパスはそのまま）。
-- **見えるもの**：Etherscan では呼び出しが `0x93f984ee`、ログが生の topic のまま表示されます。ソースを検証済みの Blockscout では、SingleProofRegistry の `record` の呼び出しと、`nullifierHash`、`scopeHash`、`requestHash` の入った `SingleStatusVerified` イベントが1つ見えます。
+- **操作**：**Sepolia に記録済み（ブロック …） ↗** を押す。ソースを検証済みの Blockscout で、トランザクションのログが開きます。上にバナーが出ていたら、スクロールして飛ばします。
+- **見えるもの**：「… called `record` on SingleProofRegistry」と、`nullifierHash`、`scopeHash`、`requestHash` の入った `SingleStatusVerified` イベントが1つ、読める形で見えます。`nullifierHash` は10進数で、先頭の数字が Mingle の匿名の番号と同じです。
+- **Blockscout が遅いとき**：アドレスバーのホストを `sepolia.etherscan.io` に書き換え（`/tx/…` のパスはそのまま）、Logs タブを開きます。Etherscan でも同じトランザクションが見えますが、呼び出しは `0x93f984ee`、ログは16進の topic のまま表示されます。
 - **話すこと**：「チェーンに残るのは nullifier 1つです。氏名も生年月日もありません。」
-- **質問されたら**：トランザクションの入力には、証明と公開シグナルが入っています。東京の住所コードと生まれ年の範囲がそこに出るのは、健さんが共有を選んだときだけです。Mingle に出ている番号と見比べるときは、topic を10進数で表示してください。
+- **質問されたら**：トランザクションの入力には、証明と公開シグナルが入っています。東京の住所コードと生まれ年の範囲がそこに出るのは、健さんが共有を選んだときだけです。Etherscan で Mingle に出ている番号と見比べるときは、topic を10進数で表示してください。
 
 ### 11. 同じ証明書でもう一度（任意）
 

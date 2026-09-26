@@ -389,7 +389,7 @@ const storyJa: StoryCopy = {
         arrow: "Mingle に戻る",
         title: "Mingle がバッジを出す",
         body: "Mingle は結果が自分のリクエストへの答えだと確かめ、「独身証明済み」を表示します。",
-        tech: "/mingle?result=… はサーバーで確認し、nonce が Mingle の保存した値と一致する必要があります。Etherscan へのリンクは「本人確認と証明」の画面にあります。",
+        tech: "/mingle?result=… はサーバーで確認し、nonce が Mingle の保存した値と一致する必要があります。Blockscout へのリンクは「本人確認と証明」の画面にあります。",
         data: "Mingle に残るのは、独身であること、選んだ事実、nullifier、区役所の公開鍵。",
       },
     },

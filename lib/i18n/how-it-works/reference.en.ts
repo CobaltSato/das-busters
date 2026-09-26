@@ -103,7 +103,7 @@ const referenceEn = {
         proofRevert: "revert InvalidProof",
         ok: "Store the nullifier, emit SingleStatusVerified",
       },
-      rule: "A revert is shown as a failure. If recording fails for any other reason, such as Sepolia being unreachable or the relayer running out of test ETH, Mingle keeps its off-chain result and says “Off-chain by Mingle”, with no Etherscan link.",
+      rule: "A revert is shown as a failure. If recording fails for any other reason, such as Sepolia being unreachable or the relayer running out of test ETH, Mingle keeps its off-chain result and says “Off-chain by Mingle”, with no explorer link.",
     },
     tokens: {
       title: "Tokens and replay protection",
@@ -292,7 +292,7 @@ const referenceEn = {
     recipe: [
       "Laptop: open the hub and click Issuing counter. Phone: scan the QR code and save the certificate. Any Google account works.",
       "Phone: open Mingle, tap Identity & verification, then Verify with DAS Busters, and share.",
-      "When the badge appears, tap Recorded on Sepolia to open the transaction. For a readable view, open the registry on Blockscout (link above): it shows each record call and its event decoded. Etherscan shows the same data as raw hex.",
+      "When the badge appears, tap What Mingle received, then Recorded on Sepolia. The transaction opens on Blockscout, which shows the record call and its SingleStatusVerified event decoded. Etherscan shows the same data as raw hex.",
       "The event holds three numbers: the nullifier, and which app asked and which request, both hashed{{ (SingleStatusVerified: nullifierHash, scopeHash, requestHash)}}. No name, no birth date.",
       "Go back to Choose what to share and share again. Same certificate, same nullifier, so the contract refuses it and Mingle shows an error.",
     ],
@@ -478,7 +478,7 @@ const referenceEn = {
             id: "sepolia",
             q: "Why Sepolia and not Ethereum mainnet?",
             a: "It is a public test network, so the demo is free and anyone can inspect it.",
-            d: "The RPC URL and the registry address come from the environment, but the code knows only Sepolia and a local chain today, and the Etherscan link is fixed to Sepolia. Moving to another chain such as World Chain means adding that chain, then redeploying the plain-Solidity contracts.",
+            d: "The RPC URL and the registry address come from the environment, but the code knows only Sepolia and a local chain today, and the explorer link is fixed to Sepolia. Moving to another chain such as World Chain means adding that chain, then redeploying the plain-Solidity contracts.",
           },
           {
             id: "before",

@@ -398,7 +398,7 @@ const storyEn = {
         arrow: "back to Mingle",
         title: "Mingle shows the badge",
         body: "Mingle checks the result answers its own request and shows “Single status verified”.",
-        tech: "/mingle?result=… is checked on the server, and its nonce must equal the one Mingle saved. Identity & verification links to the transaction on Etherscan.",
+        tech: "/mingle?result=… is checked on the server, and its nonce must equal the one Mingle saved. Identity & verification links to the transaction on Blockscout.",
         data: "What Mingle keeps: single yes, the facts you chose, the nullifier, the city office key.",
       },
     } satisfies Record<StepId, StepCopy>,

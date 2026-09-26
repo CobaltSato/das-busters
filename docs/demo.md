@@ -98,10 +98,11 @@ Use this instead of step 5 to show that the human check is optional.
 
 ### 10. On the Sepolia explorer
 
-- **Do**: tap **Recorded on Sepolia, block … ↗**. It opens the transaction on Etherscan. Then change `sepolia.etherscan.io` in the address bar to `eth-sepolia.blockscout.com` (the path `/tx/…` stays the same).
-- **They see**: Etherscan shows the call as `0x93f984ee` and the log as raw topics. Blockscout, where the source is verified, shows a `record` call to SingleProofRegistry and one `SingleStatusVerified` event with `nullifierHash`, `scopeHash` and `requestHash`.
+- **Do**: tap **Recorded on Sepolia, block … ↗**. It opens the transaction's logs on Blockscout, where the source is verified. If a banner sits at the top, scroll past it.
+- **They see**: "… called `record` on SingleProofRegistry" and one decoded `SingleStatusVerified` event with `nullifierHash`, `scopeHash` and `requestHash`. `nullifierHash` is in decimal and starts with the same digits as Mingle's anonymous number.
+- **If Blockscout is slow**: change the host in the address bar to `sepolia.etherscan.io` (the path `/tx/…` stays the same) and open its Logs tab. Etherscan shows the same transaction, but the call as `0x93f984ee` and the log as raw hex topics.
 - **Say**: "The chain stores one nullifier. No name, no birth date."
-- **If asked**: the transaction input carries the proof and its public signals. The Tokyo code and the birth-year range appear there only when Ken chose to share them. To compare the nullifier with Mingle's, show the topic in decimal.
+- **If asked**: the transaction input carries the proof and its public signals. The Tokyo code and the birth-year range appear there only when Ken chose to share them. On Etherscan, show the topic in decimal to compare the nullifier with Mingle's.
 
 ### 11. Same certificate again (optional)
 

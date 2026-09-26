@@ -42,7 +42,9 @@ export function TxStatus({ txHash }: { txHash: string }) {
     };
   }, [txHash]);
 
-  const link = `https://sepolia.etherscan.io/tx/${txHash}`;
+  // Blockscout has the contracts' source, so its logs tab shows the event
+  // decoded; Etherscan would show raw hex.
+  const link = `https://eth-sepolia.blockscout.com/tx/${txHash}?tab=logs`;
   const label =
     state.status === "confirmed"
       ? t.tx.recorded(state.blockNumber ?? "")
@@ -53,7 +55,7 @@ export function TxStatus({ txHash }: { txHash: string }) {
           : t.tx.recording;
   return (
     <a href={link} target="_blank" rel="noreferrer">
-      {label} ↗
+      {label}{"\u00a0"}↗
     </a>
   );
 }

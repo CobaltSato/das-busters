@@ -99,7 +99,7 @@ const referenceJa: ReferenceCopy = {
         proofRevert: "revert InvalidProof",
         ok: "nullifier を保存し、SingleStatusVerified を emit",
       },
-      rule: "revert は失敗として表示します。Sepolia に接続できない、relayer のテスト用 ETH が尽きたなど、それ以外の理由で記録できなかったときは、Mingle はオフチェーンの検証結果を使い、「Mingle がオフチェーンで検証」と表示して、Etherscan のリンクは出しません。",
+      rule: "revert は失敗として表示します。Sepolia に接続できない、relayer のテスト用 ETH が尽きたなど、それ以外の理由で記録できなかったときは、Mingle はオフチェーンの検証結果を使い、「Mingle がオフチェーンで検証」と表示して、エクスプローラーのリンクは出しません。",
     },
     tokens: {
       title: "トークンとリプレイ対策",
@@ -288,7 +288,7 @@ const referenceJa: ReferenceCopy = {
     recipe: [
       "PC でハブを開き「発行窓口」を押します。スマホで QR コードを読み、証明書を保存します。Google アカウントはどれでも使えます。",
       "スマホで Mingle を開き、「本人確認と証明」から「DAS Busters で確認」へ進んで共有します。",
-      "バッジが出たら「Sepolia に記録済み」を押すと、トランザクションが開きます。読める形で見るには、上のリンクから Blockscout でレジストリを開きます。record の呼び出しとイベントが読める形で出ます。Etherscan では同じ内容が16進のまま表示されます。",
+      "バッジが出たら「Mingle が受け取った情報」から「Sepolia に記録済み」を押します。Blockscout でトランザクションが開き、record の呼び出しと SingleStatusVerified イベントが読める形で出ます。Etherscan では同じ内容が16進のまま表示されます。",
       "イベントに入っている数は3つだけです。nullifier と、どのアプリのどのリクエストかを表す2つのハッシュです{{（SingleStatusVerified の nullifierHash、scopeHash、requestHash）}}。氏名も生年月日もありません。",
       "戻るボタンで「共有する情報を選ぶ」に戻り、もう一度共有します。同じ証明書なら nullifier も同じなので、コントラクトが拒否して Mingle にエラーが出ます。",
     ],
@@ -474,7 +474,7 @@ const referenceJa: ReferenceCopy = {
             id: "sepolia",
             q: "なぜ Ethereum のメインネットではなく Sepolia なのですか？",
             a: "公開のテストネットなので、デモが無料で、誰でも中身を確かめられるからです。",
-            d: "RPC とレジストリのアドレスは環境変数から読みますが、コードが知っているチェーンは今のところ Sepolia とローカルだけで、Etherscan のリンクも Sepolia 固定です。World Chain のような別のチェーンに移すには、そのチェーンを追加してから、普通の Solidity のコントラクトをデプロイし直します。",
+            d: "RPC とレジストリのアドレスは環境変数から読みますが、コードが知っているチェーンは今のところ Sepolia とローカルだけで、エクスプローラーのリンクも Sepolia 固定です。World Chain のような別のチェーンに移すには、そのチェーンを追加してから、普通の Solidity のコントラクトをデプロイし直します。",
           },
           {
             id: "before",
