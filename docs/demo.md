@@ -93,7 +93,7 @@ Use this instead of step 5 to show that the human check is optional.
 ### 9. What Mingle received
 
 - **Do**: on Mingle's profile, tap **What Mingle received ›**.
-- **They see**: **What Mingle received**: single status, plus Tokyo or 30s if shared and the human check if included, a short anonymous number for Mingle (the nullifier), a **Signed by** row reading **City office (its public key)**, and how it was checked (**Zero-knowledge (Groth16)**, **Recorded on Sepolia, block …**). Below it, **What Mingle did not receive**: no name, birth date, address, certificate or Google account.
+- **They see**: **What Mingle received**: single status, plus Tokyo or 30s if shared, the human check (**None** if not included), a short anonymous number for Mingle (the nullifier), a **Signed by** row reading **City office (its public key)**, and how it was checked (**Zero-knowledge (Groth16)**, **Recorded on Sepolia, block …**). Below it, **What Mingle did not receive**: no name, birth date, address, certificate or Google account.
 - **Say**: "This is everything Mingle holds about Ken's certificate."
 
 ### 10. On the Sepolia explorer

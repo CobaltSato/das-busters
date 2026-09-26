@@ -209,12 +209,11 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
             <dd>✓ {t.ageRange(ageRange)}</dd>
           </div>
         )}
-        {human && (
-          <div>
-            <dt>{p.human}</dt>
-            <dd>{p.humanMethod[human]}</dd>
-          </div>
-        )}
+        {/* Always shown, so a share without the human check reads "None" here. */}
+        <div>
+          <dt>{p.human}</dt>
+          <dd>{human ? p.humanMethod[human] : p.humanNone}</dd>
+        </div>
         <div>
           <dt>{p.nullifier}</dt>
           <dd>

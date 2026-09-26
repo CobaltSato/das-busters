@@ -357,10 +357,11 @@ const en = {
       offChain: "Off-chain by Mingle",
       human: "Human check",
       humanMethod: {
-        worldId: "World ID, with an anonymous World ID number",
-        staging: "World ID staging (Simulator identity), with an anonymous World ID number",
+        worldId: "World ID, checked by World's Developer Portal",
+        staging: "World ID staging (Simulator test identity), checked by World's Developer Portal",
         simulated: "Simulated for the demo",
       },
+      humanNone: "None",
       nullifier: "Anonymous number for Mingle",
       issuer: "Signed by",
       issuerKey: "City office (its public key)",

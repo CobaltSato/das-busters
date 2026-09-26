@@ -355,10 +355,11 @@ const ja: Messages = {
       offChain: "Mingle がオフチェーンで検証",
       human: "人間確認",
       humanMethod: {
-        worldId: "World ID（World ID の匿名の番号つき）",
-        staging: "World ID staging（Simulator のテスト用 ID。World ID の匿名の番号つき）",
+        worldId: "World ID（World の Developer Portal で確認済み）",
+        staging: "World ID staging（Simulator のテスト用 ID。World の Developer Portal で確認済み）",
         simulated: "デモ用のシミュレーション",
       },
+      humanNone: "なし",
       nullifier: "Mingle 用の匿名の番号",
       issuer: "発行元",
       issuerKey: "区役所（公開鍵）",
