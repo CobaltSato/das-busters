@@ -1,11 +1,11 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import { CounterScreen } from "./CounterScreen";
+import "./counter.css";
 
-export default function Page() {
-  return (
-    <main className="placeholder">
-      <h1>Issuing counter</h1>
-      <p>This screen is being built.</p>
-      <Link href="/">Back to demo hub</Link>
-    </main>
-  );
+export const metadata: Metadata = {
+  title: "Certificate pickup · Shibuya City",
+};
+
+export default function CounterPage() {
+  return <CounterScreen />;
 }
