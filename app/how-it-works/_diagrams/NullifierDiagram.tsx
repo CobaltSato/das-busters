@@ -1,7 +1,8 @@
 import type { StoryCopy } from "@/lib/i18n/how-it-works/story.en";
 
-// Three rows build up one after another: Mingle twice (same number, the
-// second is refused) and another app (a different number). The numbers are
+// Three rows: Mingle twice (same number, the second is refused) and another
+// app (a different number). The first row always shows; the other two
+// brighten in turn (diagrams.css), so the picture is never blank. The numbers are
 // illustrative, shortened the way Mingle shows them; real ones are
 // decimal field elements of about 77 digits.
 

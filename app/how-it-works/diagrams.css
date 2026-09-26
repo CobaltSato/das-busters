@@ -221,20 +221,21 @@
   fill: var(--green-ink);
 }
 
+/* The inputs slide towards the circuit and fade to faint, and the outputs
+   brighten from faint: every label stays readable, so the picture is never
+   just the black box. */
 @keyframes hiw-zk-in {
   0%,
   10% {
     opacity: 1;
     transform: translateX(0);
   }
-  26% {
-    opacity: 0;
-    transform: translateX(28px);
+  26%,
+  80% {
+    opacity: 0.3;
+    transform: translateX(12px);
   }
-  90% {
-    opacity: 0;
-    transform: translateX(0);
-  }
+  92%,
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -258,29 +259,25 @@
 @keyframes hiw-zk-out {
   0%,
   38% {
-    opacity: 0;
-    transform: translateX(-16px);
+    opacity: 0.25;
   }
   48%,
   86% {
     opacity: 1;
-    transform: translateX(0);
   }
   94%,
   100% {
-    opacity: 0;
-    transform: translateX(0);
+    opacity: 0.25;
   }
 }
 
 /* Nullifier */
 
-.hiw-n-row {
+/* The first row is always there, so the picture is never empty. Rows 2
+   and 3 brighten in turn from faint and fade back to faint. */
+.hiw-n-row.is-row2,
+.hiw-n-row.is-row3 {
   animation: 8s ease-out infinite both;
-}
-
-.hiw-n-row.is-row1 {
-  animation-name: hiw-n-row1;
 }
 
 .hiw-n-row.is-row2 {
@@ -356,56 +353,33 @@
   fill: var(--hiw-leak-bg);
 }
 
-@keyframes hiw-n-row1 {
-  0% {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  6%,
-  88% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  96%,
-  100% {
-    opacity: 0;
-    transform: translateY(0);
-  }
-}
-
 @keyframes hiw-n-row2 {
   0%,
-  24% {
-    opacity: 0;
-    transform: translateY(6px);
+  18% {
+    opacity: 0.2;
   }
-  30%,
+  28%,
   88% {
     opacity: 1;
-    transform: translateY(0);
   }
   96%,
   100% {
-    opacity: 0;
-    transform: translateY(0);
+    opacity: 0.2;
   }
 }
 
 @keyframes hiw-n-row3 {
   0%,
-  48% {
-    opacity: 0;
-    transform: translateY(6px);
+  42% {
+    opacity: 0.2;
   }
-  54%,
+  52%,
   88% {
     opacity: 1;
-    transform: translateY(0);
   }
   96%,
   100% {
-    opacity: 0;
-    transform: translateY(0);
+    opacity: 0.2;
   }
 }
 
