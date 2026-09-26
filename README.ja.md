@@ -349,7 +349,7 @@ Foundry のテストは [contracts/test/SingleProofRegistry.t.sol](contracts/tes
 - すべての画面が英語と日本語に対応しています。
 - ユニット、回路、コントラクト、端から端までの smoke のテストがあります（上の一覧）。
 
-まだ作っていないもの：有効期限と失効の確認、多人数での trusted setup、アプリごとの固定の scope、World ID と証明の結びつけ、役割ごとに分けた鍵、本物の区役所の鍵と戸籍の照会。イベント前に書いた実装計画は [docs/plan.md](docs/plan.md) にあります。
+まだ作っていないもの：有効期限と失効の確認、多人数での trusted setup、アプリごとの固定の scope、World ID と証明の結びつけ、役割ごとに分けた鍵、本物の区役所の鍵と戸籍の照会。実装を始める前に書いた計画は [docs/plan.md](docs/plan.md) にあります。
 
 ## 言語
 

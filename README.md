@@ -349,7 +349,7 @@ On the live demo, [das-busters.vercel.app](https://das-busters.vercel.app):
 - Every screen is in English and Japanese.
 - Unit, circuit, contract and end-to-end smoke tests, listed above.
 
-Not built yet: the freshness and revocation checks, a multi-party trusted setup, a fixed scope per app, binding World ID to the proof, separate keys per party, and a real city office key with a real family-register lookup. The build plan written before the event is in [docs/plan.md](docs/plan.md) (Japanese).
+Not built yet: the freshness and revocation checks, a multi-party trusted setup, a fixed scope per app, binding World ID to the proof, separate keys per party, and a real city office key with a real family-register lookup. The build plan we wrote before building is in [docs/plan.md](docs/plan.md) (Japanese).
 
 ## Language
 
