@@ -471,3 +471,57 @@ dd {
   margin-top: 32px;
   justify-content: flex-start;
 }
+
+.hub-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hub-reset {
+  display: inline-block;
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Language toggle */
+
+.lang-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #ffffff;
+}
+
+.lang-toggle button {
+  min-width: 36px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.lang-toggle button[aria-pressed="true"] {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.lang-toggle[aria-busy="true"] {
+  opacity: 0.6;
+}
+
+.phone-top-side {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

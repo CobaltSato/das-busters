@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
+import { I18nProvider } from "@/components/I18nProvider";
+import { getLocale, getMessages } from "@/lib/i18n/server";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -9,11 +11,14 @@ const manrope = Manrope({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "DAS Busters",
-  description: "Show a dating app that you are single, and nothing else.",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getMessages();
+  return {
+    title: "DAS Busters",
+    description: t.meta.description,
+    robots: { index: false, follow: false },
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -22,10 +27,13 @@ export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
   return (
-    <html lang="en" className={manrope.variable}>
-      <body>{children}</body>
+    <html lang={locale} className={manrope.variable}>
+      <body>
+        <I18nProvider locale={locale}>{children}</I18nProvider>
+      </body>
     </html>
   );
 }
