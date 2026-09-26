@@ -187,3 +187,5 @@ npm run dev
 ```
 
 Open http://localhost:3000. The dev server listens on all interfaces, so a phone on the same Wi-Fi can open `http://<your-ip>:3000`.
+
+Deployment, the outside services (Vercel, Google Cloud, Privy, World ID) and the relayer's gas are covered in [docs/setup.md](docs/setup.md).

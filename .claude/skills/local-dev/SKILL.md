@@ -16,6 +16,7 @@ description: DAS Busters をローカルで起動する、Vercel にデプロイ
 - GitHub の main に push すると、本番に出る。
 - env の追加は `npx vercel env add <NAME> production`。追加したあとは再デプロイが必要。
 - `NEXT_PUBLIC_` 付きの env はビルド時に埋め込まれるので、値を変えたら必ず再ビルドする。
+- 外部サービス（Google Cloud、Privy、World ID）の設定、URL を変えるときの手順、World ID の staging 窓の延長、relayer のガス補充は `docs/setup.ja.md` にある。
 
 ## デモ前のチェック
 

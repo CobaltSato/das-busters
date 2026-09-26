@@ -42,7 +42,8 @@ About the skills:
 | World ID (IDKit 4) | `lib/worldid.ts`, `app/api/world-id/`, `app/wallet/world-id/`, `scripts/world-staging.ts` | Generated. Claude Code also set up the Developer Portal app and action through Claude in Chrome and ran the first test against the World ID Simulator; the team created the Portal account and API key |
 | Privacy policy page | `app/privacy/` | Drafted from what the code actually stores; needed to open Google sign-in to any account |
 | How-it-works explainer | `app/how-it-works/`, `lib/i18n/how-it-works/` | Drafted from the code, the circuit, the contract and the README diagrams, then fact-checked against the code; the team asked for a page that explains the app from the basics and prepares answers for judges |
-| Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md`, `docs/demo.md` | Drafted, including the Mermaid diagrams in the README (checked against the circuit, the contract and the API routes); we edited |
+| Move to das-busters.vercel.app | Vercel domains, Google Cloud and Privy settings, `docs/setup.md` | Claude Code added the domain and the redirect with the Vercel CLI and updated Google Cloud and Privy through Claude in Chrome; the team chose the new URL |
+| Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md`, `docs/demo.md`, `docs/setup.md` | Drafted, including the Mermaid diagrams in the README (checked against the circuit, the contract and the API routes); we edited |
 
 ## What the team did
 

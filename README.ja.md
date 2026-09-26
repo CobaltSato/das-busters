@@ -187,3 +187,5 @@ npm run dev
 ```
 
 http://localhost:3000 を開いてください。開発サーバーはすべてのネットワークインターフェースで待ち受けるので、同じ Wi-Fi のスマホから `http://<PCのIP>:3000` で開けます。
+
+デプロイ、外部サービス（Vercel、Google Cloud、Privy、World ID）、relayer のガス代は [docs/setup.ja.md](docs/setup.ja.md) にまとめています。

@@ -59,7 +59,7 @@ flowchart LR
 - **操作**: ホームで **World ID で確認** を押し、もう一度 **World ID で確認する** を押す。画面の上に World ID Simulator が開くので **Continue** を押す。Presented と出ると自動で閉じるので、**続ける** を押す。
 - **見えるもの**: Simulator のあとに **人間確認が完了しました**。「World ID の staging 環境で確認しました。Simulator のテスト用 ID なので、実在の人の確認ではありません。」と出ます。
 - **話すこと**: 「IDKit から出した本物の World ID リクエストを、World の Developer Portal が検証しています。staging では World App の代わりに World ID Simulator を使い、画面にもそう書いてあります。Mingle が知るのは、ウォレットの向こうにいるのが一人の人間だということだけです。」
-- **戻ってしまったとき**: staging 窓口は24時間で閉じます。閉じるとハブに `人間確認: シミュレーション` と出て、この手順はカメラを開く流れに変わります（5秒待って **続ける**）。開き直すには `npx tsx --env-file=.env.local scripts/world-staging.ts` を実行し、`WORLDID_STAGING_TOKEN` と `WORLDID_STAGING_EXPIRES_AT` を Vercel にコピーして再デプロイします。
+- **戻ってしまったとき**: staging 窓口は24時間で閉じます。閉じるとハブに `人間確認: シミュレーション` と出て、この手順はカメラを開く流れに変わります（5秒待って **続ける**）。開き直すには `npx tsx --env-file=.env.local scripts/world-staging.ts` を実行し、`WORLDID_STAGING_TOKEN` と `WORLDID_STAGING_EXPIRES_AT` を Vercel にコピーして再デプロイします。コマンドは [setup.ja.md](setup.ja.md#world-id-の-staging-窓) にあります。
 
 ### 6. Mingle が確認を求める
 
