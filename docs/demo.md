@@ -136,7 +136,9 @@ One reset clears both apps on the phone: the certificate, the human check, the s
 
 **The proof is slow on the phone.** The wallet home starts downloading the circuit files (7.7 MB) once the human check is done, and the share screen starts them if the home did not. Doing step 5 on stage Wi-Fi gives the download a head start. If the phone cannot finish, the server makes the proof and the first step says so (step 8).
 
-**Sepolia is slow.** The **Waiting for a Sepolia block** count can reach about 45 seconds. If the block has not arrived by then, Mingle shows its result with the note "Sepolia has not confirmed the transaction yet. The link shows its status." The link text changes to **Recorded on Sepolia, block …** once the block lands.
+**This request has expired.** Mingle's request lasts 10 minutes from **Verify with DAS Busters**. If the share screen says so, tap **Back to Mingle**, then **Verify with DAS Busters** again.
+
+**Sepolia is slow.** The **Waiting for a Sepolia block** count can reach about 45 seconds. If the block has not arrived by then, Mingle shows its result with the note "Sepolia has not confirmed the transaction yet. The link shows its status." The link text changes to **Recorded on Sepolia, block …** once the block lands. Until Mingle answers, the share screen hides **Cancel** and the back arrow, because leaving would not stop the recording. They come back if the share fails.
 
 **Sepolia is unreachable, or the relayer is out of test ETH.** Mingle still checks the proof, and says it did so off-chain: Checked shows **Off-chain by Mingle**, with a note saying why. There is no transaction link. Say this on stage; don't present it as on-chain. The relayer's balance is in [setup.md](setup.md#relayer-gas).
 
