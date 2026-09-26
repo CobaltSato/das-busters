@@ -4,7 +4,7 @@
 
 DAS は Dating App Scam（マッチングアプリ詐欺）の略です。DAS Busters を使うと、マッチングアプリに「独身であること」だけを見せられます。氏名も生年月日も本籍も見せません。
 
-ETHGlobal Tokyo 2026 で作りました。英語版の [README.md](README.md) が正本で、このページはその日本語訳です。[デモ](https://das-busters.vercel.app) · [図で見るしくみ](https://das-busters.vercel.app/how-it-works)（右上で日本語に切り替え） · [デモの手順](docs/demo.ja.md) · [技術的な詳細](docs/technical.ja.md)
+ETHGlobal Tokyo 2026 で作りました。英語版の [README.md](README.md) が正本で、このページはその日本語訳です。[デモ](https://das-busters.vercel.app/?lang=ja) · [図で見るしくみ](https://das-busters.vercel.app/how-it-works?lang=ja) · [デモの手順](docs/demo.ja.md) · [技術的な詳細](docs/technical.ja.md)
 
 ## 問題
 
@@ -63,7 +63,7 @@ API ルートとサーバーでの予備の証明まで入れた全体の流れ�
 
 どの Google アカウントでも使えます。インストールは要りません。
 
-1. [das-busters.vercel.app](https://das-busters.vercel.app) を開き、**発行窓口** を押します。
+1. [das-busters.vercel.app](https://das-busters.vercel.app/?lang=ja) を開き、**発行窓口** を押します。
 2. QR コードの下で、PC なら **スマホがない場合は、このパソコンで続ける** を、スマホなら **このスマホで受け取る** を押します。2台で試すときは、PC の QR コードをスマホのカメラで読み取り、そのままスマホで続けます。
 3. **Google で続ける**、**証明書を保存** の順に押します。
 4. **Mingle で独身証明を使う** を押し、Mingle で **DAS Busters で確認**、**続ける** の順に押します。
@@ -71,7 +71,7 @@ API ルートとサーバーでの予備の証明まで入れた全体の流れ�
 6. Mingle のプロフィールで **Mingle が受け取った情報 ›** を押すと、Mingle が受け取ったもの、受け取っていないもの、Sepolia のトランザクションへのリンクが出ます。
 
 - 人間確認は任意です。DAS Busters のホームの **World ID で確認** から始めます。World ID の staging 環境で World ID Simulator を使うので、World App は要りません。
-- やり直すときは [/reset](https://das-busters.vercel.app/reset) を開きます。
+- やり直すときは [/reset](https://das-busters.vercel.app/reset?lang=ja) を開きます。
 - どの画面も英語と日本語に対応しています。EN / 日本語 の切り替えか `?lang=ja` で日本語になります。
 - 手順を順に書いた台本と、うまくいかないときの対処は [docs/demo.ja.md](docs/demo.ja.md) にあります。
 

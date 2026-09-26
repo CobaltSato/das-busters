@@ -12,7 +12,7 @@ In Japan, the city office that keeps your family register issues a Single Status
 
 Users want the check: in a 2024 Tapple survey of 5,429 users, 83.8% of men and 97.4% of women wanted some proof that the other person is single ([Digital Agency](https://digital-agency-news.digital.go.jp/articles/2025-10-17)). Of the 5,645 social-media romance scams the National Police Agency counted in 2025, 1,846 (32.7%) started on a matching app, more than on any other channel ([NPA](https://www.npa.go.jp/bureau/safetylife/sos47/new-topics/260605/01.html)).
 
-Japan already has a digital check: Tapple's かんたん独身証明 reads marital status through Mynaportal, but Tapple then keeps your verified identity alongside your marital status ([more](docs/technical.md#japans-digital-route)).
+Japan already has a digital check: Tapple's かんたん独身証明 reads marital status through Mynaportal, but Tapple then keeps your verified identity alongside your marital status ([more](docs/technical.md#compared-with-the-my-number-card-check)).
 
 ## How it works
 
