@@ -1,0 +1,57 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+type Status = { status: "pending" | "confirmed" | "reverted"; blockNumber?: string };
+
+const POLL_MS = 3000;
+const MAX_POLLS = 40;
+
+// Polls /api/tx until the relayer's transaction lands on Sepolia.
+export function TxStatus({ txHash }: { txHash: string }) {
+  const [state, setState] = useState<Status>({ status: "pending" });
+  const [gaveUp, setGaveUp] = useState(false);
+
+  useEffect(() => {
+    let polls = 0;
+    let timer: number | undefined;
+    let active = true;
+    async function poll() {
+      polls += 1;
+      try {
+        const res = await fetch(`/api/tx?hash=${txHash}`);
+        const data = (await res.json()) as Status;
+        if (!active) return;
+        if (res.ok) setState(data);
+        if (res.ok && data.status !== "pending") return;
+      } catch {
+        // Network blip: try again on the next tick.
+      }
+      if (polls >= MAX_POLLS) {
+        setGaveUp(true);
+        return;
+      }
+      timer = window.setTimeout(poll, POLL_MS);
+    }
+    poll();
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [txHash]);
+
+  const link = `https://sepolia.etherscan.io/tx/${txHash}`;
+  const label =
+    state.status === "confirmed"
+      ? `Recorded on Sepolia, block ${state.blockNumber}`
+      : state.status === "reverted"
+        ? "Sepolia transaction failed"
+        : gaveUp
+          ? "Sent to Sepolia"
+          : "Recording on Sepolia…";
+  return (
+    <a href={link} target="_blank" rel="noreferrer">
+      {label} ↗
+    </a>
+  );
+}

@@ -56,6 +56,20 @@ async function main() {
   check("mingle verifies the proof", verified.status === 200 && verified.data.result?.disclosed?.residence === "Tokyo", verified.data.error);
   check("result is signed for mingle", typeof verified.data.resultToken === "string");
 
+  const chain = verified.data.result?.chain;
+  console.log(`      chain=${chain} tx=${verified.data.result?.txHash ?? "-"}`);
+  if (chain === "sepolia") {
+    // Same holder, same Mingle epoch: the registry must refuse a second account.
+    const again = await post("/api/request", { epoch });
+    const proof2 = await post("/api/prove", { request: again.data.request, credential, holderSecret: secret, disclose });
+    const second = await post("/api/verify", {
+      request: again.data.request,
+      presentation: proof2.data.presentation,
+      humanCheck: null,
+    });
+    check("one certificate backs one account per epoch", second.status === 422, second.data.error);
+  }
+
   const stranger = await post("/api/prove", { request: req.data.request, credential, holderSecret: randomField(), disclose });
   check("someone else's secret cannot prove", stranger.status === 422, stranger.data.error);
 

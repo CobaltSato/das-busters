@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { recordOnChain } from "@/lib/chain";
 import { errorResponse } from "@/lib/http";
 import type { VerificationResult } from "@/lib/presentation";
 import { ProofError } from "@/lib/errors";
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
     if (!(await verifyProof(body.presentation))) {
       throw new ProofError("The proof did not verify");
     }
+    const onChain = await recordOnChain(body.presentation);
     const result: VerificationResult = {
       nonce: presentationRequest.nonce,
       verifiedAt: new Date().toISOString(),
@@ -27,9 +29,9 @@ export async function POST(request: Request) {
       humanCheck: body.humanCheck,
       nullifierHash: body.presentation.publicSignals.nullifierHash,
       prover: body.presentation.prover,
-      // On-chain recording arrives in Phase 3; until then say so plainly.
-      chain: "off",
-      txHash: null,
+      chain: onChain.chain,
+      txHash: onChain.txHash,
+      fallbackReason: onChain.fallbackReason,
     };
     const { token } = await signToken("result", result, RESULT_TTL_SECONDS);
     return NextResponse.json({ result, resultToken: token });

@@ -16,6 +16,7 @@ import {
   SlidersIcon,
   UserIcon,
 } from "./icons";
+import { TxStatus } from "./TxStatus";
 
 export type Screen = "profile" | "verification" | "settings" | "help" | "edit";
 type Verification = MingleRecord["verification"];
@@ -161,9 +162,7 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
           <dt>Checked</dt>
           <dd>
             {verification.chain === "sepolia" && verification.txHash ? (
-              <a href={`https://sepolia.etherscan.io/tx/${verification.txHash}`} target="_blank" rel="noreferrer">
-                On Ethereum Sepolia ↗
-              </a>
+              <TxStatus txHash={verification.txHash} />
             ) : (
               "Off-chain by Mingle"
             )}
@@ -176,6 +175,7 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
           </dd>
         </div>
       </dl>
+      {verification.fallbackReason && <p className="mingle-proof-note">{verification.fallbackReason}</p>}
       <p className="mingle-proof-note">Mingle never received your name, birth date or address.</p>
       <button type="button" className="mingle-view" onClick={() => go("profile")}>
         View on profile
