@@ -48,31 +48,39 @@ function Term({ term, labels, picture, children }: TermProps) {
   );
 }
 
-export function Basics({ copy, worldId }: { copy: Copy; worldId: Modes["worldId"] }) {
+// The seven terms with their pictures. /how-it-works/basics renders them
+// under its own heading.
+export function BasicsTerms({ copy, worldId }: { copy: Copy; worldId: Modes["worldId"] }) {
   const labels = { why: copy.whyLabel, inApp: copy.inApp };
   return (
+    <div className="hiw-terms">
+      <Term term={copy.signature} labels={labels} picture={<StampArt copy={copy.signature.art} />} />
+      <Term term={copy.hash} labels={labels} picture={<HashArt copy={copy.hash.art} />} />
+      <Term term={copy.zk} labels={labels} picture={<ZkDiagram copy={copy.zk.diagram} />} />
+      <Term term={copy.nullifier} labels={labels} picture={<NullifierDiagram copy={copy.nullifier.diagram} />} />
+      <Term term={copy.chain} labels={labels} picture={<ChainArt copy={copy.chain.art} />}>
+        <p className="hiw-term-link">
+          <a href={CHAIN_LINKS.registryBlockscout} target="_blank" rel="noreferrer">
+            {copy.chain.link} <span aria-hidden="true">↗</span>
+          </a>
+        </p>
+      </Term>
+      <Term term={copy.privy} labels={labels} picture={<WalletArt copy={copy.privy.art} />} />
+      <Term term={copy.worldId} labels={labels} picture={<HumanArt copy={copy.worldId.art} />}>
+        {/* Follows how this deployment runs the check, so a simulated
+            check is never described as a real one. */}
+        <p className={worldId === "idkit" ? "hiw-mode is-live" : "hiw-mode"}>
+          <Rich text={copy.worldId.status[worldId]} />
+        </p>
+      </Term>
+    </div>
+  );
+}
+
+export function Basics({ copy, worldId }: { copy: Copy; worldId: Modes["worldId"] }) {
+  return (
     <Section id="basics" title={copy.title} lede={copy.lede} wide>
-      <div className="hiw-terms">
-        <Term term={copy.signature} labels={labels} picture={<StampArt copy={copy.signature.art} />} />
-        <Term term={copy.hash} labels={labels} picture={<HashArt copy={copy.hash.art} />} />
-        <Term term={copy.zk} labels={labels} picture={<ZkDiagram copy={copy.zk.diagram} />} />
-        <Term term={copy.nullifier} labels={labels} picture={<NullifierDiagram copy={copy.nullifier.diagram} />} />
-        <Term term={copy.chain} labels={labels} picture={<ChainArt copy={copy.chain.art} />}>
-          <p className="hiw-term-link">
-            <a href={CHAIN_LINKS.registryBlockscout} target="_blank" rel="noreferrer">
-              {copy.chain.link} <span aria-hidden="true">↗</span>
-            </a>
-          </p>
-        </Term>
-        <Term term={copy.privy} labels={labels} picture={<WalletArt copy={copy.privy.art} />} />
-        <Term term={copy.worldId} labels={labels} picture={<HumanArt copy={copy.worldId.art} />}>
-          {/* Follows how this deployment runs the check, so a simulated
-              check is never described as a real one. */}
-          <p className={worldId === "idkit" ? "hiw-mode is-live" : "hiw-mode"}>
-            <Rich text={copy.worldId.status[worldId]} />
-          </p>
-        </Term>
-      </div>
+      <BasicsTerms copy={copy} worldId={worldId} />
     </Section>
   );
 }

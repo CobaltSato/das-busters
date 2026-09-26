@@ -115,9 +115,17 @@ const storyEn = {
     },
   },
 
+  // /how-it-works/basics: the page around the seven terms below.
+  basicsPage: {
+    description:
+      "The seven terms DAS Busters uses, each with a picture: digital signature, hash, zero-knowledge proof, nullifier, blockchain, sign-in with Privy and World ID.",
+    back: "How it works",
+    footer: "Back to How it works",
+  },
+
   basics: {
-    title: "The building blocks",
-    lede: "Seven terms the rest of the page uses. For each: what it is, why this app needs it, and how DAS Busters uses it.",
+    title: "The basics",
+    lede: "The seven terms the How it works page uses. For each: what it is, why this app needs it, and how DAS Busters uses it.",
     whyLabel: "Why it's needed",
     inApp: "How DAS Busters uses it",
     signature: {

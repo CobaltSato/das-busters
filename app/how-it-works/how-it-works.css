@@ -39,6 +39,33 @@
   gap: 12px;
 }
 
+/* The basics page: links back, then its own heading */
+
+.hiw-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.hiw-crumbs a {
+  color: var(--muted);
+}
+
+.hiw-crumbs a:hover {
+  color: var(--ink);
+}
+
+.hiw-page-head {
+  margin-top: 40px;
+}
+
+.hiw-page-head .hiw-level {
+  width: fit-content;
+  margin-top: 20px;
+}
+
 /* Hero */
 
 .hiw-hero {

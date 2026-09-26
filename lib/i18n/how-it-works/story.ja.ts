@@ -109,9 +109,16 @@ const storyJa: StoryCopy = {
     },
   },
 
+  basicsPage: {
+    description:
+      "DAS Busters で使う7つの用語を、図で説明します。デジタル署名、ハッシュ、ゼロ知識証明、nullifier、ブロックチェーン、Privy のログイン、World ID です。",
+    back: "しくみ",
+    footer: "しくみのページに戻る",
+  },
+
   basics: {
     title: "基本の用語",
-    lede: "このページに出てくる用語は7つです。それぞれ、何なのか、なぜ要るのか、DAS Busters でどう使うのかを書いています。",
+    lede: "「しくみ」のページに出てくる用語は7つです。それぞれ、何なのか、なぜ要るのか、DAS Busters でどう使うのかを書いています。",
     whyLabel: "なぜ必要？",
     inApp: "DAS Busters での使い方",
     signature: {

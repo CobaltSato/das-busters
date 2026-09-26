@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
 import Link from "next/link";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { howItWorksFor } from "@/lib/i18n/how-it-works";
 import { DOC_LINKS } from "@/lib/i18n/how-it-works/links";
 import { getLocale } from "@/lib/i18n/server";
 import { getModes, provingLocation } from "@/lib/modes";
+import { hiwMono } from "./_components/font";
 import { LevelRoot, LevelToggle } from "./_components/Level";
 import { Architecture } from "./_sections/Architecture";
 import { Basics } from "./_sections/Basics";
@@ -22,14 +22,6 @@ import "./basics.css";
 import "./flow.css";
 import "./reference.css";
 import "./answers.css";
-
-// Hashes, routes and addresses read better in a monospace face.
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-hiw-mono",
-  display: "swap",
-});
 
 const CONTENTS = ["why", "idea", "basics", "flow", "architecture", "tech", "built", "check", "qa"] as const;
 
@@ -48,7 +40,7 @@ export default async function HowItWorksPage() {
   const modes = getModes();
   const proveOn = provingLocation();
   return (
-    <LevelRoot className={`hiw ${mono.variable}`}>
+    <LevelRoot className={`hiw ${hiwMono.variable}`}>
       <div className="hiw-top">
         <Link className="hub-eyebrow" href="/">
           {story.nav.home}
