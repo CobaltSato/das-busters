@@ -41,6 +41,7 @@ ETHGlobal は、AI ツールをどこでどう使ったかを申告するよう�
 | デモのリセット（1回で両方） | `app/reset/`、`lib/storage.ts` | 生成 |
 | World ID（IDKit 4） | `lib/worldid.ts`、`app/api/world-id/`、`app/wallet/world-id/`、`scripts/world-staging.ts` | 生成。Developer Portal のアプリと action の作成、World ID Simulator での最初の試験も、Claude Code が Claude in Chrome で行った。Portal のアカウントと API キーはチームが作成 |
 | プライバシーポリシーのページ | `app/privacy/` | コードが実際に保存しているものをもとに下書き。Google ログインを誰にでも開放するために必要だった |
+| しくみの説明ページ | `app/how-it-works/`, `lib/i18n/how-it-works/` | コード、回路、コントラクト、README の図をもとに下書きし、コードと突き合わせて事実確認した。アプリを基礎から説明し、審査員の質問に答えられるページがほしいというチームの依頼 |
 | ドキュメント | `README.md`、`AI_USAGE.md`、`AGENTS.md`、`docs/demo.md` | 下書きし、チームが手を入れた。README の Mermaid の図も下書きし、回路とコントラクトと API ルートに照らして確認した |
 
 ## チームがやったこと

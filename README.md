@@ -8,6 +8,8 @@ Built at ETHGlobal Tokyo 2026.
 
 **Try it**: [single-proof.vercel.app](https://single-proof.vercel.app) · [Demo walkthrough](docs/demo.md), step by step with what to click and what to say.
 
+**How it works**: [single-proof.vercel.app/how-it-works](https://single-proof.vercel.app/how-it-works) explains the app from the basics (signatures, zero-knowledge proofs, nullifiers) to the circuit and the contracts, with animated diagrams, links to check each part, and answers to common questions.
+
 ## The problem
 
 People on dating apps lie about being single. An official certificate from the city office would settle it. But sending a copy to a dating app hands over your full name, birth date and address to a company you just met.

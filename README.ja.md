@@ -8,6 +8,8 @@ ETHGlobal Tokyo 2026 で作りました。審査は英語で行われるので�
 
 **試す**: [single-proof.vercel.app](https://single-proof.vercel.app) · [デモの手順](docs/demo.ja.md)。押すボタンと話す内容を順に書いています。
 
+**しくみ**: [single-proof.vercel.app/how-it-works](https://single-proof.vercel.app/how-it-works) で、署名、ゼロ知識証明、nullifier といった基礎から回路とコントラクトまでを、動く図で説明しています。各部分を確かめるリンクと、よく聞かれる質問への答えもあります。右上で日本語に切り替えられます。
+
 ## 解決したい問題
 
 マッチングアプリでは、既婚なのに独身と偽る人がいます。区役所が出す独身証明書を見せれば白黒はつきます。ただ、そのコピーを送ると、会ったばかりの会社に氏名も生年月日も住所も渡すことになります。
