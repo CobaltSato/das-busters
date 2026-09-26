@@ -106,12 +106,12 @@ sequenceDiagram
 
 ## Demo setup vs a real deployment
 
-In this demo one Next.js server on Vercel plays three parties: the city office, which holds the issuer's EdDSA signing key in an environment variable (`ISSUER_PRIVATE_KEY`); the fallback prover; and Mingle's backend, the verifier and the relayer. All three sign their tokens with one shared `TOKEN_SECRET`. This is a shortcut so the whole flow runs from one URL. These parties would not trust each other this way, and a city office's signing key would never sit on an app server.
+The demo server holds the issuer's EdDSA signing key in `ISSUER_PRIVATE_KEY`. The city office, the fallback prover and Mingle's backend all sign their tokens with one `TOKEN_SECRET`, so the whole flow runs from one URL. Real parties would not share a secret like this, and a city office's signing key would never sit on an app server.
 
 | Part | This demo | A real deployment (intended design, not built) |
 |---|---|---|
 | City office (issuer) | An API route on the demo server; the signing key is a Vercel environment variable | Run by the municipality, or through the national family-register system or Mynaportal. The signing key stays in the office's own hardware security module, and its public key is published in a list of trusted issuers. |
-| Wallet (DAS Busters) | Web pages on the same site as Mingle; the certificate and holder key sit in the browser's localStorage | Its own app or origin, with keys in the phone's secure storage |
+| Wallet (DAS Busters) | Web pages on the same site as Mingle; the certificate and holder secret sit in the browser's localStorage | Its own app or origin, with keys in the phone's secure storage |
 | Prover | On the phone by default; the demo server makes the proof only if the phone cannot | On the phone only |
 | Mingle's verifier | An API route on the same server, sharing one token secret with the other roles | Mingle's own backend with its own keys, and one fixed scope per app so the nullifier never changes |
 | Recording | Sepolia testnet; the demo server's relayer pays the fee | A public mainnet or L2. Mingle (or the wallet) sends the transaction, and the contract checks the proof against the trusted-issuer list by proving membership in a set, for example a Merkle root of city keys, so the proof does not reveal which city. |
@@ -128,7 +128,7 @@ The circuit is [circuits/single_proof.circom](../circuits/single_proof.circom), 
 
 It outputs a nullifier per holder and verifier scope.
 
-The proof is made in the browser, with snarkjs and the same circuit files the server uses ([lib/deviceProver.ts](../lib/deviceProver.ts); `single_proof.wasm` 2.7 MB and `single_proof.zkey` 5.0 MB). The share screen starts downloading them when it opens. On a laptop in Chrome the proof itself took under a second once the files were cached; we have not measured phones yet. If the phone cannot finish, `/api/prove` makes that one proof and the button says "This phone could not finish. Creating the proof on the DAS Busters server…". A broken rule (not single, someone else's certificate, an edited certificate) is an answer and is never retried on the server. `PROVE_ON=server` moves proving back to the server; the mock prover always runs there.
+The proof is made in the browser, with snarkjs and the same circuit files the server uses ([lib/deviceProver.ts](../lib/deviceProver.ts); `single_proof.wasm` 2.7 MB and `single_proof.zkey` 5.0 MB). The share screen starts downloading them when it opens. On a laptop in Chrome the proof itself took under a second once the files were cached; we have not measured phones yet. If the phone cannot finish, `/api/prove` makes that one proof and the button says "This phone could not finish. Creating the proof on the DAS Busters server…". If the input breaks a rule (not single, someone else's certificate, an edited certificate), the phone shows that error and does not retry on the server. `PROVE_ON=server` moves proving back to the server; the mock prover always runs there.
 
 Trusted setup: the Hermez ptau mirrors returned 403 at the event, so both phases have one local contribution ([circuits/build.sh](../circuits/build.sh)). That is fine for a demo and not for production. PSE Perpetual Powers of Tau is reachable, and moving to it is the next step.
 
@@ -152,7 +152,7 @@ flowchart LR
   checks --> out
 ```
 
-The public signals come out as `nullifierHash` followed by the nine public inputs in the order above. [lib/presentation.ts](../lib/presentation.ts) and the registry both rely on that order. The same holder gets the same nullifier in the same Mingle scope, which is how the registry refuses a second account on one certificate. `requestHash` ties each proof to one Mingle request, so it cannot be reused for a different request. The server does not mark a request as used, so within its 10 minutes the same proof verifies again off-chain; on Sepolia its nullifier is still recorded only once.
+The public signals come out as `nullifierHash` followed by the nine public inputs in the order above. [lib/presentation.ts](../lib/presentation.ts) and the registry both rely on that order. The same holder gets the same nullifier in the same Mingle scope, which is how the registry refuses a second account on one certificate. `requestHash` ties each proof to one Mingle request, so it cannot be reused for a different request. Requests are not marked used; see [Security model and limits](#security-model-and-limits).
 
 ## The registry
 
@@ -177,17 +177,17 @@ Both contracts match the source in [contracts/src/](../contracts/src/) exactly o
 
 ## World ID
 
-The certificate proves civil status. It cannot tell whether one person is behind several Google accounts: each account gets its own holder key and so its own nullifier, and in this demo the counter hands a certificate to anyone who scans. World ID is there to add "a real person approved this".
+The certificate proves civil status. It cannot tell whether one person is behind several Google accounts: each account gets its own holder secret and so its own nullifier, and in this demo the counter hands a certificate to anyone who scans. World ID is there to add "a real person approved this".
 
 How the integration went, what slowed us down and what would help: [FEEDBACK.md](../FEEDBACK.md).
 
 ### Why proof of human
 
-We request IDKit's `proofOfHuman` preset ([app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)). The certificate already covers civil status, residence and age, so World ID only needs to add personhood, and proof of human adds nothing else: no name, face or ID number. World describes the selfie check as medium assurance: a device-camera check for liveness and facial similarity that returns a sybil score the app has to interpret ([World docs](https://docs.world.org/world-id/idkit/credentials)). For one person per account we wanted the Orb-backed uniqueness of proof of human. A passport or document credential would repeat what the city certificate proves and ask the user for more.
+We request IDKit's `proofOfHuman` preset ([app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)). The certificate already covers civil status, residence and age, so World ID only has to add personhood. Proof of human shares nothing else: no name, face or ID number. We wanted its Orb-backed uniqueness for one person per account. World rates the selfie check as medium assurance: it checks liveness and facial similarity with the device camera and returns a sybil score the app has to interpret ([World docs](https://docs.world.org/world-id/idkit/credentials)). A passport or document credential would repeat what the certificate proves and ask the user for more.
 
 ### What Mingle receives
 
-After the World ID check our server signs a token, and the wallet sends it to Mingle when you include the human check in a share. Mingle's server reads it, so it sees World ID's anonymous number for this app (the World ID nullifier), but the result it keeps says only that a human check passed and which kind it was: World ID, World ID staging or simulated ([app/api/verify/route.ts](../app/api/verify/route.ts)). In this demo our server signs that token and also plays Mingle's backend.
+After the World ID check, our server signs a human token. The wallet sends it to Mingle when you include the human check in a share. Mingle's server can read the World ID nullifier for this app from the token, but the result it keeps says only that a human check passed and which kind: World ID, World ID staging or simulated ([app/api/verify/route.ts](../app/api/verify/route.ts)). In this demo the same server signs the token and plays Mingle's backend.
 
 ### Without World ID
 
@@ -314,7 +314,7 @@ Of the 23 circuit tests, 13 show the circuit itself refusing an input, and each 
 
 ## Language
 
-The UI is in English by default. An EN / 日本語 toggle on the hub, the counter, the DAS Busters screens from pickup to sharing, Mingle's profile and settings, and the explainer, reset and privacy pages switches to Japanese. The choice applies to every app in that browser. Adding `?lang=ja` to any URL does the same, and the counter's QR code carries its language to the phone.
+The UI defaults to English. The hub, the counter, the DAS Busters screens from pickup to sharing, Mingle's profile and settings, and the explainer, reset and privacy pages each have an EN / 日本語 toggle. The choice applies to every app in that browser. Adding `?lang=ja` to any URL does the same, and the counter's QR code carries its language to the phone.
 
 ## Running locally
 

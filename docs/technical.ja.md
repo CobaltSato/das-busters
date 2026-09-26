@@ -106,7 +106,7 @@ sequenceDiagram
 
 ## デモの構成と実運用の構成
 
-このデモでは、Vercel 上の1台の Next.js サーバーが3者を兼ねています。発行者の EdDSA 署名鍵を環境変数（`ISSUER_PRIVATE_KEY`）に持つ区役所、予備の証明サーバー、そして Mingle のバックエンド（検証と relayer）です。3者のトークンはどれも同じ `TOKEN_SECRET` で署名しています。1つの URL で流れ全体を動かすための近道です。実際にこの3者が互いを信頼するなら、こうはしません。区役所の署名鍵をアプリのサーバーに置くこともありません。
+デモ用サーバーは発行者の EdDSA 署名鍵を `ISSUER_PRIVATE_KEY` に持っています。区役所、予備の証明サーバー、Mingle のバックエンドのトークンはどれも同じ `TOKEN_SECRET` で署名していて、1つの URL で流れ全体を動かせるようにしています。実運用では、この3者が1つの秘密を共有するほど互いを信頼することはありません。区役所の署名鍵をアプリのサーバーに置くこともありません。
 
 | 部分 | このデモ | 実運用での想定（設計のみで、作っていません） |
 |---|---|---|
@@ -128,7 +128,7 @@ sequenceDiagram
 
 出力は、保有者と検証者の scope ごとに決まる nullifier です。
 
-証明はブラウザの中で作ります。snarkjs と、サーバーと同じ回路のファイル（`single_proof.wasm` 2.7 MB、`single_proof.zkey` 5.0 MB）を使います（[lib/deviceProver.ts](../lib/deviceProver.ts)）。共有画面を開いた時点でダウンロードを始めます。PC の Chrome では、ファイルがキャッシュに入ったあとの証明そのものは1秒かかりませんでした。スマホではまだ測っていません。スマホで作りきれなければ、その1回だけ `/api/prove` が作り、ボタンは「このスマホでは作れませんでした。DAS Busters のサーバーで証明を作成中…」になります。独身でない、他人の証明書、書き換えた証明書のようにルールを満たさない場合は、それが答えなのでサーバーでやり直しません。`PROVE_ON=server` にするとサーバーでの証明に戻ります。モックの証明は常にサーバーで作ります。
+証明はブラウザの中で作ります。snarkjs と、サーバーと同じ回路のファイル（`single_proof.wasm` 2.7 MB、`single_proof.zkey` 5.0 MB）を使います（[lib/deviceProver.ts](../lib/deviceProver.ts)）。共有画面を開いた時点でダウンロードを始めます。PC の Chrome では、ファイルがキャッシュに入ったあとの証明そのものは1秒かかりませんでした。スマホではまだ測っていません。スマホで作りきれなければ、その1回だけ `/api/prove` が作り、ボタンは「このスマホでは作れませんでした。DAS Busters のサーバーで証明を作成中…」になります。独身でない、他人の証明書、書き換えた証明書など、ルールを満たさない入力はそのままエラーとして出し、サーバーではやり直しません。`PROVE_ON=server` にするとサーバーでの証明に戻ります。モックの証明は常にサーバーで作ります。
 
 Trusted setup は、両フェーズともローカルで1回ずつ contribution しただけです。イベント中は Hermez の ptau のミラーが 403 を返したためです（[circuits/build.sh](../circuits/build.sh)）。デモには足りますが、本番には使えません。PSE の Perpetual Powers of Tau は取得できるので、次はそちらに移します。
 
@@ -152,7 +152,7 @@ flowchart LR
   checks --> out
 ```
 
-公開シグナルは `nullifierHash` が先頭で、そのあとに9個の公開入力が上の順で並びます。[lib/presentation.ts](../lib/presentation.ts) もレジストリもこの順番を前提にしています。同じ保有者なら、Mingle の同じ scope では nullifier も同じになります。レジストリはこれを使って、1枚の証明書での2つ目のアカウントを拒否します。`requestHash` は証明を Mingle のリクエスト1つに縛るので、別のリクエストには使い回せません。ただしサーバーはリクエストを使用済みにしないので、10分の有効期間内なら同じ証明がオフチェーンでもう一度通ります。Sepolia ではその nullifier は1回しか記録されません。
+公開シグナルは `nullifierHash` が先頭で、そのあとに9個の公開入力が上の順で並びます。[lib/presentation.ts](../lib/presentation.ts) もレジストリもこの順番を前提にしています。同じ保有者なら、Mingle の同じ scope では nullifier も同じになります。レジストリはこれを使って、1枚の証明書での2つ目のアカウントを拒否します。`requestHash` は証明を Mingle のリクエスト1つに縛るので、別のリクエストには使い回せません。リクエストは使用済みにしていません（[セキュリティモデルと限界](#セキュリティモデルと限界)）。
 
 ## レジストリ
 
@@ -177,17 +177,17 @@ revert したら、Mingle は失敗として画面に出します。オフチェ
 
 ## World ID
 
-独身証明書で証明できるのは婚姻の状況です。1人が Google アカウントをいくつも使っているかどうかまではわかりません。アカウントごとに保有者鍵が変わるので nullifier も変わりますし、このデモの窓口は QR を読み取った人なら誰にでも証明書を渡します。World ID は「実在の人がこれを承認した」を足すために入れています。
+独身証明書で証明できるのは婚姻の状況です。1人が Google アカウントをいくつも使っているかどうかまではわかりません。アカウントごとに保有者鍵が変わるので、nullifier も変わります。しかもこのデモの窓口は、QR を読み取った人なら誰にでも証明書を渡します。World ID は「実在の人がこれを承認した」を足すために入れています。
 
 組み込みの経過、詰まった点、あると助かるものは [FEEDBACK.ja.md](../FEEDBACK.ja.md) に書きました。
 
 ### proof of human を選んだ理由
 
-IDKit の `proofOfHuman` プリセットを使っています（[app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)）。婚姻の状況、居住地、年代は証明書が受け持つので、World ID に頼むのは「人であること」だけで済みます。proof of human はそれ以外、つまり名前も顔も ID 番号も渡しません。セルフィーチェックは、World 自身の説明では中程度の保証です。デバイスのカメラで、その場に本人がいるか（liveness）と顔の類似を確かめて sybil スコアを返し、その判断はアプリに任されます（[World のドキュメント](https://docs.world.org/world-id/idkit/credentials)）。1人1アカウントのためには、Orb に裏付けられた proof of human の一意性がほしかったのです。パスポートなどの書類系のクレデンシャルは、区役所の証明書と同じことを重ねて証明するうえに、利用者からもっと多くの情報を取ります。
+IDKit の `proofOfHuman` プリセットを使っています（[app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)）。婚姻の状況、居住地、年代は証明書が受け持つので、World ID に頼むのは「人であること」だけで済みます。proof of human はそれ以外、つまり名前も顔も ID 番号も渡しません。1人1アカウントのために、Orb に裏付けられた一意性がほしかったのです。セルフィーチェックは、World 自身の説明では中程度の保証です。デバイスのカメラで、その場に本人がいるか（liveness）と顔の類似を確かめて sybil スコアを返し、その判断はアプリに任されます（[World のドキュメント](https://docs.world.org/world-id/idkit/credentials)）。パスポートなどの書類系のクレデンシャルは、区役所の証明書と同じことを重ねて証明するうえに、利用者からもっと多くの情報を取ります。
 
 ### Mingle が受け取るもの
 
-World ID の確認が通ると、私たちのサーバーが署名したトークンがウォレットに届き、人間確認を含めて共有するときに、ウォレットがそれを Mingle に送ります。Mingle のサーバーはこれを読むので、このアプリ用の World ID の匿名の番号（World ID の nullifier）も見えます。ただし Mingle が残す結果には、人間確認が通ったことと、その種類（World ID、World ID staging、シミュレーション）しか入りません（[app/api/verify/route.ts](../app/api/verify/route.ts)）。このデモでは、トークンに署名するサーバーが Mingle のバックエンドも兼ねています。
+World ID の確認が通ると、私たちのサーバーが human トークンに署名します。人間確認を含めて共有すると、ウォレットがこのトークンを Mingle に送ります。Mingle のサーバーはトークンからこのアプリ用の World ID の nullifier を読めますが、残す結果に入るのは、人間確認が通ったこととその種類（World ID、World ID staging、シミュレーション）だけです（[app/api/verify/route.ts](../app/api/verify/route.ts)）。このデモでは、トークンに署名するサーバーが Mingle のバックエンドも兼ねています。
 
 ### World ID を使わない場合
 
