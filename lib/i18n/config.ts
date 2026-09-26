@@ -1,6 +1,6 @@
-// English first, because the judges read English. Japanese is opt-in through
-// the language toggle or ?lang=ja, and the choice lives in a cookie so the
-// server renders the right language on the first paint.
+// English first. Japanese is opt-in through the language toggle or ?lang=ja,
+// and the choice lives in a cookie so the server renders the right language
+// on the first paint.
 export const LOCALES = ["en", "ja"] as const;
 export type Locale = (typeof LOCALES)[number];
 
