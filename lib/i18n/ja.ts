@@ -365,7 +365,7 @@ const ja: Messages = {
     backToWallet: "DAS Busters に戻る",
     reset: "デモをリセット（DAS Busters と Mingle）",
     helpBody: "独身証明書は「本人確認と証明」から連携できます。",
-    helpMuted: "Mingle が証明書そのものを見ることはありません。DAS Busters が送るのは、独身であることの証明と、あなたが選んだ情報だけです。",
+    helpMuted: "Mingle が証明書そのものを見ることはありません。DAS Busters が送るのは、独身であることの証明と、あなたが選んだ情報です。",
     helpDemo: "Mingle はこのデモ用のサンプルアプリです。プロフィールの数字と下のタブは見た目だけです。",
     editDemo: "プロフィールの編集は、このデモにはありません。",
     profileData: {
