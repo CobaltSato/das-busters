@@ -1,7 +1,7 @@
 import "server-only";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { ProofError } from "./prover";
+import { ProofError } from "./errors";
 import { TokenError } from "./token";
 
 // One place that turns thrown errors into JSON the UI can show. Known errors

@@ -12,7 +12,8 @@ export type Modes = {
 
 export function getModes(): Modes {
   return {
-    auth: process.env.NEXT_PUBLIC_PRIVY_APP_ID ? "privy" : "mock",
+    // Privy sign-in is not wired up yet (Phase 4); report mock until it is.
+    auth: "mock",
     prover: process.env.PROVER_MODE === "groth16" ? "groth16" : "mock",
     chain: process.env.CHAIN_MODE === "sepolia" ? "sepolia" : "off",
     worldId: process.env.WORLDID_MODE === "idkit" ? "idkit" : "simulated",

@@ -46,6 +46,7 @@ async function main() {
   const proved = await post("/api/prove", { request: req.data.request, credential, holderSecret: secret, disclose });
   const presentation = proved.data.presentation;
   check("wallet proves single status", proved.status === 200 && presentation?.publicSignals?.revealResidence === "1", proved.data.error);
+  console.log(`      prover=${presentation?.prover} provingMs=${presentation?.provingMs}`);
   check(
     "hidden age range stays zero",
     presentation?.publicSignals?.minBirthYear === "0" && presentation?.publicSignals?.maxBirthYear === "0",

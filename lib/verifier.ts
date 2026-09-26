@@ -1,5 +1,7 @@
 import "server-only";
-import { ProofError } from "./prover";
+import { ISSUER_PUBLIC_KEY } from "./issuer";
+import { getModes } from "./modes";
+import { ProofError } from "./errors";
 import type { PresentationRequest, PublicSignals, VerificationResult } from "./presentation";
 
 // Mingle's side: the proof alone says "these signals are consistent with a
@@ -48,7 +50,9 @@ function flag(value: string): boolean {
   return value === "1";
 }
 
+// Mingle trusts one city office key, published in lib/zk/issuer-public.json.
+// The mock issuer has no curve key and is trusted only in mock mode.
 function isTrustedIssuer(ax: string, ay: string): boolean {
-  // The mock issuer has no curve key; the EdDSA issuer's key comes from env.
-  return ax === "0" && ay === "0";
+  if (getModes().prover === "mock") return ax === "0" && ay === "0";
+  return ax === ISSUER_PUBLIC_KEY.Ax && ay === ISSUER_PUBLIC_KEY.Ay;
 }

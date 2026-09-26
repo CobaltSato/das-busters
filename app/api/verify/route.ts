@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { errorResponse } from "@/lib/http";
 import type { VerificationResult } from "@/lib/presentation";
-import { ProofError, verifyProof } from "@/lib/prover";
+import { ProofError } from "@/lib/errors";
+import { verifyProof } from "@/lib/prover";
 import { VerifyBody } from "@/lib/schemas";
 import { signToken } from "@/lib/token";
 import { readRequest } from "@/lib/tokens";
