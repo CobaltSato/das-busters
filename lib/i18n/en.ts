@@ -383,7 +383,7 @@ const en = {
       },
       shared: {
         heading: "What Mingle and the blockchain receive",
-        body: "Mingle receives only that you are single, anything else you choose to share, and an anonymous number made for Mingle only (a nullifier). When the demo records on-chain, a transaction on the Ethereum Sepolia test network carries that number and the proof, plus the Tokyo code and the birth-year range if you chose to share them. Sepolia is public and cannot be erased. Your name, birth date and address never go on-chain.",
+        body: "Mingle receives that you are single, anything else you choose to share, an anonymous number made for Mingle only (a nullifier), and the public key of the city office that signed your certificate, which shows which office issued it. When the demo records on-chain, a transaction on the Ethereum Sepolia test network carries the proof, that number and the city office's public key, plus the Tokyo code and the birth-year range if you chose to share them. Sepolia is public and cannot be erased. Your name, birth date and address never go on-chain.",
       },
       worldId: {
         heading: "World ID",
@@ -391,7 +391,7 @@ const en = {
       },
       camera: {
         heading: "Camera",
-        body: "Only when the human check is simulated, it opens the front camera for five seconds. Nothing is uploaded or saved.",
+        body: "The simulated human check opens the front camera for five seconds. Nothing is uploaded or saved. This site does not open the camera for the World ID check.",
       },
       hosting: {
         heading: "Hosting and cookies",
