@@ -32,7 +32,7 @@ type Step = "idle" | "proving" | "proving-device" | "proving-server" | "verifyin
 const MINGLE_VERIFICATION = "/mingle?screen=verification";
 
 export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const copy = t.wallet.share;
   const router = useRouter();
   const [loaded, setLoaded] = useState(false);
@@ -238,7 +238,9 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
       )}
 
       <p className="fine-print share-privacy">
-        {copy.privacy} {serverProves ? copy.provedOnServer : copy.provedHere}
+        {copy.privacy}
+        {locale === "ja" ? "" : " "}
+        {serverProves ? copy.provedOnServer : copy.provedHere}
       </p>
 
       <div className="phone-actions">

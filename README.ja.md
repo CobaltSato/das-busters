@@ -126,7 +126,7 @@ sequenceDiagram
 ```mermaid
 flowchart LR
   subgraph phone["スマホの DAS Busters"]
-    cert["証明書<br/>署名の対象：独身、生まれ年、住所コード、<br/>発行日、保有者のコミットメント<br/>表示だけ：氏名"]
+    cert["証明書<br/>署名の対象：独身、生まれ年、居住地コード、<br/>発行日、保有者のコミットメント<br/>表示だけ：氏名"]
     secret["保有者鍵<br/>Google に紐づくウォレットの署名から作る"]
     prove["ブラウザの中の証明器<br/>snarkjs、Groth16"]
   end
@@ -206,7 +206,7 @@ sequenceDiagram
 - **確認すること**
   - 証明書の値と保有者のコミットメント Poseidon(保有者鍵) に対する、区役所の EdDSA-Poseidon 署名。
   - 独身であること。
-  - 任意で、住所と生まれ年の範囲。
+  - 任意で、居住地と生まれ年の範囲。
 - **出力**：保有者と検証者の scope ごとに決まる nullifier。
 - **証明を作る場所**：ブラウザの中です。snarkjs と、サーバーと同じ回路のファイル（`single_proof.wasm` 2.7 MB、`single_proof.zkey` 5.0 MB）を使います（[lib/deviceProver.ts](lib/deviceProver.ts)）。共有画面を開いた時点でダウンロードを始めます。PC の Chrome では、ファイルがキャッシュに入ったあとの証明そのものは1秒かかりませんでした。スマホではまだ測っていません。スマホで作りきれなければ、その1回だけ `/api/prove` が作り、ボタンは「このスマホでは作れませんでした。DAS Busters のサーバーで証明を作成中…」になります。独身でない、他人の証明書、書き換えた証明書のようにルールを満たさない場合は、それが答えなのでサーバーでやり直しません。`PROVE_ON=server` にするとサーバーでの証明に戻ります。モックの証明は常にサーバーで作ります。
 - **Trusted setup**：イベント中は Hermez の ptau のミラーが 403 を返したので、両フェーズともローカルで1回ずつ contribution しました（[circuits/build.sh](circuits/build.sh)）。デモには足りますが、本番には使えません。PSE の Perpetual Powers of Tau は取得できるので、次はそちらに移します。
@@ -224,7 +224,7 @@ flowchart LR
     asks["expectedResidence,<br/>minBirthYear, maxBirthYear"]
     ctx["scopeHash, requestHash"]
   end
-  checks["回路が確かめること<br/>Poseidon(fields, Poseidon(holderSecret)) への署名<br/>isSingle = 1<br/>住所が一致する（公開するときだけ）<br/>生まれ年が範囲内（公開するときだけ）<br/>公開しない項目は 0"]
+  checks["回路が確かめること<br/>Poseidon(fields, Poseidon(holderSecret)) への署名<br/>isSingle = 1<br/>居住地が一致する（公開するときだけ）<br/>生まれ年が範囲内（公開するときだけ）<br/>公開しない項目は 0"]
   out["出力：nullifierHash<br/>= Poseidon(holderSecret, scopeHash)"]
   private --> checks
   public --> checks
@@ -274,7 +274,7 @@ revert したら、Mingle は失敗として画面に出します。オフチェ
 | 署名した鍵が区役所の鍵である | Mingle の検証とレジストリ（`UntrustedIssuer`）。回路は鍵を公開入力として受け取るだけ |
 | 証明書が独身を示している | 回路（`isSingle === 1`） |
 | 証明している人が保有者鍵を持っている | 回路（コミットメントが署名の対象に入っている） |
-| 共有した住所や生まれ年の範囲が、Mingle の求めたものと合う | 回路。値がリクエストと同じかは Mingle の検証が比べる |
+| 共有した居住地や生まれ年の範囲が、Mingle の求めたものと合う | 回路。値がリクエストと同じかは Mingle の検証が比べる |
 | 隠した項目は 0 で、開示フラグは 0 か 1 | 回路と Mingle の検証 |
 | 証明がこの Mingle のリクエストへの答えである | Mingle の検証（scope hash と request hash）。レジストリは証明を検証するだけで、scope は見ない |
 | 公開シグナルがどれもスカラー体の法（field modulus）未満である | snarkjs の `verify` と、生成した Solidity の検証器 |
@@ -301,7 +301,7 @@ revert したら、Mingle は失敗として画面に出します。オフチェ
 - **証明はスマホで作り、サーバーは表示付きの予備にする。** 計画では、メンターの助言とイベント前のプロトタイプに合わせてサーバーで証明することにしていました（[docs/plan.md](docs/plan.md)）。9月26日にこれをブラウザの中へ移し、証明書と保有者鍵がスマホから出ないようにしました。その分 7.7 MB のダウンロードが要り、スマホでの速さはまだ測っていません。そのため `/api/prove` を予備に残し、使ったときはボタンに出します（[lib/deviceProver.ts](lib/deviceProver.ts)、[app/wallet/share/ShareScreen.tsx](app/wallet/share/ShareScreen.tsx)、[lib/modes.ts](lib/modes.ts) の `PROVE_ON`）。
 - **nullifier は保有者鍵から作る。** `nullifier = Poseidon(holderSecret, scopeHash)` です。区役所が見るのは `Poseidon(holderSecret)` だけなので、区役所があなたの nullifier を計算して Mingle 上で探すことはできません。ただしこのデモでは予備の証明サーバーが同じサーバーで動くので、これが成り立つのはスマホで証明したときだけです。引き換えに、証明するたびに保有者鍵が手元に要ります（[lib/fields.ts](lib/fields.ts)、[circuits/single_proof.circom](circuits/single_proof.circom)）。
 - **一意性は証明ではなく nullifier で判定する。** Groth16 の証明は、同じ内容のまま別のバイト列に作り変えられます。だからレジストリは証明のハッシュではなく `used[nullifierHash]` を記録します。一意性が保てるのは、scope が変わらない範囲だけです（[contracts/src/SingleProofRegistry.sol](contracts/src/SingleProofRegistry.sol)）。
-- **隠した項目は 0 に固定する。** 回路は、フラグがオフの住所と年代の値を 0 にするよう強制し、Mingle の検証も値の入った隠し項目を拒否します。隠した項目に、共有したように読める値を紛れ込ませられません。ただしフラグ自体は公開なので、どの事実を共有したかはトランザクションから見えます（[lib/verifier.ts](lib/verifier.ts)）。
+- **隠した項目は 0 に固定する。** 回路は、フラグがオフの居住地と年代の値を 0 にするよう強制し、Mingle の検証も値の入った隠し項目を拒否します。隠した項目に、共有したように読める値を紛れ込ませられません。ただしフラグ自体は公開なので、どの事実を共有したかはトランザクションから見えます（[lib/verifier.ts](lib/verifier.ts)）。
 - **モードはサーバーが決める。** 連携ごとにモックと本物があり、env で選びます。Mingle の検証はサーバーが動かしている方式の証明しか受け付けないので、クライアントが本番をモックに格下げすることはできません。イベント前のプロトタイプでは、クライアントが `bypass:true` を送れば通りました。env が抜けると黙ってモックになるので、ハブ、共有画面、Mingle にモードのバッジを出しています（[lib/modes.ts](lib/modes.ts)、[lib/prover.ts](lib/prover.ts) の `verifyProof`）。
 - **revert は失敗として扱う。** relayer は先に `record()` をシミュレーションし、revert（nullifier 使用済み、信頼していない発行者、無効な証明）はエラーとして利用者に出します。オフチェーンの確認に切り替えるのは RPC か relayer の問題のときだけで、画面にもそう出します。プロトタイプは revert を「オフチェーンで成功」に丸めていました（[lib/chain.ts](lib/chain.ts)）。
 - **receipt を待つ。** 計画ではトランザクションのハッシュをすぐ返すつもりでした。コードは receipt を最大45秒待ち、あとで revert するトランザクションを「記録済み」と言わないようにしています。共有はその分、Sepolia のブロック1つぶん遅くなります（[lib/chain.ts](lib/chain.ts)）。
@@ -330,7 +330,7 @@ BASE_URL=https://das-busters.vercel.app npm run smoke # API を端から端ま�
 | 攻撃 | 拒否するところ | テスト |
 |---|---|---|
 | 区役所が「独身でない」として署名した証明書 | 回路（`isSingle === 1`） | [scripts/circuit-test.ts](scripts/circuit-test.ts) |
-| 生まれ年や住所を書き換える | 回路（署名の確認） | circuit-test.ts、smoke の「an edited certificate cannot prove」（[scripts/smoke.ts](scripts/smoke.ts)。サーバーの証明器が署名を先に確認して拒否） |
+| 生まれ年や居住地を書き換える | 回路（署名の確認） | circuit-test.ts、smoke の「an edited certificate cannot prove」（[scripts/smoke.ts](scripts/smoke.ts)。サーバーの証明器が署名を先に確認して拒否） |
 | 他人の証明書を使う（保有者鍵が違う） | 回路（保有者のコミットメントへの署名） | circuit-test.ts、smoke の「someone else's secret cannot prove」（証明器の事前確認で拒否） |
 | 証明書に署名していない発行者の鍵 | 回路 | circuit-test.ts |
 | 公開した範囲の外の生まれ年、公開した住所の食い違い | 回路 | circuit-test.ts |

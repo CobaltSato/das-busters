@@ -287,7 +287,7 @@ export function VerificationScreen({ error, verification, go, modes, dialog, con
               {verification ? c.verified : c.notVerified}
             </span>
           </div>
-          <p>{c.singleBody}</p>
+          <p>{verification ? c.singleBodyDone : c.singleBody}</p>
           {verification ? (
             <ProofDetails verification={verification} go={go} />
           ) : (
