@@ -273,16 +273,16 @@
 .human-heading p {
   margin-top: 2px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .status-chip {
   flex: none;
-  padding: 4px 9px;
+  padding: 4px 10px;
   border-radius: 12px;
   background: #eef0f3;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .status-chip.is-done {
@@ -293,8 +293,8 @@
 .human-card > p {
   margin: 18px 0 12px;
   color: var(--muted);
-  font-size: 11px;
-  line-height: 17px;
+  font-size: 13px;
+  line-height: 20px;
 }
 
 .human-card .btn {
@@ -332,12 +332,13 @@
 }
 
 .human-done strong {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .human-done small {
   color: #517565;
-  font-size: 10px;
+  font-size: 12px;
+  line-height: 17px;
 }
 
 /* Plays once when World ID passes on this screen. */
@@ -743,14 +744,14 @@
   gap: 9px;
   margin-top: 15px;
   color: #555d67;
-  font-size: 11px;
-  line-height: 17px;
+  font-size: 13px;
+  line-height: 19px;
 }
 
 .human-consent input {
   flex: none;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   margin: 0;
   accent-color: var(--blue);
 }
@@ -761,13 +762,14 @@
 }
 
 .human-consent strong {
+  font-size: 14px;
   font-weight: 600;
 }
 
 .human-consent small {
   color: #8a9097;
-  font-size: 9px;
-  line-height: 15px;
+  font-size: 11px;
+  line-height: 16px;
 }
 
 .human-consent.is-missing {
@@ -793,13 +795,13 @@
   flex: none;
   align-items: center;
   gap: 6px;
-  min-height: 34px;
+  min-height: 40px;
   padding: 6px 12px;
   border: 1px solid #cfd4dc;
-  border-radius: 18px;
+  border-radius: 20px;
   background: #ffffff;
   color: var(--blue);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
