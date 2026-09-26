@@ -37,6 +37,7 @@ About the skills:
 | On-chain recording | `lib/chain.ts`, `app/api/tx/`, `app/mingle/TxStatus.tsx` | Generated |
 | Google sign-in and holder key | `app/wallet/_components/`, `lib/privy.ts` | Generated; the team set up Privy and Google OAuth and found the stuck-button bug by signing in on production |
 | Smoke test | `scripts/smoke.ts` | Generated, including the refusal cases |
+| Unit, circuit and contract tests | `scripts/unit-test.ts`, `scripts/circuit-test.ts`, `contracts/test/SingleProofRegistry.t.sol`, the `test` scripts in `package.json` | Generated. They cover the wallet's proof rules, Mingle's checks on the public signals, the committed circuit with a good certificate and tampered ones, and the registry refusing public signals pushed out of the field |
 | Internationalisation (English/Japanese) | `lib/i18n/`, `components/LanguageToggle.tsx`, `middleware.ts`, `README.ja.md`, `AI_USAGE.ja.md` | Generated; the team asked for English-first with Japanese as an option |
 | One-step demo reset | `app/reset/`, `lib/storage.ts` | Generated |
 | World ID (IDKit 4) | `lib/worldid.ts`, `app/api/world-id/`, `app/wallet/world-id/`, `scripts/world-staging.ts` | Generated. Claude Code also set up the Developer Portal app and action through Claude in Chrome and ran the first test against the World ID Simulator; the team created the Portal account and API key |
