@@ -420,6 +420,19 @@ dd {
   line-height: 1.5;
 }
 
+.hub-explainer {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--blue);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.hub-explainer:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .hub-apps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

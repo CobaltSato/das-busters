@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ModeBadges } from "@/components/ModeBadges";
-import { getMessages } from "@/lib/i18n/server";
+import { howItWorksFor } from "@/lib/i18n/how-it-works";
+import { getLocale, getMessages } from "@/lib/i18n/server";
 import { getModes } from "@/lib/modes";
 
 const APPS = [
@@ -12,6 +13,7 @@ const APPS = [
 
 export default async function Hub() {
   const t = await getMessages();
+  const { story } = howItWorksFor(await getLocale());
   return (
     <main className="hub">
       <div className="hub-top">
@@ -20,6 +22,9 @@ export default async function Hub() {
       </div>
       <h1>{t.hub.title}</h1>
       <p className="hub-lede">{t.hub.lede}</p>
+      <Link href="/how-it-works" className="hub-explainer">
+        {story.hubLink} <span aria-hidden="true">→</span>
+      </Link>
       <ul className="hub-apps">
         {APPS.map(({ href, key }) => (
           <li key={href}>
