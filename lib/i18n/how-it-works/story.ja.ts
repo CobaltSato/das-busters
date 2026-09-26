@@ -297,7 +297,7 @@ const storyJa: StoryCopy = {
         data: "スマホの外には何も出ません。",
       },
       commit: {
-        label: "鍵の指紋",
+        label: "鍵のハッシュ",
         arrow: "Poseidon(鍵)",
         title: "スマホが証明書を申し込む",
         body: "受け取り券と、保有者鍵のハッシュを送ります。鍵そのものは送りません。",
@@ -308,7 +308,7 @@ const storyJa: StoryCopy = {
         label: "署名付き証明書",
         arrow: "署名付き証明書",
         title: "区役所が署名する",
-        body: "区役所の役をするデモのサーバーが、その指紋と一緒に証明書へ署名し、スマホが保存します。",
+        body: "区役所の役をするデモのサーバーが、そのハッシュと一緒に証明書へ署名し、スマホが保存します。",
         tech: "Poseidon(isSingle, birthYear, residenceCode, issuedAt, holderCommitment) に EdDSA-Poseidon で署名。スマホの localStorage に保存します。",
         data: "証明書。渡る先はスマホだけ。",
       },

@@ -306,7 +306,7 @@ const storyEn = {
         data: "Nothing leaves the phone.",
       },
       commit: {
-        label: "key fingerprint",
+        label: "key hash",
         arrow: "Poseidon(secret)",
         title: "The phone asks for the certificate",
         body: "It sends the ticket and a hash of the secret key, never the key itself.",
@@ -317,7 +317,7 @@ const storyEn = {
         label: "signed certificate",
         arrow: "signed certificate",
         title: "The city office signs it",
-        body: "The city office, played by our demo server, signs Ken's certificate together with that fingerprint. The phone saves it.",
+        body: "The city office, played by our demo server, signs Ken's certificate together with that hash. The phone saves it.",
         tech: "EdDSA-Poseidon over Poseidon(isSingle, birthYear, residenceCode, issuedAt, holderCommitment). Saved in the phone's localStorage.",
         data: "The certificate, to the phone only.",
       },

@@ -320,7 +320,7 @@ const referenceEn = {
       borrow: {
         label: "A certificate works only with its owner's key.",
         cert: "Ken's certificate",
-        bound: "signed with a fingerprint of Ken's key",
+        bound: "signed with a hash of Ken's key",
         own: "Ken's key",
         other: "Someone else's key",
         ok: "Proof made",
@@ -384,12 +384,12 @@ const referenceEn = {
             id: "fake",
             q: "Could someone edit a certificate, or make a fake one?",
             a: "No. The city office's signature covers every value, so an edited or home-made certificate can't produce a proof.",
-            d: "The circuit checks the signature against the city office's public key, and that key is one of the proof's public numbers. Mingle's server and the contract accept only the published key{{ (lib/zk/issuer-public.json)}}, which is fixed in the contract. The signed message is a hash of the single flag, birth year, prefecture code, issue date and your key's fingerprint{{: Poseidon(isSingle, birthYear, residenceCode, issuedAt, holderCommitment)}}, and the circuit also requires the single flag to be set{{ (isSingle = 1)}}.",
+            d: "The circuit checks the signature against the city office's public key, and that key is one of the proof's public numbers. Mingle's server and the contract accept only the published key{{ (lib/zk/issuer-public.json)}}, which is fixed in the contract. The signed message is a hash of the single flag, birth year, prefecture code, issue date and your key's hash{{: Poseidon(isSingle, birthYear, residenceCode, issuedAt, holderCommitment)}}, and the circuit also requires the single flag to be set{{ (isSingle = 1)}}.",
           },
           {
             id: "borrow",
             q: "Could someone borrow another person's certificate?",
-            a: "No. A certificate is signed together with a fingerprint of its owner's key, and making a proof needs the key itself.",
+            a: "No. A certificate is signed together with a hash of its owner's key, and making a proof needs the key itself.",
             d: "The key comes from a signature by the embedded wallet of the Google account that saved the certificate. Limit: in the demo the counter hands Ken's certificate to anyone who scans, so any Google account can pick one up. A real city office would check ID at the counter first.",
           },
           {
