@@ -178,13 +178,16 @@
   font-size: 11px;
 }
 
+/* For a visitor with no phone at hand: open the pickup in this browser. It
+   sits under the QR code, where people are already looking. */
 .counter-preview-link {
-  position: fixed;
-  bottom: 12px;
-  left: 16px;
+  display: inline-block;
+  margin-top: 12px;
   color: #596579;
-  font-size: 10px;
-  opacity: 0.35;
+  font-size: 13px;
+  opacity: 0.8;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 @media (max-width: 980px) {
@@ -226,5 +229,11 @@
   .counter-receive-here {
     display: flex;
     margin-top: 16px;
+  }
+
+  /* The button above replaces the link, and the counter label does not fit. */
+  .counter-preview-link,
+  .counter-number span {
+    display: none;
   }
 }

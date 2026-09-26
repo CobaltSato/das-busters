@@ -25,6 +25,7 @@ export default async function Hub() {
       <Link href="/how-it-works" className="hub-explainer">
         {story.hubLink} <span aria-hidden="true">→</span>
       </Link>
+      <p className="hub-start">{t.hub.start}</p>
       <ul className="hub-apps">
         {APPS.map(({ href, key }) => (
           <li key={href}>

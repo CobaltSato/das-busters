@@ -29,21 +29,22 @@ const en = {
   hub: {
     title: "DAS Busters demo",
     lede: "Prove you are single to a dating app without handing over your certificate.",
+    start: "Start at the counter. Scan its QR code with your phone, or continue on this computer.",
     apps: {
       counter: {
-        device: "Desktop / iPad",
+        device: "Step 1 · Laptop, iPad or this phone",
         title: "Issuing counter",
-        body: "The city office screen. It shows a QR code for picking up a Single Status Certificate.",
+        body: "The city office screen. Scan its QR code with your phone to pick up a Single Status Certificate.",
       },
       wallet: {
-        device: "Phone",
+        device: "Step 2 · Phone",
         title: "DAS Busters",
-        body: "Keeps the certificate on your phone and shares only the facts you choose.",
+        body: "Sign in with Google and save the certificate on your phone. When an app asks, you choose what to share.",
       },
       mingle: {
-        device: "Phone",
+        device: "Step 3 · Phone",
         title: "Mingle",
-        body: "A dating app that asks for proof of single status before showing the badge.",
+        body: "A dating app. It asks DAS Busters for proof that you are single, then shows a badge on your profile.",
       },
     },
   },
@@ -91,11 +92,11 @@ const en = {
     demo: "Demo",
     qrLabel: "QR code for receiving a Single Status Certificate",
     qrFailed: "Could not draw the QR code. Reload the page.",
-    validFor: "Valid for 3 minutes",
-    refreshes: "The QR code refreshes automatically when it expires.",
+    validFor: "New code in",
+    refreshes: "A new code every 3 minutes. Each code works for 10 minutes after it appears.",
     issued: (when: string) => `Issued: ${when}`,
     system: "DAS Busters Digital Certificate Issuance System",
-    preview: "Open the phone flow on this device",
+    preview: "No phone? Continue on this computer",
     receiveHere: "Receive it on this phone",
   },
 
@@ -110,7 +111,7 @@ const en = {
       nothingToSave: "Nothing to save yet",
       nothingToSaveBody: "Scan the QR code at the counter to receive your certificate first.",
       qrExpiredBody:
-        "The pickup QR code is valid for three minutes. Ask the counter for a new one and scan it again.",
+        "A pickup code works for 10 minutes after the counter shows it. Scan the code the counter shows now.",
       noCertificate: "No certificate on this phone",
       noCertificateBody:
         "Receive your Single Status Certificate at the city office counter first, then come back to Mingle.",

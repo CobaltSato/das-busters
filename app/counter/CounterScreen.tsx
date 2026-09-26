@@ -55,8 +55,12 @@ export function CounterScreen() {
     if (remaining !== null && remaining <= 0) refresh();
   }, [remaining, refresh]);
 
-  // The phone opens in the counter's language.
-  const receiveUrl = offer ? `${baseUrl()}/wallet/receive?offer=${offer.offer}&lang=${locale}` : null;
+  // The phone opens in the counter's language. openExternalBrowser=1 asks
+  // LINE to hand the link to the real browser: Google refuses sign-in inside
+  // in-app browsers.
+  const receiveUrl = offer
+    ? `${baseUrl()}/wallet/receive?offer=${offer.offer}&lang=${locale}&openExternalBrowser=1`
+    : null;
   const c = t.counter;
 
   return (
@@ -111,9 +115,14 @@ export function CounterScreen() {
           </div>
           <p>{c.refreshes}</p>
           {receiveUrl && (
-            <a className="btn btn-primary counter-receive-here" href={receiveUrl}>
-              {c.receiveHere}
-            </a>
+            <>
+              <a className="btn btn-primary counter-receive-here" href={receiveUrl}>
+                {c.receiveHere}
+              </a>
+              <a className="counter-preview-link" href={receiveUrl}>
+                {c.preview}
+              </a>
+            </>
           )}
         </div>
       </section>
@@ -122,12 +131,6 @@ export function CounterScreen() {
         <span>{now ? c.issued(formatIssued(t.dateLocale, now)) : " "}</span>
         <span>{c.system}</span>
       </footer>
-
-      {receiveUrl && (
-        <a className="counter-preview-link" href={receiveUrl}>
-          {c.preview}
-        </a>
-      )}
     </main>
   );
 }
