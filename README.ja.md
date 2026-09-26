@@ -323,7 +323,8 @@ BASE_URL=https://das-busters.vercel.app npm run smoke # API を端から端ま�
 | 隠した項目に値を入れる、開示フラグを 2 にする | 回路と Mingle の検証 | circuit-test.ts、[scripts/unit-test.ts](scripts/unit-test.ts) |
 | 証明のあとで公開シグナルを変える | Groth16 の検証（オフチェーンとオンチェーン） | circuit-test.ts、`test_RevertWhen_DisclosedValueIsChanged`、smoke の「tampered signals are rejected」（Mingle のリクエスト照合で拒否） |
 | 本物の証明をモックの証明と偽る | Mingle の検証 | circuit-test.ts |
-| 証明の点を変える | Solidity の検証器（`InvalidProof`） | `test_RevertWhen_ProofPointIsChanged` |
+| 証明の点を変える、または符号を反転する | Solidity の検証器（`InvalidProof`） | `test_RevertWhen_ProofPointIsChanged`、`test_RevertWhen_ProofPointIsNegated` |
+| 公開シグナルに法を足してスカラー体の外に出す（同じ証明書で別の nullifier を得るためなど） | Solidity の検証器（`checkField` で `InvalidProof`）。発行者の公開鍵はその前に `UntrustedIssuer` で止まる | `test_RevertWhen_NullifierIsPushedOutOfTheField`、`test_RevertWhen_AnySignalIsPushedOutOfTheField` |
 | 証明を別のリクエストや別の scope に使い回す | Mingle の検証（`wrong-request`）、レジストリは `verifyProof` を通して | smoke の「a proof cannot be replayed on another request」、`testFuzz_RevertWhen_RequestHashDiffers`、`testFuzz_RevertWhen_ScopeDiffers`（それぞれ fuzz を1,000回） |
 | 同じ証明書と同じ scope で2つ目のアカウントを作る | レジストリ（`NullifierAlreadyUsed`） | `test_RevertWhen_NullifierIsReused`、smoke の「one certificate backs one account per epoch」（Sepolia モードのときだけ） |
 | 失敗した試みで nullifier を使い切らせる | レジストリ（`verifyProof` のあとでしか保存しない） | `test_FailedAttemptDoesNotBurnTheNullifier` |

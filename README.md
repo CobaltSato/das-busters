@@ -323,7 +323,8 @@ Smoke against a deployment with `CHAIN_MODE=sepolia` sends one Sepolia transacti
 | A value in a hidden field, or a disclosure flag of 2 | Circuit and Mingle's verifier | circuit-test.ts; [scripts/unit-test.ts](scripts/unit-test.ts) |
 | A public signal changed after proving | Groth16 verification, off-chain and on-chain | circuit-test.ts; `test_RevertWhen_DisclosedValueIsChanged`; smoke "tampered signals are rejected" (refused by Mingle's request check) |
 | A proof relabelled as a mock proof | Mingle's verifier | circuit-test.ts |
-| A proof point changed | Solidity verifier (`InvalidProof`) | `test_RevertWhen_ProofPointIsChanged` |
+| A proof point changed or negated | Solidity verifier (`InvalidProof`) | `test_RevertWhen_ProofPointIsChanged`, `test_RevertWhen_ProofPointIsNegated` |
+| A public signal pushed out of the field (the same value plus the modulus), for example to get a second nullifier for one certificate | Solidity verifier (`checkField`, so `InvalidProof`); the issuer key fails earlier as `UntrustedIssuer` | `test_RevertWhen_NullifierIsPushedOutOfTheField`, `test_RevertWhen_AnySignalIsPushedOutOfTheField` |
 | A proof reused for another request or scope | Mingle's verifier (`wrong-request`); the registry through `verifyProof` | smoke "a proof cannot be replayed on another request"; `testFuzz_RevertWhen_RequestHashDiffers`, `testFuzz_RevertWhen_ScopeDiffers` (1,000 fuzz runs each) |
 | A second account with the same certificate in the same scope | Registry (`NullifierAlreadyUsed`) | `test_RevertWhen_NullifierIsReused`; smoke "one certificate backs one account per epoch" (Sepolia mode only) |
 | A failed attempt that uses up the nullifier | Registry (stores only after `verifyProof`) | `test_FailedAttemptDoesNotBurnTheNullifier` |
