@@ -10,9 +10,9 @@ flowchart LR
   B --> C["Save certificate"]
   C --> D["Mingle<br/>Verify with DAS Busters"]
   D --> E["Choose what to share"]
-  E --> F["Proof checked<br/>and recorded"]
+  E --> F["Proof made on the phone,<br/>checked and recorded"]
   F --> G["Badge on<br/>Mingle profile"]
-  F --> H["Etherscan<br/>nullifier only"]
+  F --> H["Sepolia explorer<br/>nullifier only"]
 ```
 
 ## What you need
@@ -22,83 +22,94 @@ flowchart LR
 | Counter | A laptop or iPad on the stage screen |
 | Phone | One phone for both DAS Busters and Mingle, not in private browsing |
 | URL | https://das-busters.vercel.app, on both devices |
-| Google account | Any Google account. The sign-in app is published, so judges can use their own. |
+| Google account | Any Google account works; the sign-in app is published. |
+| One device instead | A laptop alone: on the counter, click **No phone? Continue on this computer** under the QR code, and run every step in that browser. A phone alone: open the counter on the phone and tap **Receive it on this phone** under the QR code. |
 
 **Language.** Everything starts in English. The `EN / 日本語` toggle is on the hub, the counter, every DAS Busters screen from pickup to sharing, and Mingle's profile and Settings. Adding `?lang=ja` to any URL also switches to Japanese. The counter's QR code carries its language to the phone, so switching the counter is enough.
 
-**Check before going on stage.** The hub (`/`) shows four mode badges. For the full demo they read `Sign-in: Google via Privy`, `Proof: Groth16` and `Recorded on Sepolia`. `Human check: World ID staging` is expected until the Portal's staging window closes (see step 5); after that it falls back to `Human check: simulated`. See [Mode badges](#mode-badges) if any of them says mock or off-chain.
+**Check before going on stage.** The hub (`/`) shows four mode badges. For the full demo they read `Sign-in: Google via Privy`, `Proof: Groth16` and `Recorded on Sepolia`. `Human check: World ID staging` is expected until the Portal's staging window closes on 27 September 2026 at 16:58 JST (see step 5); after that it falls back to `Human check: simulated`. See [Mode badges](#mode-badges) if any of them says mock or off-chain.
 
 ## The run
 
 ### 1. Open the counter
 
 - **Do**: on the laptop, open the hub and click **Issuing counter**.
-- **They see**: the Shibuya City counter with a QR code and a 3-minute countdown.
+- **They see**: the Shibuya City counter with a QR code and a **New code in** countdown. A new code appears every 3 minutes, and each code works for 10 minutes after it appears.
 - **Say**: "Ken is at the city office. The counter hands him his Single Status Certificate as a QR code."
 
 ### 2. Scan the QR code
 
 - **Do**: scan the QR code with the phone's camera and open the link.
-- **They see**: **Receive your certificate**, with Ken's full name, date of birth and marital status.
-- **Say**: "This is what a dating app would get if Ken sent a copy. None of it will leave the phone."
+- **They see**: **Receive your certificate**, with Ken's full name, date of birth and marital status, and a note that every pickup issues this sample certificate.
+- **Say**: "This is what a dating app would get if Ken sent a copy. Mingle will never see any of it."
 
 ### 3. Sign in with Google
 
 - **Do**: tap **Continue with Google** and pick the test account.
-- **They see**: back in DAS Busters: **Signed in as …** and **Save to this device**. The button shows **Preparing your key…** for a moment.
+- **They see**: back in DAS Busters: **Signed in as …** and **Save to this device**. The button may show **Preparing your key…** while the sign-in library loads.
 - **Say**: "Privy gives Ken an embedded wallet. A signature from it becomes his holder key."
 
 ### 4. Save the certificate
 
-- **Do**: tap **Save certificate**, then **Go to home**.
+- **Do**: tap **Save certificate**. The button shows **Saving…** while the wallet signs and the city office signs the certificate. Then tap **Go to home**.
 - **They see**: **Certificate saved**, then **My proofs** with the certificate.
-- **Say**: "The city office signed the certificate together with a commitment to Ken's key. Only this phone can prove anything with it."
+- **Say**: "The city office signed the certificate together with a commitment to Ken's key. Only someone with Ken's key can prove anything with it."
 
 ### 5. Human check (optional)
 
 - **Do**: on the home screen, tap **Verify with World ID**, then **Verify with World ID** again. The World ID Simulator opens over the screen; tap **Continue** in it. When it shows Presented, it closes by itself. Tap **Continue**.
 - **They see**: the Simulator, then **Human check complete**: "World ID staging confirmed the request. The identity came from the Simulator, so this is a test, not a real person."
-- **Say**: "This is a real World ID request through IDKit, checked by World's Developer Portal. On staging the World ID Simulator stands in for World App, and the app says so. Mingle only learns that a unique human is behind the wallet."
-- **If it falls back**: the staging window lasts 24 hours. When it has closed, the hub shows `Human check: simulated` and this step opens the camera instead (five seconds, then **Continue**). To reopen it, run `npx tsx --env-file=.env.local scripts/world-staging.ts` and copy `WORLDID_STAGING_TOKEN` and `WORLDID_STAGING_EXPIRES_AT` to Vercel, then redeploy. The exact commands are in [setup.md](setup.md#world-id-staging-window).
+- **Say**: "This is a real World ID request through IDKit, checked by World's Developer Portal. On staging the World ID Simulator stands in for World App, and the app says so. Mingle learns only that a World ID check passed. In this demo it is not yet tied to the certificate."
+- **If it falls back**: the staging window lasts 24 hours. When it has closed, the hub shows `Human check: simulated`, and this step opens the camera instead, under **Human check · simulated** (five seconds, then **Continue**, or **Complete without camera (simulated)**). To reopen it, run `npx tsx --env-file=.env.local scripts/world-staging.ts` and copy `WORLDID_STAGING_TOKEN` and `WORLDID_STAGING_EXPIRES_AT` to Vercel, then redeploy. The exact commands are in [setup.md](setup.md#world-id-staging-window).
+
+### 5b. Without World ID (optional)
+
+Use this instead of step 5 to show that the human check is optional.
+
+- **Do**: tap **Verify with World ID**, then **Verify with World ID** again. When the Simulator opens, tap **×** at its top right instead of **Continue**. Tap **‹** to go back to the home screen.
+- **They see**: the request screen again, and nothing saved: the home screen still offers **Verify with World ID**. In step 7 the share screen shows **Add a human check** instead of the tick box, and in step 8 Mingle shows single status without a Human badge.
+- **Say**: "World ID is optional. Without it, the certificate still proves single status; Mingle just doesn't get the human check."
 
 ### 6. Mingle asks
 
-- **Do**: open Mingle from the hub (or tap **Verify single status on Mingle** on the Certificate saved screen, which opens this screen directly). Tap **Identity & verification**, then **Verify with DAS Busters**, then **Continue**.
-- **They see**: Ken's profile (36, Tokyo), Single status **Not verified**, then DAS Busters with **Choose what to share**.
+- **Do**: tap **Verify single status on Mingle** on the Certificate saved screen, or **Prove it on Mingle →** on the DAS Busters home screen. Either one opens Mingle's verification screen. From the hub instead, open Mingle and tap **Verify single status with DAS Busters** under Ken's city, or **Identity & verification**, which reads **Single status: not verified**. Then tap **Verify with DAS Busters**, then **Continue**.
+- **They see**: Mingle's Single status **Not verified**, then DAS Busters with **Choose what to share**.
 - **Say**: "Mingle wants to know one thing: is Ken single?"
 
 ### 7. Choose what to share
 
 - **Do**: leave **Single status** on; it is required. Turn on **Lives in Tokyo** and **Age range: 30s** if you like. If you did step 5, keep **Include human check** ticked.
-- **They see**: "Your name, date of birth, and original certificate won’t be shared."
+- **They see**: a line saying what will not be shared, and "The proof is made on this phone."
 - **Say**: "Ken picks the facts. Everything else stays hidden inside the proof."
 
 ### 8. Share
 
 - **Do**: tap **Share selected information**.
-- **They see**: **Creating proof…** (1 to 4 seconds), then **Recording on Sepolia…**, then Mingle's profile with **✓ Single status verified** and a badge for each fact Ken chose.
-- **Say**: "That was a zero-knowledge proof. Mingle learned that Ken is single, and nothing else."
+- **They see**: **Creating proof on this phone…**, then **Recording on Sepolia…** with "Waiting for a Sepolia block, usually 10–20 seconds. Keep this screen open.", then Mingle's profile with **✓ Single status verified** and a badge for each fact Ken chose (and a Human badge if he included the check).
+- **If the phone cannot finish**: the button changes to "This phone could not finish. Creating the proof on the DAS Busters server…" and the server makes that one proof (about 1 to 4 seconds on Vercel). Say so on stage.
+- **Say**: "That was a zero-knowledge proof, made on the phone. Mingle learned that Ken is single, and nothing else."
 
 ### 9. What Mingle received
 
-- **Do**: tap **Identity & verification**.
-- **They see**: Shared, Proof **Zero-knowledge (Groth16)**, Checked **Recorded on Sepolia, block …**, a short nullifier, and "Mingle never received your name, birth date or address."
+- **Do**: on Mingle's profile, tap **What Mingle received ›**.
+- **They see**: **What Mingle received**: single status, plus Tokyo or 30s if shared, how it was checked (**Zero-knowledge (Groth16)**, **Recorded on Sepolia, block …**) and a short anonymous number for Mingle, the nullifier. Below it, **What Mingle did not receive**: no name, birth date, address, certificate or Google account.
 - **Say**: "This is everything Mingle holds about Ken's certificate."
 
-### 10. Etherscan
+### 10. On the Sepolia explorer
 
-- **Do**: tap **Recorded on Sepolia, block … ↗**.
-- **They see**: a `record` call to SingleProofRegistry. In **Logs**, one `SingleStatusVerified` event with `nullifierHash`, `scopeHash` and `requestHash`.
+- **Do**: tap **Recorded on Sepolia, block … ↗**. It opens the transaction on Etherscan. Then change `sepolia.etherscan.io` in the address bar to `eth-sepolia.blockscout.com` (the path `/tx/…` stays the same).
+- **They see**: Etherscan shows the call as `0x93f984ee` and the log as raw topics, because Etherscan verification is still pending. Blockscout, where the source is verified, shows a `record` call to SingleProofRegistry and one `SingleStatusVerified` event with `nullifierHash`, `scopeHash` and `requestHash`.
 - **Say**: "The chain stores one nullifier. No name, no birth date."
-- **If asked**: the transaction input carries the proof and its public signals. The Tokyo code and the birth-year range appear there only when Ken chose to share them. To compare the nullifier with Mingle's, switch the topic on Etherscan to decimal.
+- **If asked**: the transaction input carries the proof and its public signals. The Tokyo code and the birth-year range appear there only when Ken chose to share them. To compare the nullifier with Mingle's, show the topic in decimal.
 
 ### 11. Same certificate again (optional)
 
 This step needs `Recorded on Sepolia`. Off-chain, nothing stops the repeat. Do it within 10 minutes of step 6, while Mingle's request is still valid.
 
 - **Do**: on the phone, press the browser's Back button to return to **Choose what to share**, then tap **Share selected information** again.
-- **They see**: an error: "This certificate is already linked to a Mingle account. Reset the demo to start another run."
+- **They see**: an error: "This certificate is already linked to a Mingle account. Reset the demo to start another run." with a **Start Mingle over** button.
 - **Say**: "Same certificate, same app, same nullifier. The registry refuses it, so one certificate backs one account."
+- **Then**: tap **Start Mingle over**. It keeps the certificate, clears only Mingle's record so Mingle starts a new scope, and opens Mingle's verification screen. **Verify with DAS Busters** again, and the share works with a new nullifier.
 
 ## Reset between runs
 
@@ -110,19 +121,22 @@ One reset clears both apps on the phone: the certificate, the human check, the s
 
 ## If something goes wrong
 
-**QR code expired.** The counter makes a new QR code every 3 minutes by itself. If the phone says **This QR code has expired**, scan the new one. After a scan, Ken has 10 minutes to sign in and save.
+**QR code expired.** The counter shows a new QR code every 3 minutes by itself. A code works for 10 minutes after the counter shows it, so after a scan Ken has at least 7 minutes to sign in and save. If the phone says **This QR code has expired**, scan the counter's current code.
 
 **Google sign-in.**
 - Use the live URL. A laptop IP address such as `http://192.168.x.x:3000` is not an allowed origin in Privy.
 - Back from Google on **Receive your certificate** with a **Continue as …** button: tap it.
-- **Preparing your key…** gives up after 30 seconds with "Setting up your key took too long." Tap **Save certificate** again. If it fails twice, reset the demo and start from step 1.
+- **Preparing your key…** shows while the sign-in library loads and has no time limit. If it does not go away, reload the page.
+- **Saving…** covers the wallet signature and the city office's signature. The signature step gives up after 30 seconds with "Setting up your key took too long. Check your connection and try again." Tap **Save certificate** again. If it fails twice, reset the demo and start from step 1.
 - If Google refuses an account, try the team's account and tell us: the sign-in app is published, so this should not happen.
+
+**The proof is slow on the phone.** The share screen starts downloading the circuit files (7.7 MB) as soon as it opens, so open it on stage Wi-Fi a moment before tapping Share. If the phone cannot finish, the server makes the proof and the button says so (step 8).
 
 **Sepolia is slow.** **Recording on Sepolia…** can take up to about 45 seconds. If the block has not arrived by then, Mingle shows its result with the note "Sepolia has not confirmed the transaction yet. The link shows its status." The link text changes to **Recorded on Sepolia, block …** once the block lands.
 
-**Sepolia is unreachable.** Mingle still checks the proof, and says it did so off-chain: Checked shows **Off-chain by Mingle**, with the note "Sepolia could not be reached, so Mingle checked the proof off-chain only." There is no Etherscan link. Say this on stage; don't present it as on-chain.
+**Sepolia is unreachable, or the relayer is out of test ETH.** Mingle still checks the proof, and says it did so off-chain: Checked shows **Off-chain by Mingle**, with a note saying why. There is no transaction link. Say this on stage; don't present it as on-chain. The relayer's balance is in [setup.md](setup.md#relayer-gas).
 
-**The registry refuses the proof.** That shows as an error on the share screen, never as a success. The usual cause is step 11 done by accident: reset the demo.
+**The registry refuses the proof.** That shows as an error on the share screen, never as a success. The usual cause is step 11 done by accident: tap **Start Mingle over**, or reset the demo.
 
 ### Mode badges
 
@@ -132,7 +146,7 @@ Each integration has a real mode and a stand-in, chosen by the server. The badge
 |---|---|
 | `Sign-in: Google via Privy` | Real Google sign-in |
 | `Sign-in: mock` | No Google. A built-in demo account signs in. |
-| `Proof: Groth16` | A real zero-knowledge proof from the circuit |
+| `Proof: Groth16` | A real zero-knowledge proof from the circuit, made on the phone (the server only as a fallback) |
 | `Proof: mock` | The server checks the same rules but makes no zero-knowledge proof |
 | `Recorded on Sepolia` | The relayer records each verification in SingleProofRegistry |
 | `Verified off-chain` | Mingle checks the proof itself; nothing goes on-chain |

@@ -6,7 +6,7 @@ ETHGlobal asks teams to say where and how they used AI tools. We keep this file 
 
 ## Tools
 
-We used Claude Code (Claude Opus 5.5) in the terminal. Commits it helped write carry a `Co-Authored-By: Claude` trailer, so `git log` shows its part commit by commit.
+We used Claude Code (Claude Opus 5.5) in the terminal. Every commit in this repository was made with Claude Code and carries its `Co-Authored-By: Claude` trailer, so the trailer does not separate its part from ours. The tables below do that, area by area.
 
 ## Planning files
 
@@ -28,7 +28,7 @@ About the skills:
 | Area | Files | Involvement |
 |---|---|---|
 | Project setup | `package.json`, `tsconfig.json`, `next.config.ts`, `vercel.json` | Generated; we reviewed |
-| Demo hub and placeholder routes | `app/` | Generated from our screen designs |
+| Demo hub and routes | `app/` | Generated from our screen designs |
 | API and mock prover | `app/api/`, `lib/` | Generated from the data flow in the plan |
 | Screens | `app/counter/`, `app/wallet/`, `app/mingle/`, `components/` | Generated from our Figma designs |
 | Circuit and setup | `circuits/`, `public/zk/`, `lib/zk/` | Generated from the rules in the plan; the build script is based on pitfalls from our pre-event spike |
@@ -44,6 +44,11 @@ About the skills:
 | Privacy policy page | `app/privacy/` | Drafted from what the code actually stores; needed to open Google sign-in to any account |
 | How-it-works explainer | `app/how-it-works/`, `lib/i18n/how-it-works/` | Drafted from the code, the circuit, the contract and the README diagrams, then fact-checked against the code; later reworked to lead with pictures, with a Plain/Engineer switch for the technical detail and an FAQ. The team asked for a page that explains the app from the basics and is readable without a technical background |
 | Move to das-busters.vercel.app | Vercel domains, Google Cloud and Privy settings, the GitHub repository name, `docs/setup.md` | Claude Code added the domain and the redirect with the Vercel CLI, updated Google Cloud and Privy through Claude in Chrome, and renamed the repository with the GitHub CLI; the team chose the new names |
+| Proving on the phone | `lib/deviceProver.ts`, `lib/statement.ts`, `app/wallet/share/ShareScreen.tsx`, `lib/modes.ts` | Generated. Claude Code moved the circuit rules into a module the browser can load, ran snarkjs in the browser with the server as a labelled fallback, and added `PROVE_ON` to switch back without new code |
+| Contract source verification | Sourcify, `docs/setup.md` | Claude Code exported the standard JSON input with forge and sent it to the Sourcify v2 API after forge's own upload failed, then checked the exact match. Etherscan verification still needs the team's API key |
+| Review fixes in the app | `app/page.tsx`, `app/counter/`, `app/wallet/`, `app/mingle/`, `lib/chain.ts`, `lib/i18n/` | Claude Code reviewed the app against the code and rewrote copy that claimed more than the code does (World ID uniqueness, what Mingle receives), numbered the hub's steps, made the no-phone link readable, and added a way to recover from a used nullifier without losing the certificate |
+| README and explainer rework | `README.md`, `README.ja.md`, `docs/demo.md`, `docs/setup.md`, `app/how-it-works/`, `lib/i18n/how-it-works/` | Claude Code checked the docs against the code and against public sources (city office pages, youbride, IBJ, the Digital Agency, the National Police Agency, World's docs), then rewrote the README around the problem, what is real and what is a stand-in, the limits, and the tests. The team asked for everything to be explained in full with less of an AI-generated feel, and for a note that the city office's signing key sits on the demo server only for the demo, with the layout of a real deployment |
+| Integration debrief | `FEEDBACK.md`, `FEEDBACK.ja.md` | Drafted from the git history, the code comments and the setup notes |
 | Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md`, `docs/demo.md`, `docs/setup.md` | Drafted, including the Mermaid diagrams in the README (checked against the circuit, the contract and the API routes); we edited |
 
 ## What the team did
