@@ -39,6 +39,7 @@ About the skills:
 | Smoke test | `scripts/smoke.ts` | Generated, including the refusal cases |
 | Internationalisation (English/Japanese) | `lib/i18n/`, `components/LanguageToggle.tsx`, `middleware.ts`, `README.ja.md`, `AI_USAGE.ja.md` | Generated; the team asked for English-first with Japanese as an option |
 | One-step demo reset | `app/reset/`, `lib/storage.ts` | Generated |
+| World ID (IDKit 4) | `lib/worldid.ts`, `app/api/world-id/`, `app/wallet/world-id/`, `scripts/world-staging.ts` | Generated. Claude Code also set up the Developer Portal app and action through Claude in Chrome and ran the first test against the World ID Simulator; the team created the Portal account and API key |
 | Privacy policy page | `app/privacy/` | Drafted from what the code actually stores; needed to open Google sign-in to any account |
 | Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md`, `docs/demo.md` | Drafted, including the Mermaid diagrams in the README (checked against the circuit, the contract and the API routes); we edited |
 

@@ -52,7 +52,11 @@ const en = {
     auth: { mock: "Sign-in: mock", privy: "Sign-in: Google via Privy" },
     prover: { mock: "Proof: mock", groth16: "Proof: Groth16" },
     chain: { off: "Verified off-chain", sepolia: "Recorded on Sepolia" },
-    worldId: { simulated: "Human check: simulated", idkit: "Human check: World ID" },
+    worldId: {
+      simulated: "Human check: simulated",
+      "idkit-staging": "Human check: World ID staging",
+      idkit: "Human check: World ID",
+    },
   },
 
   // Place names and certificate values come from the issuer in English.
@@ -115,6 +119,7 @@ const en = {
       humanTitle: "Human check",
       worldId: "World ID",
       worldIdSimulated: "World ID · simulated",
+      worldIdStaging: "World ID · staging (Simulator)",
       done: "Done",
       optional: "Optional",
       humanComplete: "Human check complete",
@@ -136,6 +141,7 @@ const en = {
 
     human: {
       verifiedWorldId: "Verified with World ID",
+      verifiedWorldIdStaging: "World ID staging · a Simulator identity, not a real person",
       simulatedShort: "Simulated for the demo · not a World ID proof",
     },
 
@@ -218,6 +224,40 @@ const en = {
       openIphoneCamera: "Open iPhone camera",
       finePrint: "Simulated for the demo. This does not create a World ID proof.",
     },
+
+    worldId: {
+      title: "Human check",
+      subtitle: "World ID",
+      subtitleStaging: "World ID · staging",
+      intro: "Show apps that a real, unique person holds this wallet. World ID shares no name, face or ID number.",
+      introStaging:
+        "This demo uses World ID staging. You approve the request in the World ID Simulator, which stands in for World App with a test identity.",
+      start: "Verify with World ID",
+      preparing: "Preparing the request…",
+      scanTitle: "Scan with World App",
+      scanBody: "Scan the code with World App, or open World App on this phone.",
+      scanTitleStaging: "Approve in the World ID Simulator",
+      scanBodyStaging:
+        "Open the request in the World ID Simulator and approve it there, or scan this code with the Simulator's camera.",
+      qrLabel: "QR code for the World ID request",
+      openWorldApp: "Open World App",
+      openSimulator: "Open in World ID Simulator",
+      copyLink: "Copy link",
+      copied: "Link copied",
+      copyFailed: "Could not copy. Scan the code instead.",
+      waiting: "Waiting for the request to be opened…",
+      confirming: "Waiting for approval…",
+      verifying: "Checking with World ID…",
+      failed: (code: string) => `World ID did not finish (${code}). Try again.`,
+      tryAgain: "Try again",
+      cancel: "Cancel",
+      complete: "Human check complete",
+      completeBody: "World ID confirmed that a unique person approved this request.",
+      completeBodyStaging:
+        "World ID staging confirmed the request. The identity came from the Simulator, so this is a test, not a real person.",
+      storeFailed: "Could not save the result. Turn off private browsing and try again.",
+      finePrint: "DAS Busters receives a yes, plus an anonymous code that only works for this app.",
+    },
   },
 
   mingle: {
@@ -242,6 +282,7 @@ const en = {
     livesIn: (place: string) => `Lives in ${place}`,
     realPerson: "Real person · World ID",
     humanSimulated: "Human check · simulated",
+    humanStaging: "Human check · World ID staging",
     proof: {
       shared: "Shared",
       single: "Single",

@@ -64,7 +64,11 @@ function VerifiedBadges({ verification }: { verification: NonNullable<Verificati
       {ageRange && <span className="mingle-status is-done">{t.ageRange(ageRange)}</span>}
       {verification.humanCheck && (
         <span className="mingle-status is-done">
-          {verification.humanCheck === "world-id" ? m.realPerson : m.humanSimulated}
+          {verification.humanCheck !== "world-id"
+            ? m.humanSimulated
+            : verification.humanEnvironment === "production"
+              ? m.realPerson
+              : m.humanStaging}
         </span>
       )}
     </div>

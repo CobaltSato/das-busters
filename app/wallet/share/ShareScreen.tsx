@@ -13,6 +13,7 @@ import type { Disclosure } from "@/lib/credential";
 import type { Modes } from "@/lib/modes";
 import type { Presentation, PresentationRequest, VerificationResult } from "@/lib/presentation";
 import { humanStore, sharesStore, walletStore, type HumanRecord, type WalletRecord } from "@/lib/storage";
+import { humanLabel } from "../_components/humanLabel";
 import { Problem } from "../_components/Problem";
 
 type Props = { requestToken: string; request: PresentationRequest; modes: Modes };
@@ -66,7 +67,12 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
       setStep("verifying");
       const { result, resultToken } = await postJson<{ result: VerificationResult; resultToken: string }>(
         "/api/verify",
-        { request: requestToken, presentation, humanCheck: includeHuman && human ? human.check : null },
+        {
+          request: requestToken,
+          presentation,
+          humanCheck: includeHuman && human ? human.check : null,
+          humanToken: includeHuman && human?.check === "world-id" ? human.token : undefined,
+        },
       );
       sharesStore.add({ verifier: request.verifierName, sharedAt: result.verifiedAt, disclosed: result.disclosed });
       router.push(`/mingle?result=${encodeURIComponent(resultToken)}`);
@@ -143,7 +149,7 @@ export function ShareScreen({ requestToken, request, modes }: Props) {
           />
           <span>
             <strong>{copy.includeHuman}</strong>
-            <small>{human.check === "world-id" ? t.wallet.human.verifiedWorldId : t.wallet.human.simulatedShort}</small>
+            <small>{humanLabel(t, human)}</small>
           </span>
         </label>
       ) : (

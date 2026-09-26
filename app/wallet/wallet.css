@@ -702,3 +702,45 @@
 .share-privacy {
   margin-top: 16px;
 }
+
+/* Human check (World ID) */
+
+.worldid-request {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+
+.worldid-request h2 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 26px;
+}
+
+.worldid-request > p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 21px;
+}
+
+.worldid-request .qr-code {
+  display: block;
+  width: min(260px, 100%);
+  height: auto;
+  aspect-ratio: 1;
+  margin: 4px auto;
+}
+
+.worldid-request .qr-placeholder {
+  border-radius: 8px;
+  background: #f4f6f8;
+}
+
+.worldid-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}

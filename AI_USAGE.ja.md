@@ -39,6 +39,7 @@ ETHGlobal は、AI ツールをどこでどう使ったかを申告するよう�
 | スモークテスト | `scripts/smoke.ts` | 拒否されるケースも含めて生成 |
 | 多言語対応（英語と日本語） | `lib/i18n/`、`components/LanguageToggle.tsx`、`middleware.ts`、`README.ja.md`、`AI_USAGE.ja.md` | 生成。英語を既定にして日本語も選べるように、とチームが依頼した |
 | デモのリセット（1回で両方） | `app/reset/`、`lib/storage.ts` | 生成 |
+| World ID（IDKit 4） | `lib/worldid.ts`、`app/api/world-id/`、`app/wallet/world-id/`、`scripts/world-staging.ts` | 生成。Developer Portal のアプリと action の作成、World ID Simulator での最初の試験も、Claude Code が Claude in Chrome で行った。Portal のアカウントと API キーはチームが作成 |
 | プライバシーポリシーのページ | `app/privacy/` | コードが実際に保存しているものをもとに下書き。Google ログインを誰にでも開放するために必要だった |
 | ドキュメント | `README.md`、`AI_USAGE.md`、`AGENTS.md`、`docs/demo.md` | 下書きし、チームが手を入れた。README の Mermaid の図も下書きし、回路とコントラクトと API ルートに照らして確認した |
 

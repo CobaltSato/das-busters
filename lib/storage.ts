@@ -1,12 +1,19 @@
 import type { Credential } from "./credential";
-import type { HumanCheck, VerificationResult } from "./presentation";
+import type { HumanCheck, HumanEnvironment, VerificationResult } from "./presentation";
 
 // Browser storage for the demo. The wallet and Mingle share an origin on
 // Vercel, so each app keeps to its own key prefix and never reads the other's.
 
 export type WalletRecord = { credential: Credential; holderSecret: string; savedAt: string };
 export type UserRecord = { name: string; email: string; picture?: string; provider: "mock" | "privy" };
-export type HumanRecord = { check: HumanCheck; verifiedAt: string };
+// A World ID check keeps the server's signed token, so Mingle can tell it
+// apart from the simulated one without trusting the browser.
+export type HumanRecord = {
+  check: HumanCheck;
+  verifiedAt: string;
+  environment?: HumanEnvironment;
+  token?: string;
+};
 export type ShareRecord = {
   verifier: string;
   sharedAt: string;

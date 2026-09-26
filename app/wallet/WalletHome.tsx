@@ -22,6 +22,7 @@ import {
 } from "@/lib/storage";
 import { errorMessage } from "@/lib/api";
 import { useProviderSignOut } from "./_components/holderKey";
+import { humanLabel } from "./_components/humanLabel";
 
 function describeShare(t: Messages, share: ShareRecord): string {
   const home = t.wallet.home;
@@ -111,7 +112,7 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
         <div className="human-heading">
           <div>
             <h2 id="human-title">{home.humanTitle}</h2>
-            <p>{worldId === "idkit" ? home.worldId : home.worldIdSimulated}</p>
+            <p>{{ idkit: home.worldId, "idkit-staging": home.worldIdStaging, simulated: home.worldIdSimulated }[worldId]}</p>
           </div>
           <span className={human ? "status-chip is-done" : "status-chip"}>{human ? home.done : home.optional}</span>
         </div>
@@ -120,7 +121,7 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
             <i aria-hidden="true">✓</i>
             <span>
               <strong>{home.humanComplete}</strong>
-              <small>{human.check === "world-id" ? t.wallet.human.verifiedWorldId : t.wallet.human.simulatedShort}</small>
+              <small>{humanLabel(t, human)}</small>
             </span>
           </div>
         ) : (

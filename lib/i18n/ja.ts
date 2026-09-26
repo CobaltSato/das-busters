@@ -48,7 +48,11 @@ const ja: Messages = {
     auth: { mock: "ログイン: モック", privy: "ログイン: Google（Privy）" },
     prover: { mock: "証明: モック", groth16: "証明: Groth16" },
     chain: { off: "オフチェーンで検証", sepolia: "Sepolia に記録" },
-    worldId: { simulated: "人間確認: シミュレーション", idkit: "人間確認: World ID" },
+    worldId: {
+      simulated: "人間確認: シミュレーション",
+      "idkit-staging": "人間確認: World ID staging",
+      idkit: "人間確認: World ID",
+    },
   },
 
   places: { Tokyo: "東京" },
@@ -114,6 +118,7 @@ const ja: Messages = {
       humanTitle: "人間確認",
       worldId: "World ID",
       worldIdSimulated: "World ID · シミュレーション",
+      worldIdStaging: "World ID · staging（Simulator）",
       done: "完了",
       optional: "任意",
       humanComplete: "人間確認が完了しました",
@@ -135,6 +140,7 @@ const ja: Messages = {
 
     human: {
       verifiedWorldId: "World ID で確認済み",
+      verifiedWorldIdStaging: "World ID staging · Simulator のテスト用 ID で、実在の人ではありません",
       simulatedShort: "デモ用のシミュレーション · World ID の証明ではありません",
     },
 
@@ -217,6 +223,40 @@ const ja: Messages = {
       openIphoneCamera: "iPhone のカメラを開く",
       finePrint: "デモ用のシミュレーションです。World ID の証明は作られません。",
     },
+
+    worldId: {
+      title: "人間確認",
+      subtitle: "World ID",
+      subtitleStaging: "World ID · staging",
+      intro: "このウォレットを持っているのが実在する一人の人間だと、アプリに示せます。名前、顔、ID 番号は渡しません。",
+      introStaging:
+        "このデモは World ID の staging 環境を使います。World App の代わりに World ID Simulator のテスト用 ID で承認します。",
+      start: "World ID で確認する",
+      preparing: "リクエストを準備中…",
+      scanTitle: "World App で読み取る",
+      scanBody: "World App でコードを読み取るか、このスマホで World App を開いてください。",
+      scanTitleStaging: "World ID Simulator で承認する",
+      scanBodyStaging:
+        "World ID Simulator でリクエストを開いて承認してください。Simulator のカメラでこのコードを読み取っても進められます。",
+      qrLabel: "World ID リクエストの QR コード",
+      openWorldApp: "World App を開く",
+      openSimulator: "World ID Simulator で開く",
+      copyLink: "リンクをコピー",
+      copied: "コピーしました",
+      copyFailed: "コピーできませんでした。コードを読み取ってください。",
+      waiting: "リクエストが開かれるのを待っています…",
+      confirming: "承認を待っています…",
+      verifying: "World ID で確認中…",
+      failed: (code) => `World ID の確認が終わりませんでした（${code}）。もう一度お試しください。`,
+      tryAgain: "もう一度試す",
+      cancel: "キャンセル",
+      complete: "人間確認が完了しました",
+      completeBody: "実在する一人の人間がこのリクエストを承認したことを、World ID が確認しました。",
+      completeBodyStaging:
+        "World ID の staging 環境で確認しました。Simulator のテスト用 ID なので、実在の人の確認ではありません。",
+      storeFailed: "結果を保存できませんでした。プライベートブラウズをオフにして、もう一度お試しください。",
+      finePrint: "DAS Busters が受け取るのは「はい」という答えと、このアプリでしか使えない匿名のコードだけです。",
+    },
   },
 
   mingle: {
@@ -241,6 +281,7 @@ const ja: Messages = {
     livesIn: (place) => `${place}在住`,
     realPerson: "実在の人間 · World ID",
     humanSimulated: "人間確認 · シミュレーション",
+    humanStaging: "人間確認 · World ID staging",
     proof: {
       shared: "共有した情報",
       single: "独身",
@@ -364,6 +405,10 @@ const ja: Messages = {
     "registry-rejected": "レジストリが証明を拒否しました（{reason}）。",
     "mined-revert": "トランザクションの取り込み時に、レジストリが証明を拒否しました。",
     "bad-tx-hash": "トランザクションハッシュが必要です",
+    "world-id-off": "このサーバーでは World ID が設定されていません",
+    "world-id-mismatch": "この World ID の証明は、別のリクエスト向けに作られています",
+    "world-id-rejected": "World ID が証明を確認できませんでした（{reason}）",
+    "world-id-unconfirmed": "World ID の確認を検証できませんでした。DAS Busters からもう一度確認してください。",
   },
 };
 
