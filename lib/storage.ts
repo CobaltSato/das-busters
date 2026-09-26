@@ -73,6 +73,29 @@ export const sharesStore = {
   clear: () => remove(KEYS.shares),
 };
 
+// Everything the demo keeps in this browser, for both apps. A Google session
+// held by Privy is not ours to clear; "Sign out" in DAS Busters ends it.
+const DEMO_PREFIXES = ["dasb:", "mingle:"];
+
+function clearDemoKeys(storage: Storage): void {
+  const keys = Array.from({ length: storage.length }, (_, i) => storage.key(i)).filter(
+    (key): key is string => key !== null && DEMO_PREFIXES.some((prefix) => key.startsWith(prefix)),
+  );
+  keys.forEach((key) => storage.removeItem(key));
+}
+
+// One tap before the next run: no certificate, no human check, no share
+// history, and Mingle starts over with a new epoch (so a new nullifier).
+export function resetDemoData(): boolean {
+  try {
+    clearDemoKeys(window.localStorage);
+    clearDemoKeys(window.sessionStorage);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function newEpoch(): string {
   const bytes = new Uint8Array(6);
   crypto.getRandomValues(bytes);
