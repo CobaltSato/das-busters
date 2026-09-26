@@ -338,7 +338,7 @@ const ja: Messages = {
       singleBody: "公的な証明書を使って、独身であることをプロフィールに表示できます。",
       connect: "DAS Busters で確認",
       income: "年収",
-      incomeBody: "このデモには含まれません。同じ仕組みの証明を使えば、給与明細を見せずに年収の範囲を示せます。",
+      incomeBody: "このデモには含まれません。同じ仕組みの証明なら、給与明細を見せずに年収の範囲を示せるはずです。",
     },
     connectTitle: "DAS Busters と連携しますか？",
     connectBody: "DAS Busters を開いて、独身であることを確認します。",
