@@ -31,9 +31,17 @@ export function CertificateCard({ certificate, variant = "detail", showTitle = f
     <section className="certificate certificate-detail" aria-label={type}>
       {showTitle && <h2>{type}</h2>}
       <dl>
-        <div className="is-wide is-name">
+        <div className="is-name">
           <dt>{labels.fullName}</dt>
           <dd>{show(certificate.holder)}</dd>
+        </div>
+        {/* Not on a real 独身証明書; the demo adds it, as a residence record
+            would, so the holder can also prove "lives in Tokyo". It shares
+            the name's row so the card gets no taller; on the receive screen
+            the only button sits right below it. */}
+        <div>
+          <dt>{labels.residence}</dt>
+          <dd>{lookup(t.places, certificate.residence)}</dd>
         </div>
         <div>
           <dt>{labels.dateOfBirth}</dt>
@@ -42,12 +50,6 @@ export function CertificateCard({ certificate, variant = "detail", showTitle = f
         <div>
           <dt>{labels.maritalStatus}</dt>
           <dd>{show(certificate.maritalStatus)}</dd>
-        </div>
-        {/* Not on a real 独身証明書; the demo adds it, as a residence record
-            would, so the holder can also prove "lives in Tokyo". */}
-        <div className="is-wide">
-          <dt>{labels.residence}</dt>
-          <dd>{lookup(t.places, certificate.residence)}</dd>
         </div>
         <div className="is-wide">
           <dt>{labels.issuingAuthority}</dt>
