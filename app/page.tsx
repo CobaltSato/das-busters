@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ModeBadges } from "@/components/ModeBadges";
+import { getModes } from "@/lib/modes";
 
 const apps = [
   {
@@ -40,6 +42,7 @@ export default function Hub() {
           </li>
         ))}
       </ul>
+      <ModeBadges modes={getModes()} className="hub-modes" />
     </main>
   );
 }
