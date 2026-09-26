@@ -402,7 +402,7 @@ const referenceEn = {
             id: "replay",
             q: "Could someone copy a proof they saw and reuse it?",
             a: "Not for another request. Each proof is tied to the one request it answers, and its anonymous number can be recorded only once.",
-            d: "Mingle's request carries a random number used once{{ (a nonce)}}, and its hash is one of the proof's public numbers{{ (requestHash = Poseidon(nonce))}}. The result must carry the number Mingle saved. Limits: the server does not mark a request as used, so within its 10 minutes the same proof can be verified again; on Sepolia its nullifier is still recorded only once. Anyone can send a proof to the contract{{ (record() is open)}}, and only Mingle's server checks which app and which request a proof answers.",
+            d: "Mingle's request carries a nonce, and its hash is one of the proof's public numbers{{ (requestHash = Poseidon(nonce))}}. The result must carry the nonce Mingle saved. Limits: the server does not mark a request as used, so within its 10 minutes the same proof can be verified again; on Sepolia its nullifier is still recorded only once. Anyone can send a proof to the contract{{ (record() is open)}}, and only Mingle's server checks which app and which request a proof answers.",
           },
         ],
       },
@@ -423,9 +423,9 @@ const referenceEn = {
           },
           {
             id: "setup",
-            q: "Is the proof system's setup safe for real use?",
-            a: "Not yet. Groth16 needs a one-time setup, and we ran ours alone on one machine. A real launch needs a ceremony with many independent people.",
-            d: "The setup creates secret randomness, and whoever knows all of it could forge proofs. With many independent contributors, one honest contributor is enough. At the event the public Hermez setup files returned 403, so each phase of ours has one local contribution. The PSE Perpetual Powers of Tau files are reachable, and moving to them is the next step.",
+            q: "Is the trusted setup safe for real use?",
+            a: "Not yet. We ran both phases alone on one machine. A real launch needs a multi-party ceremony.",
+            d: "The Hermez powers-of-tau files returned 403 at the event, so each phase (powers of tau at 2^14, then the circuit key) has one local contribution. The PSE Perpetual Powers of Tau files are reachable, and moving to them is the next step.",
           },
           {
             id: "key",
