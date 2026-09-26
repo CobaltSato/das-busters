@@ -1,0 +1,34 @@
+import type { StoryCopy } from "@/lib/i18n/how-it-works/story.en";
+import type { Modes } from "@/lib/modes";
+import { Section } from "../_components/Section";
+import { ArchitectureMap } from "../_diagrams/ArchitectureMap";
+
+type Copy = StoryCopy["architecture"];
+
+export function Architecture({ copy, worldId }: { copy: Copy; worldId: Modes["worldId"] }) {
+  const head = copy.dataHead;
+  return (
+    <Section id="architecture" title={copy.title} lede={copy.lede} wide>
+      <ArchitectureMap copy={copy} worldId={worldId} />
+      <h3 className="hiw-subhead">{copy.dataTitle}</h3>
+      <table className="hiw-table is-stacking">
+        <thead>
+          <tr>
+            <th scope="col">{head.place}</th>
+            <th scope="col">{head.holds}</th>
+            <th scope="col">{head.never}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {copy.dataRows.map((row) => (
+            <tr key={row.place}>
+              <th scope="row">{row.place}</th>
+              <td data-label={head.holds}>{row.holds}</td>
+              <td data-label={head.never}>{row.never}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Section>
+  );
+}

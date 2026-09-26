@@ -5,11 +5,15 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import { howItWorksFor } from "@/lib/i18n/how-it-works";
 import { getLocale } from "@/lib/i18n/server";
 import { getModes } from "@/lib/modes";
+import { Architecture } from "./_sections/Architecture";
 import { Basics } from "./_sections/Basics";
+import { Flow } from "./_sections/Flow";
 import { Hero } from "./_sections/Hero";
 import { Idea, Why } from "./_sections/Story";
 import "./how-it-works.css";
 import "./diagrams.css";
+import "./flow.css";
+import "./reference.css";
 
 // Hashes, routes and addresses read better in a monospace face.
 const mono = JetBrains_Mono({
@@ -19,7 +23,7 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
-const CONTENTS = ["why", "idea", "basics"] as const;
+const CONTENTS = ["why", "idea", "basics", "flow", "architecture"] as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const { story } = howItWorksFor(await getLocale());
@@ -53,6 +57,8 @@ export default async function HowItWorksPage() {
       <Why copy={story.why} />
       <Idea copy={story.idea} />
       <Basics copy={story.basics} worldId={modes.worldId} />
+      <Flow copy={story.flow} />
+      <Architecture copy={story.architecture} worldId={modes.worldId} />
     </main>
   );
 }
