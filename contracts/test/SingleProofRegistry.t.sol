@@ -12,6 +12,10 @@ contract SingleProofRegistryTest is Test {
     uint256 internal constant FIELD =
         21888242871839275222246405745257275088548364400416034343698204186575808495617;
 
+    /// BN254 base field: coordinates of the proof points live here.
+    uint256 internal constant BASE_FIELD =
+        21888242871839275222246405745257275088696311157297823662689037894645226208583;
+
     event SingleStatusVerified(uint256 indexed nullifierHash, uint256 indexed scopeHash, uint256 requestHash);
 
     SingleProofRegistry internal registry;
@@ -76,6 +80,43 @@ contract SingleProofRegistryTest is Test {
         a[0] = addmod(a[0], 1, FIELD);
         vm.expectRevert(SingleProofRegistry.InvalidProof.selector);
         registry.record(a, b, c, pub);
+    }
+
+    /// Negating a point keeps it on the curve, so the pairing check itself
+    /// has to fail (the test above fails earlier, on an invalid point).
+    function test_RevertWhen_ProofPointIsNegated() public {
+        a[1] = BASE_FIELD - a[1];
+        vm.expectRevert(SingleProofRegistry.InvalidProof.selector);
+        registry.record(a, b, c, pub);
+    }
+
+    /// nullifier + FIELD is the same field element to the circuit but a new
+    /// key in `used`. The verifier's range check is what stops it from
+    /// opening a second account with the same certificate.
+    function test_RevertWhen_NullifierIsPushedOutOfTheField() public {
+        registry.record(a, b, c, pub);
+
+        uint256 aliased = pub[0] + FIELD;
+        pub[0] = aliased;
+        vm.expectRevert(SingleProofRegistry.InvalidProof.selector);
+        registry.record(a, b, c, pub);
+        assertFalse(registry.used(aliased));
+    }
+
+    /// The same holds for every public signal. The issuer key is compared
+    /// before the proof is checked, so those two fail as untrusted.
+    function test_RevertWhen_AnySignalIsPushedOutOfTheField() public {
+        for (uint256 i = 0; i < 10; i++) {
+            // Copying from storage gives a fresh array each time.
+            uint256[10] memory shifted = pub;
+            shifted[i] += FIELD;
+            bytes4 expected = i == 1 || i == 2
+                ? SingleProofRegistry.UntrustedIssuer.selector
+                : SingleProofRegistry.InvalidProof.selector;
+            vm.expectRevert(expected);
+            registry.record(a, b, c, shifted);
+        }
+        assertFalse(registry.used(pub[0]));
     }
 
     function test_FailedAttemptDoesNotBurnTheNullifier() public {

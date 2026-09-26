@@ -37,6 +37,7 @@ ETHGlobal は、AI ツールをどこでどう使ったかを申告するよう�
 | オンチェーンの記録 | `lib/chain.ts`、`app/api/tx/`、`app/mingle/TxStatus.tsx` | 生成 |
 | Google ログインと保有者鍵 | `app/wallet/_components/`、`lib/privy.ts` | 生成。Privy と Google OAuth の設定はチームが行い、ボタンが止まるバグは本番でログインしてチームが見つけた |
 | スモークテスト | `scripts/smoke.ts` | 拒否されるケースも含めて生成 |
+| ユニット、回路、コントラクトのテスト | `scripts/unit-test.ts`、`scripts/circuit-test.ts`、`contracts/test/SingleProofRegistry.t.sol`、`package.json` の `test` 系スクリプト | 生成。確かめているのは、ウォレットの証明のルール、Mingle が公開シグナルに対して行う確認、コミット済みの回路に正しい証明書と改ざんした証明書を入れたときの結果、有限体の範囲を超える公開シグナルをレジストリが拒否すること |
 | 多言語対応（英語と日本語） | `lib/i18n/`、`components/LanguageToggle.tsx`、`middleware.ts`、`README.ja.md`、`AI_USAGE.ja.md` | 生成。英語を既定にして日本語も選べるように、とチームが依頼した |
 | デモのリセット（1回で両方） | `app/reset/`、`lib/storage.ts` | 生成 |
 | World ID（IDKit 4） | `lib/worldid.ts`、`app/api/world-id/`、`app/wallet/world-id/`、`scripts/world-staging.ts` | 生成。Developer Portal のアプリと action の作成、World ID Simulator での最初の試験も、Claude Code が Claude in Chrome で行った。Portal のアカウントと API キーはチームが作成 |
