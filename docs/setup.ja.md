@@ -27,7 +27,7 @@ Google ログインは上に挙げた origin でしか動きません。`http://
 1. **Vercel**：新しいドメインをプロジェクトに足し、古いドメインをそこへ転送する設定にします。
 2. **Privy**：新しい origin を Allowed origins に足します。足さないと、Google の画面が開く前にログインが失敗します。
 3. **Google Cloud**：ドメインを承認済みドメインに、origin をクライアントの JavaScript 生成元に足し、ホームページとプライバシーポリシーのリンクも新しい URL に向けます。
-4. **コード**：`lib/i18n/how-it-works/links.ts` の `SITE_HOST`、README（英日）、デモの手順（英日）。
+4. **コード**：`lib/i18n/how-it-works/links.ts` の `SITE_HOST`、README（英日）、技術的な詳細（`docs/technical.md` と `docs/technical.ja.md`）、デモの手順（英日）。
 5. **GitHub**：リポジトリの homepage（About 欄のリンク）を新しい URL に向けます。`gh repo edit CobaltSato/das-busters --homepage <新しい URL>`
 6. World ID と Sepolia はドメインに依存しません。
 7. ブラウザの保存領域は origin ごとに分かれます。旧 URL で保存した証明書は新しい URL には出てこないので、発行し直してください。

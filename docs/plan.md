@@ -1,7 +1,7 @@
 # DAS Busters / Single Proof 実装計画（ETHGlobal Tokyo 2026）
 
-> 実装を始める前に書いた計画です。ほぼ当時のまま残しています（あとで直したのは、コミットの行の言い回し1か所だけです）。World ID の staging 対応、スマホでの証明、テストの形などその後に変えた点は、[README](../README.ja.md) と git log にあります。
-> This is the plan we wrote before building, kept mostly as written (we later changed one phrase in the commit row). Later changes (World ID staging, proving on the phone, the test setup and more) are in the [README](../README.md) and the git log.
+> 実装を始める前に書いた計画です。ほぼ当時のまま残しています（あとで直したのは、コミットの行の言い回し1か所だけです）。World ID の staging 対応、スマホでの証明、テストの形などその後に変えた点は、[README](../README.ja.md)、[技術的な詳細](technical.ja.md)、git log にあります。
+> This is the plan we wrote before building, kept mostly as written (we later changed one phrase in the commit row). Later changes (World ID staging, proving on the phone, the test setup and more) are in the [README](../README.md), [docs/technical.md](technical.md) and the git log.
 
 ## Context
 
