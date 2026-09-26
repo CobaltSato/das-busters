@@ -7,6 +7,7 @@ import { BrandLockup } from "@/components/BrandLockup";
 import { useI18n } from "@/components/I18nProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ModeBadges } from "@/components/ModeBadges";
+import { ProgressSteps } from "@/components/ProgressSteps";
 import { Switch } from "@/components/Switch";
 import { ApiError, errorMessage, postJson } from "@/lib/api";
 import { prefetchCircuit, proveOnDevice } from "@/lib/deviceProver";
@@ -26,9 +27,9 @@ import {
 import { humanLabel } from "../_components/humanLabel";
 import { Problem } from "../_components/Problem";
 import { WorldIdButton } from "../world-id/WorldIdButton";
+import { shareSteps, type Step } from "./shareSteps";
 
 type Props = { requestToken: string; request: PresentationRequest; modes: Modes; proveOn: ProvingLocation };
-type Step = "idle" | "proving" | "proving-device" | "proving-server" | "verifying";
 
 const MINGLE_VERIFICATION = "/mingle?screen=verification";
 
@@ -45,6 +46,10 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   const [error, setError] = useState<{ message: string; code?: string } | null>(null);
   // Set when this phone could not finish and the server made the proof.
   const [fellBack, setFellBack] = useState(false);
+  // How long the proof took, shown once it is made.
+  const [provingMs, setProvingMs] = useState<number | null>(null);
+  // Seconds spent waiting for Mingle's check and the Sepolia block.
+  const [waited, setWaited] = useState(0);
 
   useEffect(() => {
     setWallet(walletStore.get());
@@ -55,6 +60,13 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   useEffect(() => {
     if (proveOn === "device") prefetchCircuit();
   }, [proveOn]);
+
+  useEffect(() => {
+    if (step !== "verifying") return;
+    setWaited(0);
+    const timer = setInterval(() => setWaited((seconds) => seconds + 1), 1000);
+    return () => clearInterval(timer);
+  }, [step]);
 
   if (loaded && !wallet) {
     return (
@@ -112,8 +124,10 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
     if (!wallet) return;
     setError(null);
     setFellBack(false);
+    setProvingMs(null);
     try {
       const { presentation, provedOn } = await makeProof();
+      setProvingMs(presentation.provingMs);
       setStep("verifying");
       const { result, resultToken } = await postJson<{ result: VerificationResult; resultToken: string }>(
         "/api/verify",
@@ -154,13 +168,15 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   const { minBirthYear, maxBirthYear } = ageRange;
   const serverProves = proveOn === "server" || fellBack;
 
-  const stepLabel: Record<Step, string> = {
-    idle: copy.submit,
-    proving: copy.proving,
-    "proving-device": copy.provingDevice,
-    "proving-server": copy.provingServer,
-    verifying: modes.chain === "sepolia" ? copy.recordingSepolia : copy.checkingWith(request.verifierName),
-  };
+  const steps = shareSteps({
+    t,
+    step,
+    modes,
+    serverProves,
+    provingMs,
+    waited,
+    verifier: request.verifierName,
+  });
 
   return (
     <main className="phone">
@@ -256,11 +272,16 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
 
       <div className="phone-actions">
         {error && <p className="error-banner">{error.message}</p>}
-        <button type="button" className="btn btn-primary" onClick={share} disabled={busy || !wallet}>
-          {busy && <span className="spinner" />}
-          {stepLabel[step]}
-        </button>
-        {step === "verifying" && modes.chain === "sepolia" && <p className="fine-print">{copy.waitingBlock}</p>}
+        {busy ? (
+          <>
+            <ProgressSteps label={copy.steps.label} steps={steps} />
+            {modes.chain === "sepolia" && <p className="fine-print">{copy.waitingBlock}</p>}
+          </>
+        ) : (
+          <button type="button" className="btn btn-primary" onClick={share} disabled={!wallet}>
+            {copy.submit}
+          </button>
+        )}
         {error?.code === "nullifier-used" && (
           <button type="button" className="btn btn-outline" onClick={startMingleOver}>
             {copy.startMingleOver}
