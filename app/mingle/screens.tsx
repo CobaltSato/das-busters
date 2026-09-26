@@ -252,7 +252,11 @@ export function VerificationScreen({ error, verification, go, modes, dialog, con
           <p>{c.incomeBody}</p>
         </article>
       </div>
-      <ModeBadges modes={modes} only={["prover", "chain"]} />
+      {/* A stored result keeps how it was checked, even after a fallback or a mode change. */}
+      <ModeBadges
+        modes={verification ? { ...modes, prover: verification.prover, chain: verification.chain } : modes}
+        only={["prover", "chain"]}
+      />
       <dialog ref={dialog} className="mingle-dialog">
         <h2>{m.connectTitle}</h2>
         <p>{m.connectBody}</p>
