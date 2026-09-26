@@ -39,6 +39,7 @@ About the skills:
 | Smoke test | `scripts/smoke.ts` | Generated, including the refusal cases |
 | Internationalisation (English/Japanese) | `lib/i18n/`, `components/LanguageToggle.tsx`, `middleware.ts`, `README.ja.md`, `AI_USAGE.ja.md` | Generated; the team asked for English-first with Japanese as an option |
 | One-step demo reset | `app/reset/`, `lib/storage.ts` | Generated |
+| Privacy policy page | `app/privacy/` | Drafted from what the code actually stores; needed to open Google sign-in to any account |
 | Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md`, `docs/demo.md` | Drafted, including the Mermaid diagrams in the README (checked against the circuit, the contract and the API routes); we edited |
 
 ## What the team did

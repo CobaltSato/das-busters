@@ -488,6 +488,46 @@ dd {
   text-underline-offset: 3px;
 }
 
+.hub-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Privacy policy */
+
+.legal {
+  max-width: 720px;
+}
+
+.legal-updated {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.legal section {
+  margin-top: 32px;
+}
+
+.legal h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.legal section p {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.legal section a {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--blue);
+  font-size: 14px;
+}
+
 /* Language toggle */
 
 .lang-toggle {

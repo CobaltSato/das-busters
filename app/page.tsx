@@ -32,9 +32,14 @@ export default async function Hub() {
         ))}
       </ul>
       <ModeBadges modes={getModes()} className="hub-modes" />
-      <Link href="/reset" className="hub-reset">
-        {t.reset.title}
-      </Link>
+      <div className="hub-footer">
+        <Link href="/reset" className="hub-reset">
+          {t.reset.title}
+        </Link>
+        <Link href="/privacy" className="hub-reset">
+          {t.privacy.title}
+        </Link>
+      </div>
     </main>
   );
 }

@@ -282,6 +282,45 @@ const ja: Messages = {
     },
   },
 
+  privacy: {
+    title: "プライバシーポリシー",
+    updated: "最終更新 2026年9月26日",
+    intro:
+      "DAS Busters は ETHGlobal Tokyo 2026 で作ったデモです。証明書、区役所、Mingle はすべて架空のものです。本物の個人書類はアップロードしないでください。",
+    privyLink: "Privy のプライバシーポリシー",
+    contactLink: "GitHub で Issue を作成",
+    sections: {
+      google: {
+        heading: "Google ログイン",
+        body: "「Google で続ける」を押すと、ログインを担当する Privy が Google からあなたの名前、メールアドレス、プロフィール写真を受け取り、埋め込みウォレットを作ります。DAS Busters は、誰がログインしているかを表示するために、名前とメールアドレスをこのブラウザに保存します。私たちのサーバーには保存しません。Privy が受け取ったデータは、Privy のポリシーに沿って扱われます。",
+      },
+      certificate: {
+        heading: "証明書と保有者鍵",
+        body: "デモの証明書と保有者鍵は、このブラウザにだけ保存されます。サーバーは証明を作る1回のリクエストのあいだだけ証明書を読み、保存しません。",
+      },
+      shared: {
+        heading: "Mingle とブロックチェーンが受け取るもの",
+        body: "Mingle が受け取るのは、独身であること、あなたが選んで共有した情報、nullifier だけです。nullifier は Ethereum の Sepolia テストネットに記録されます。Sepolia は公開されていて、記録は消せません。nullifier に氏名、生年月日、住所は含まれません。",
+      },
+      camera: {
+        heading: "カメラ",
+        body: "人間確認では、前面カメラが 5 秒間だけ開きます。映像のアップロードや保存はしません。",
+      },
+      hosting: {
+        heading: "ホスティングと Cookie",
+        body: "このサイトは Vercel でホストしていて、Vercel が IP アドレスなどの通常のアクセスログを残すことがあります。アクセス解析や広告は使っていません。私たちが設定する Cookie は、表示言語を覚えるものだけです。",
+      },
+      deletion: {
+        heading: "データの削除",
+        body: "「デモをリセット」で、このサイトがブラウザに保存したものはすべて消えます。「ログアウト」で Privy のセッションが終わります。Privy のアカウント自体の削除を希望する場合は、ご連絡ください。",
+      },
+      contact: {
+        heading: "連絡先",
+        body: "質問や削除の依頼は、プロジェクトの GitHub リポジトリからチームにお送りください。",
+      },
+    },
+  },
+
   reset: {
     title: "デモをリセット",
     lede: "この端末の DAS Busters と Mingle のデータを消します。保存した証明書、人間確認、共有履歴、Mingle の確認結果が対象です。",

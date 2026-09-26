@@ -285,6 +285,45 @@ const en = {
     } as Lookup,
   },
 
+  privacy: {
+    title: "Privacy policy",
+    updated: "Last updated 26 September 2026",
+    intro:
+      "DAS Busters is a demo built at ETHGlobal Tokyo 2026. The certificate, the city office and Mingle are fictional. Please do not upload real personal documents.",
+    privyLink: "Privy's privacy policy",
+    contactLink: "Open an issue on GitHub",
+    sections: {
+      google: {
+        heading: "Google sign-in",
+        body: "When you continue with Google, Privy, our sign-in provider, receives your name, email address and profile picture from Google and creates an embedded wallet for you. DAS Busters keeps your name and email in this browser to show who is signed in. Our server does not store them. Privy handles this data under its own policy.",
+      },
+      certificate: {
+        heading: "Certificate and holder key",
+        body: "The demo certificate and your holder key are stored only in this browser. The server reads the certificate for a single proving request and does not keep it.",
+      },
+      shared: {
+        heading: "What Mingle and the blockchain receive",
+        body: "Mingle receives only that you are single, anything else you choose to share, and a nullifier. The nullifier is recorded on the Ethereum Sepolia test network, which is public and cannot be erased. It does not contain your name, birth date or address.",
+      },
+      camera: {
+        heading: "Camera",
+        body: "The human check opens the front camera for five seconds. Nothing is uploaded or saved.",
+      },
+      hosting: {
+        heading: "Hosting and cookies",
+        body: "Vercel hosts this site and may keep standard request logs, such as IP addresses. We use no analytics and no advertising. The only cookie we set remembers your language.",
+      },
+      deletion: {
+        heading: "Deleting your data",
+        body: "Reset demo clears everything this site stored in your browser. Sign out ends the Privy session. To have your Privy account deleted, contact us.",
+      },
+      contact: {
+        heading: "Contact",
+        body: "Questions and deletion requests go to the team through the project's GitHub repository.",
+      },
+    },
+  },
+
   reset: {
     title: "Reset demo",
     lede: "Clears DAS Busters and Mingle on this device: the saved certificate, the human check, the share history and Mingle's verification.",
