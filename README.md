@@ -31,7 +31,7 @@ Live demo: https://single-proof.vercel.app
 | Screens and full flow with a mock prover | done |
 | Zero-knowledge proof (circom, Groth16, proved on the server) | done |
 | On-chain verification on Sepolia | done |
-| Google sign-in through Privy | planned |
+| Google sign-in through Privy, holder key from the embedded wallet | done |
 | World ID | planned |
 
 ## Made before the event

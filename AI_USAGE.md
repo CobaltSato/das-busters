@@ -33,6 +33,7 @@ About the skills:
 | Groth16 prover, EdDSA issuer | `lib/prover.ts`, `lib/groth16.ts`, `lib/issuer.ts` | Generated |
 | Registry contract and tests | `contracts/src/SingleProofRegistry.sol`, `contracts/test/`, `contracts/script/` | Generated; checked with the eth-security checklist and slither |
 | On-chain recording | `lib/chain.ts`, `app/api/tx/`, `app/mingle/TxStatus.tsx` | Generated |
+| Google sign-in and holder key | `app/wallet/_components/`, `lib/privy.ts` | Generated; the team set up Privy and Google OAuth and found the stuck-button bug by signing in on production |
 | Smoke test | `scripts/smoke.ts` | Generated, including the refusal cases |
 | Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md` | Drafted; we edited |
 
