@@ -53,7 +53,7 @@ type HumanKind = keyof Copy["mingle"]["humanBadge"];
 
 // Only a production World ID check comes from a person's World App; staging
 // uses the Simulator and the simulated check has no evidence, so neither
-// gets the done style.
+// gets the done style. They get the yellow test style instead.
 function humanKind(verification: NonNullable<Verification>): HumanKind | null {
   if (!verification.humanCheck) return null;
   if (verification.humanCheck !== "world-id") return "simulated";
@@ -71,7 +71,7 @@ function VerifiedBadges({ verification }: { verification: NonNullable<Verificati
       {residence && <span className="mingle-status is-done">{m.residenceVerified(lookup(t.places, residence))}</span>}
       {ageRange && <span className="mingle-status is-done">{m.ageVerified(t.ageRange(ageRange))}</span>}
       {human && (
-        <span className={human === "worldId" ? "mingle-status is-done" : "mingle-status"}>{m.humanBadge[human]}</span>
+        <span className={human === "worldId" ? "mingle-status is-done" : "mingle-status is-test"}>{m.humanBadge[human]}</span>
       )}
     </div>
   );

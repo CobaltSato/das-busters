@@ -120,9 +120,17 @@
   color: #3d735c;
 }
 
+/* Staging and simulated human checks: the yellow the mode badges use for stand-ins. */
+.mingle-status.is-test {
+  background: #fff3cd;
+  color: #775b00;
+}
+
 .mingle-badges .mingle-status {
-  font-size: 11px;
-  line-height: 22px;
+  padding: 0 12px;
+  border-radius: 13px;
+  font-size: 13px;
+  line-height: 26px;
 }
 
 /* Under the badges: opens the list of what Mingle got. */
@@ -134,7 +142,7 @@
   border: 0;
   background: none;
   color: #0866ed;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 /* Before any result, the profile points at the verification screen. */
