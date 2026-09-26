@@ -18,7 +18,7 @@ ETHGlobal は、AI ツールをどこでどう使ったかを申告するよう�
 | [AGENTS.md](AGENTS.md) | コーディングエージェント向けのプロジェクトルール。`CLAUDE.md` はこのファイルを参照しています。 |
 | [.claude/skills/](.claude/skills/) | エージェントが読み込む作業ガイド。 |
 
-スキルについて:
+スキルについて。
 
 - `eth-security` と `eth-testing` は [ethskills.com](https://ethskills.com) から持ってきました。このプロジェクトに関係しないリンクをいくつか削っています。
 - `zk-circuits` と `local-dev` は自分たちのメモです。イベント前の技術検証でハマった点をもとに Claude Code が書きました。
@@ -42,7 +42,7 @@ ETHGlobal は、AI ツールをどこでどう使ったかを申告するよう�
 | デモのリセット（1回で両方） | `app/reset/`、`lib/storage.ts` | 生成 |
 | World ID（IDKit 4） | `lib/worldid.ts`、`app/api/world-id/`、`app/wallet/world-id/`、`scripts/world-staging.ts` | 生成。Developer Portal のアプリと action の作成、World ID Simulator での最初の試験も、Claude Code が Claude in Chrome で行った。Portal のアカウントと API キーはチームが作成 |
 | プライバシーポリシーのページ | `app/privacy/` | コードが実際に保存しているものをもとに下書き。Google ログインを誰にでも開放するために必要だった |
-| しくみの説明ページ | `app/how-it-works/`, `lib/i18n/how-it-works/` | コード、回路、コントラクト、README の図をもとに下書きし、コードと突き合わせて事実確認した。その後、図を主役にして技術的な記述は「かんたん / 技術者向け」の切り替えで出し、よくある質問を付けた構成に作り直した。アプリを基礎から説明し、技術者でなくても読めるページがほしいというチームの依頼 |
+| しくみの説明ページ | `app/how-it-works/`、`lib/i18n/how-it-works/` | コード、回路、コントラクト、README の図をもとに下書きし、コードと突き合わせて事実確認した。その後、図を主役にして技術的な記述は「かんたん / 技術者向け」の切り替えで出し、よくある質問を付けた構成に作り直した。アプリを基礎から説明し、技術者でなくても読めるページがほしいというチームの依頼 |
 | das-busters.vercel.app への移行 | Vercel のドメイン、Google Cloud と Privy の設定、GitHub のリポジトリ名、`docs/setup.md` | ドメインの追加と転送は Claude Code が Vercel CLI で、Google Cloud と Privy の設定は Claude in Chrome で、リポジトリの改名は GitHub CLI で行った。新しい名前はチームが決めた |
 | スマホでの証明 | `lib/deviceProver.ts`、`lib/statement.ts`、`app/wallet/share/ShareScreen.tsx`、`lib/modes.ts` | 生成。回路のルールをブラウザでも読めるモジュールに移し、ブラウザの中で snarkjs を動かし、サーバーを表示付きの予備にした。新しいコードなしで戻せるように `PROVE_ON` も足した |
 | コントラクトのソース検証 | Sourcify、`docs/setup.md` | forge で標準 JSON 入力を書き出し、forge 自身のアップロードが失敗したあと Sourcify v2 の API に送って、exact match を確かめたのは Claude Code。Etherscan での検証は不要とチームが判断した |
@@ -53,8 +53,8 @@ ETHGlobal は、AI ツールをどこでどう使ったかを申告するよう�
 
 ## チームがやったこと
 
-- **アイデアとリサーチ**: アイデア、問題のリサーチ、ピッチ。
-- **デザイン**: 画面デザインとユーザーの流れ。イベント前に Figma で作った。
-- **判断**: 何をチェーンに載せるか、どのチェーンを使うか、証明をどこで作るか、といった設計の判断。
-- **レビューとテスト**: コードレビューと、実機のスマホでのテスト。
-- **アカウントとデモ**: 外部サービスの設定とデモ動画。
+- **アイデアとリサーチ**：アイデア、問題のリサーチ、ピッチ。
+- **デザイン**：画面デザインとユーザーの流れ。イベント前に Figma で作った。
+- **判断**：何をチェーンに載せるか、どのチェーンを使うか、証明をどこで作るか、といった設計の判断。
+- **レビューとテスト**：コードレビューと、実機のスマホでのテスト。
+- **アカウントとデモ**：外部サービスの設定とデモ動画。

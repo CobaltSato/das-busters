@@ -225,7 +225,7 @@ flowchart LR
     ctx["scopeHash, requestHash"]
   end
   checks["回路が確かめること<br/>Poseidon(fields, Poseidon(holderSecret)) への署名<br/>isSingle = 1<br/>住所が一致する（公開するときだけ）<br/>生まれ年が範囲内（公開するときだけ）<br/>公開しない項目は 0"]
-  out["出力: nullifierHash<br/>= Poseidon(holderSecret, scopeHash)"]
+  out["出力：nullifierHash<br/>= Poseidon(holderSecret, scopeHash)"]
   private --> checks
   public --> checks
   checks --> out
