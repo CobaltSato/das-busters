@@ -381,62 +381,6 @@
 
 /* Dialog */
 
-.mingle-dialog {
-  width: calc(100% - 48px);
-  max-width: 330px;
-  padding: 24px 20px;
-  border: 0;
-  border-radius: 16px;
-  background: #ffffff;
-  color: #25252b;
-}
-
-.mingle-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.45);
-}
-
-.mingle-dialog h2 {
-  font-size: 16px;
-  line-height: 25px;
-  text-align: center;
-}
-
-.mingle-dialog p {
-  margin: 12px 0 22px;
-  color: #73737f;
-  font-size: 12px;
-  line-height: 20px;
-  text-align: center;
-}
-
-.mingle-dialog > div {
-  display: flex;
-  gap: 10px;
-}
-
-.mingle-dialog button {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 44px;
-  border: 0;
-  border-radius: 8px;
-  background: #f0f0f3;
-  color: #676774;
-  font-size: 12px;
-}
-
-.mingle-dialog button:last-child {
-  background: #0866ed;
-  color: #ffffff;
-}
-
-.mingle-dialog button:disabled {
-  opacity: 0.7;
-}
-
 /* Settings, help, edit */
 
 .mingle-secondary {

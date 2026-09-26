@@ -20,7 +20,6 @@ type Props = { incoming: Incoming; modes: Modes; initialScreen: Screen };
 export function MingleApp({ incoming, modes, initialScreen }: Props) {
   const { t } = useI18n();
   const router = useRouter();
-  const dialog = useRef<HTMLDialogElement>(null);
   const [record, setRecord] = useState<MingleRecord | null>(null);
   const [screen, setScreen] = useState<Screen>(initialScreen);
   const [connecting, setConnecting] = useState(false);
@@ -70,7 +69,6 @@ export function MingleApp({ incoming, modes, initialScreen }: Props) {
       save({ ...record, pendingNonce: nonce });
       router.push(`/wallet/share?req=${encodeURIComponent(request)}`);
     } catch (e) {
-      dialog.current?.close();
       setConnecting(false);
       setError(errorMessage(e, t));
     }
@@ -94,7 +92,6 @@ export function MingleApp({ incoming, modes, initialScreen }: Props) {
         <VerificationScreen
           {...shared}
           modes={modes}
-          dialog={dialog}
           connecting={connecting}
           onConnect={connect}
         />

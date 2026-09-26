@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { RefObject } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { ModeBadges } from "@/components/ModeBadges";
@@ -259,12 +258,11 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
 
 type VerificationProps = Shared & {
   modes: Modes;
-  dialog: RefObject<HTMLDialogElement | null>;
   connecting: boolean;
   onConnect: () => void;
 };
 
-export function VerificationScreen({ error, verification, go, modes, dialog, connecting, onConnect }: VerificationProps) {
+export function VerificationScreen({ error, verification, go, modes, connecting, onConnect }: VerificationProps) {
   const { t } = useI18n();
   const m = t.mingle;
   const c = m.checks;
@@ -291,8 +289,15 @@ export function VerificationScreen({ error, verification, go, modes, dialog, con
           {verification ? (
             <ProofDetails verification={verification} go={go} />
           ) : (
-            <button type="button" className="mingle-connect" onClick={() => dialog.current?.showModal()}>
-              <ConnectLabel label={c.connect} />
+            <button type="button" className="mingle-connect" onClick={onConnect} disabled={connecting}>
+              {connecting ? (
+                <>
+                  <span className="spinner" />
+                  <span>{c.opening}</span>
+                </>
+              ) : (
+                <ConnectLabel label={c.connect} />
+              )}
             </button>
           )}
         </article>
@@ -309,19 +314,6 @@ export function VerificationScreen({ error, verification, go, modes, dialog, con
         modes={verification ? { ...modes, prover: verification.prover, chain: verification.chain } : modes}
         only={["prover", "chain"]}
       />
-      <dialog ref={dialog} className="mingle-dialog">
-        <h2>{m.connectTitle}</h2>
-        <p>{m.connectBody}</p>
-        <div>
-          <button type="button" onClick={() => dialog.current?.close()} disabled={connecting}>
-            {t.common.cancel}
-          </button>
-          <button type="button" onClick={onConnect} disabled={connecting}>
-            {connecting && <span className="spinner" />}
-            {t.common.continue}
-          </button>
-        </div>
-      </dialog>
     </main>
   );
 }
