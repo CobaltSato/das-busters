@@ -66,7 +66,7 @@ sequenceDiagram
   S->>P: POST /api/v4/verify with the staging token
   P-->>S: success, nullifier, environment
   S-->>W: signed human token (7 days)
-  Note over W: sent with the next share; Mingle's result keeps only "World ID staging"
+  Note over W: sent with the next share, and Mingle's result keeps only "World ID staging"
 ```
 
 ## The three screens
