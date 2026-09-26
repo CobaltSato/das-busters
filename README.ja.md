@@ -49,7 +49,7 @@ API ルートとサーバーでの予備の証明まで入れた全体の流れ�
 
 | 部分 | このデモでは |
 |---|---|
-| ゼロ知識証明 | 本物。circom の回路で、BN254 上の Groth16。証明はブラウザの中で作る。スマホで作りきれないときだけサーバーが作り、ボタンにもそう出る |
+| ゼロ知識証明 | 本物。circom の回路で、BN254 上の Groth16。証明はブラウザの中で作る。スマホで作りきれないときだけサーバーが作り、共有画面にもそう出る |
 | ブロックチェーン | 本物。Ethereum Sepolia 上のコントラクトで、ソースは Sourcify で検証済み（exact match） |
 | Google ログイン | 本物。Privy を通す。埋め込みウォレットは保有者鍵を作るためにメッセージへ1回署名するだけで、トランザクションは送らない |
 | 人間確認 | リクエストは本物で、ID はテスト用。IDKit 4 のリクエストを World の Developer Portal が staging で検証し、World ID Simulator のテスト用 ID が承認する |
@@ -65,9 +65,9 @@ API ルートとサーバーでの予備の証明まで入れた全体の流れ�
 
 1. [das-busters.vercel.app](https://das-busters.vercel.app/?lang=ja) を開き、**発行窓口** を押します。
 2. QR コードの下で、PC なら **スマホがない場合は、このパソコンで続ける** を、スマホなら **このスマホで受け取る** を押します。2台で試すときは、PC の QR コードをスマホのカメラで読み取り、そのままスマホで続けます。
-3. **Google で続ける**、**証明書を保存** の順に押します。
-4. **Mingle で独身証明を使う** を押し、Mingle で **DAS Busters で確認**、**続ける** の順に押します。
-5. 共有する情報を選んで **選んだ情報を共有** を押します。ブラウザの中で証明を作り、Mingle が検証して Sepolia に記録します。
+3. **Google で続ける** を押します。証明書は自動で保存されます。
+4. **Mingle で独身証明を使う** を押し、Mingle で **DAS Busters で確認** を押します。
+5. 共有する情報を選んで **選んだ情報を共有** を押します。画面には、ブラウザの中で証明を作るのにかかった時間と、Mingle が Sepolia に記録するまでの秒数が出ます。
 6. Mingle のプロフィールで **Mingle が受け取った情報 ›** を押すと、Mingle が受け取ったもの、受け取っていないもの、Sepolia のトランザクションへのリンクが出ます。
 
 - 人間確認は任意です。DAS Busters のホームの **World ID で確認** から始めます。World ID の staging 環境で World ID Simulator を使うので、World App は要りません。
@@ -79,7 +79,7 @@ API ルートとサーバーでの予備の証明まで入れた全体の流れ�
 
 - 回路（[circuits/single_proof.circom](circuits/single_proof.circom)）の制約は 9,921 個です。証明書の値と Poseidon(保有者鍵) に対する区役所の EdDSA-Poseidon 署名と、独身であることを確かめます。居住地と生まれ年の範囲は、共有するときだけ確かめます。
 - nullifier は `Poseidon(holderSecret, scopeHash)` です。区役所が見るのは `Poseidon(holderSecret)` だけなので、スマホで証明したときは、区役所があなたの nullifier を計算して Mingle 上で探すことはできません（[lib/fields.ts](lib/fields.ts)）。
-- 証明はスマホの snarkjs で作ります（wasm 2.7 MB と zkey 5.0 MB。共有画面を開いた時点で取りに行く）。`/api/prove` は予備で、使ったときはボタンに出ます（[lib/deviceProver.ts](lib/deviceProver.ts)）。
+- 証明はスマホの snarkjs で作ります（wasm 2.7 MB と zkey 5.0 MB。共有画面を開いた時点で取りに行く）。`/api/prove` は予備で、使ったときは共有画面に出ます（[lib/deviceProver.ts](lib/deviceProver.ts)）。
 - 回路は、隠した項目を 0 に、開示フラグを 0 か 1 に固定します。Mingle の検証も同じことをもう一度確かめます（[lib/verifier.ts](lib/verifier.ts)）。
 - レジストリは発行者の鍵、nullifier、`verifyProof` の順に確かめ、nullifier だけを保存します。relayer は先にシミュレーションし、receipt を最大45秒待ちます。revert は失敗として画面に出します。オフチェーンの確認に切り替えるのは RPC か relayer の問題のときだけで、そのときも画面に表示します（[lib/chain.ts](lib/chain.ts)）。
 - モードはすべてサーバーが env から決めます。Mingle はサーバーが動かしている方式の証明しか受け付けないので、クライアントがモックに格下げすることはできません（[lib/modes.ts](lib/modes.ts)、[lib/prover.ts](lib/prover.ts) の `verifyProof`）。

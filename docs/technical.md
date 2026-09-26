@@ -33,7 +33,7 @@ DAS Busters gives the app one checked fact and a number that differs per app. Th
 | Where | What it holds |
 |---|---|
 | Phone | The certificate and the holder secret. The phone makes the proof. |
-| `/api/prove` | Only if the phone cannot finish (an old browser, too little memory): the certificate and holder secret for that one proof. The button says so, and nothing is kept. |
+| `/api/prove` | Only if the phone cannot finish (an old browser, too little memory): the certificate and holder secret for that one proof. The share screen says so, and nothing is kept. |
 | Mingle | Single: yes, anything you chose to share, the nullifier, and the city office's public key (which shows which office signed) |
 | Sepolia storage | The nullifier |
 | Sepolia event log | The nullifier, the scope hash and the request hash |
@@ -128,7 +128,7 @@ The circuit is [circuits/single_proof.circom](../circuits/single_proof.circom), 
 
 It outputs a nullifier per holder and verifier scope.
 
-The proof is made in the browser, with snarkjs and the same circuit files the server uses ([lib/deviceProver.ts](../lib/deviceProver.ts); `single_proof.wasm` 2.7 MB and `single_proof.zkey` 5.0 MB). The share screen starts downloading them when it opens. On a laptop in Chrome the proof itself took under a second once the files were cached; we have not measured phones yet. If the phone cannot finish, `/api/prove` makes that one proof and the button says "This phone could not finish. Creating the proof on the DAS Busters server…". If the input breaks a rule (not single, someone else's certificate, an edited certificate), the phone shows that error and does not retry on the server. `PROVE_ON=server` moves proving back to the server; the mock prover always runs there.
+The proof is made in the browser, with snarkjs and the same circuit files the server uses ([lib/deviceProver.ts](../lib/deviceProver.ts); `single_proof.wasm` 2.7 MB and `single_proof.zkey` 5.0 MB). The share screen starts downloading them when it opens. On a laptop in Chrome the proof itself took under a second once the files were cached; we have not measured phones yet. If the phone cannot finish, `/api/prove` makes that one proof and the share screen says "This phone could not finish. Making it on the DAS Busters server…". If the input breaks a rule (not single, someone else's certificate, an edited certificate), the phone shows that error and does not retry on the server. `PROVE_ON=server` moves proving back to the server; the mock prover always runs there.
 
 Trusted setup: the Hermez ptau mirrors returned 403 at the event, so both phases have one local contribution ([circuits/build.sh](../circuits/build.sh)). That is fine for a demo and not for production. PSE Perpetual Powers of Tau is reachable, and moving to it is the next step.
 
@@ -260,7 +260,7 @@ The build plan we wrote before building is in [docs/plan.md](plan.md) (Japanese)
 
 | Decision | Why | Cost |
 |---|---|---|
-| Prove on the phone, with `/api/prove` as a fallback the button names ([lib/deviceProver.ts](../lib/deviceProver.ts), [app/wallet/share/ShareScreen.tsx](../app/wallet/share/ShareScreen.tsx), `PROVE_ON` in [lib/modes.ts](../lib/modes.ts)) | The plan proved on the server, following a mentor's advice and the pre-event prototype. On 26 September we moved proving into the browser so the certificate and holder secret stay on the phone. | A 7.7 MB download, and phone speed not measured yet |
+| Prove on the phone, with `/api/prove` as a fallback the share screen names ([lib/deviceProver.ts](../lib/deviceProver.ts), [app/wallet/share/ShareScreen.tsx](../app/wallet/share/ShareScreen.tsx), `PROVE_ON` in [lib/modes.ts](../lib/modes.ts)) | The plan proved on the server, following a mentor's advice and the pre-event prototype. On 26 September we moved proving into the browser so the certificate and holder secret stay on the phone. | A 7.7 MB download, and phone speed not measured yet |
 | `nullifier = Poseidon(holderSecret, scopeHash)` ([lib/fields.ts](../lib/fields.ts), [circuits/single_proof.circom](../circuits/single_proof.circom)) | The city office only sees `Poseidon(holderSecret)`, so it cannot compute your nullifier and find you on Mingle. In this demo the fallback prover runs on the same server, so this holds only when the phone proves. | The secret is needed at every proof |
 | Uniqueness on `used[nullifierHash]` ([contracts/src/SingleProofRegistry.sol](../contracts/src/SingleProofRegistry.sol)) | Groth16 proofs are malleable, so a proof hash is not unique | Only as stable as the scope |
 | Hidden values forced to 0, in the circuit and in Mingle's verifier ([lib/verifier.ts](../lib/verifier.ts)) | A hidden field cannot carry a value that reads as shared | The flags are public, so the transaction shows which facts were shared |
@@ -280,7 +280,7 @@ Holes in the pre-event prototype ([docs/plan.md](plan.md), section "プロトタ
 | The issuer seed was committed | Only the public key is in the repository ([lib/zk/issuer-public.json](../lib/zk/issuer-public.json)) |
 | Results were not tied to a request | A nonce ties them |
 | The 256-bit holder secret overflowed the field | 31 bytes, below the BN254 field |
-| The UI said data stayed on the device while the server proved | The phone proves, and the button names the server fallback |
+| The UI said data stayed on the device while the server proved | The phone proves, and the share screen names the server fallback |
 
 ## Tests
 

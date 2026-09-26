@@ -49,7 +49,7 @@ The proof, the contracts, Google sign-in and the World ID request are real. Our 
 
 | Part | In this demo |
 |---|---|
-| Zero-knowledge proof | Real. A circom circuit, Groth16 on BN254, proved in your browser. The server proves only if the phone cannot finish, and the button says so. |
+| Zero-knowledge proof | Real. A circom circuit, Groth16 on BN254, proved in your browser. The server proves only if the phone cannot finish, and the share screen says so. |
 | Blockchain | Real contracts on Ethereum Sepolia, source verified on Sourcify (exact match). |
 | Google sign-in | Real, through Privy. The embedded wallet signs one message to derive your holder secret and never sends a transaction. |
 | Human check | Real request, test identity. IDKit 4, verified by World's Developer Portal on staging and approved by a test identity in the World ID Simulator. |
@@ -65,9 +65,9 @@ Any Google account works, and there is nothing to install.
 
 1. Open [das-busters.vercel.app](https://das-busters.vercel.app) and click **Issuing counter**.
 2. Under the QR code, click **No phone? Continue on this computer** on a laptop, or tap **Receive it on this phone** on a phone. With two devices, scan the laptop's QR code with your phone's camera and continue on the phone.
-3. Tap **Continue with Google**, then **Save certificate**.
-4. Tap **Verify single status on Mingle**. In Mingle, tap **Verify with DAS Busters**, then **Continue**.
-5. Choose what to share and tap **Share selected information**. The proof is made in your browser, then Mingle checks it and records it on Sepolia.
+3. Tap **Continue with Google**. The certificate saves by itself.
+4. Tap **Verify single status on Mingle**. In Mingle, tap **Verify with DAS Busters**.
+5. Choose what to share and tap **Share selected information**. The screen shows how long the proof took in your browser, then counts the seconds while Mingle records it on Sepolia.
 6. On Mingle's profile, tap **What Mingle received ›**. It lists what Mingle got, what it did not, and links to the Sepolia transaction.
 
 - The human check is optional: **Verify with World ID** on the DAS Busters home screen. It runs on World ID staging with the World ID Simulator, so you need no World App.
@@ -79,7 +79,7 @@ Any Google account works, and there is nothing to install.
 
 - The circuit ([circuits/single_proof.circom](circuits/single_proof.circom)) has 9,921 constraints. It verifies the city office's EdDSA-Poseidon signature over the certificate fields and Poseidon(holder secret), and requires the certificate to say single. It checks residence and the birth-year range only when they are shared.
 - The nullifier is `Poseidon(holderSecret, scopeHash)`. The city office only sees `Poseidon(holderSecret)`, so when the phone makes the proof, the office cannot compute your nullifier and find you on Mingle ([lib/fields.ts](lib/fields.ts)).
-- Proving runs on the phone with snarkjs (2.7 MB wasm and 5.0 MB zkey, fetched when the share screen opens). `/api/prove` is a fallback, and the button names it ([lib/deviceProver.ts](lib/deviceProver.ts)).
+- Proving runs on the phone with snarkjs (2.7 MB wasm and 5.0 MB zkey, fetched when the share screen opens). `/api/prove` is a fallback, and the share screen names it ([lib/deviceProver.ts](lib/deviceProver.ts)).
 - Hidden fields are forced to 0 and disclosure flags to 0 or 1, in the circuit and again in Mingle's verifier ([lib/verifier.ts](lib/verifier.ts)).
 - The registry checks the issuer key, then the nullifier, then `verifyProof`, and stores only the nullifier. The relayer simulates first and waits up to 45 s for the receipt. A revert is shown as a failure; only RPC or relayer trouble falls back to a labelled off-chain check ([lib/chain.ts](lib/chain.ts)).
 - The server picks every mode from env, and Mingle accepts only the prover the server runs, so a client cannot downgrade to the mock ([lib/modes.ts](lib/modes.ts), `verifyProof` in [lib/prover.ts](lib/prover.ts)).

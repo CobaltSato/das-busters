@@ -33,7 +33,7 @@ DAS Busters がアプリに渡すのは、確認済みの事実1つと、アプ�
 | 場所 | 置かれるもの |
 |---|---|
 | スマホ | 証明書と保有者鍵。証明もスマホが作る |
-| `/api/prove` | 古いブラウザやメモリ不足でスマホが作りきれなかったときだけ、その1回のための証明書と保有者鍵。ボタンにもそう出て、サーバーは何も保存しない |
+| `/api/prove` | 古いブラウザやメモリ不足でスマホが作りきれなかったときだけ、その1回のための証明書と保有者鍵。共有画面にもそう出て、サーバーは何も保存しない |
 | Mingle | 「独身」という答え、本人が共有を選んだ項目、nullifier、区役所の公開鍵（どの区役所が署名したかがわかる） |
 | Sepolia のストレージ | nullifier |
 | Sepolia のイベントのログ | nullifier、scope hash、request hash |
@@ -128,7 +128,7 @@ sequenceDiagram
 
 出力は、保有者と検証者の scope ごとに決まる nullifier です。
 
-証明はブラウザの中で作ります。snarkjs と、サーバーと同じ回路のファイル（`single_proof.wasm` 2.7 MB、`single_proof.zkey` 5.0 MB）を使います（[lib/deviceProver.ts](../lib/deviceProver.ts)）。共有画面を開いた時点でダウンロードを始めます。PC の Chrome では、ファイルがキャッシュに入ったあとの証明そのものは1秒かかりませんでした。スマホではまだ測っていません。スマホで作りきれなければ、その1回だけ `/api/prove` が作り、ボタンは「このスマホでは作れませんでした。DAS Busters のサーバーで証明を作成中…」になります。独身でない、他人の証明書、書き換えた証明書など、ルールを満たさない入力はそのままエラーとして出し、サーバーではやり直しません。`PROVE_ON=server` にするとサーバーでの証明に戻ります。モックの証明は常にサーバーで作ります。
+証明はブラウザの中で作ります。snarkjs と、サーバーと同じ回路のファイル（`single_proof.wasm` 2.7 MB、`single_proof.zkey` 5.0 MB）を使います（[lib/deviceProver.ts](../lib/deviceProver.ts)）。共有画面を開いた時点でダウンロードを始めます。PC の Chrome では、ファイルがキャッシュに入ったあとの証明そのものは1秒かかりませんでした。スマホではまだ測っていません。スマホで作りきれなければ、その1回だけ `/api/prove` が作り、共有画面に「このスマホでは作れませんでした。DAS Busters のサーバーで作っています…」と出ます。独身でない、他人の証明書、書き換えた証明書など、ルールを満たさない入力はそのままエラーとして出し、サーバーではやり直しません。`PROVE_ON=server` にするとサーバーでの証明に戻ります。モックの証明は常にサーバーで作ります。
 
 Trusted setup は、両フェーズともローカルで1回ずつ contribution しただけです。イベント中は Hermez の ptau のミラーが 403 を返したためです（[circuits/build.sh](../circuits/build.sh)）。デモには足りますが、本番には使えません。PSE の Perpetual Powers of Tau は取得できるので、次はそちらに移します。
 
@@ -260,7 +260,7 @@ sequenceDiagram
 
 | 判断 | 理由 | 代償 |
 |---|---|---|
-| 証明はスマホで作り、`/api/prove` は使ったときにボタンに出る予備にする（[lib/deviceProver.ts](../lib/deviceProver.ts)、[app/wallet/share/ShareScreen.tsx](../app/wallet/share/ShareScreen.tsx)、[lib/modes.ts](../lib/modes.ts) の `PROVE_ON`） | 計画では、メンターの助言とイベント前のプロトタイプに合わせてサーバーで証明する予定だった。9月26日にブラウザの中へ移し、証明書と保有者鍵がスマホから出ないようにした | 7.7 MB のダウンロードが要る。スマホでの速さはまだ測っていない |
+| 証明はスマホで作り、`/api/prove` は使ったときに共有画面に出る予備にする（[lib/deviceProver.ts](../lib/deviceProver.ts)、[app/wallet/share/ShareScreen.tsx](../app/wallet/share/ShareScreen.tsx)、[lib/modes.ts](../lib/modes.ts) の `PROVE_ON`） | 計画では、メンターの助言とイベント前のプロトタイプに合わせてサーバーで証明する予定だった。9月26日にブラウザの中へ移し、証明書と保有者鍵がスマホから出ないようにした | 7.7 MB のダウンロードが要る。スマホでの速さはまだ測っていない |
 | `nullifier = Poseidon(holderSecret, scopeHash)`（[lib/fields.ts](../lib/fields.ts)、[circuits/single_proof.circom](../circuits/single_proof.circom)） | 区役所が見るのは `Poseidon(holderSecret)` だけなので、区役所があなたの nullifier を計算して Mingle 上で探すことはできない。このデモでは予備の証明サーバーが同じサーバーで動くので、これが成り立つのはスマホで証明したときだけ | 証明するたびに保有者鍵が要る |
 | 一意性は `used[nullifierHash]` で判定する（[contracts/src/SingleProofRegistry.sol](../contracts/src/SingleProofRegistry.sol)） | Groth16 の証明は改変可能（malleable）なので、証明のハッシュでは一意にならない | scope が変わらない範囲でしか一意にならない |
 | 隠した項目は、回路でも Mingle の検証でも 0 に固定する（[lib/verifier.ts](../lib/verifier.ts)） | 隠した項目に、共有したように読める値を紛れ込ませられない | フラグ自体は公開なので、どの事実を共有したかはトランザクションから見える |
@@ -280,7 +280,7 @@ sequenceDiagram
 | 発行者の seed をコミットしていた | リポジトリには公開鍵だけを置く（[lib/zk/issuer-public.json](../lib/zk/issuer-public.json)） |
 | 結果がリクエストに結びついていなかった | nonce で結びつける |
 | 256ビットの保有者鍵がスカラー体からはみ出していた | 31バイトにして BN254 のスカラー体に収める |
-| サーバーで証明しているのに、UI は端末から出ないと書いていた | 証明はスマホで作り、サーバーの予備を使ったときはボタンに出す |
+| サーバーで証明しているのに、UI は端末から出ないと書いていた | 証明はスマホで作り、サーバーの予備を使ったときは共有画面に出す |
 
 ## テスト
 
