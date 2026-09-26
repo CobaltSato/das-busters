@@ -12,6 +12,8 @@ In Japan, the city office that keeps your family register issues a Single Status
 
 Users want the check: in a 2024 Tapple survey of 5,429 users, 83.8% of men and 97.4% of women wanted some proof that the other person is single ([Digital Agency](https://digital-agency-news.digital.go.jp/articles/2025-10-17)). Of the 5,645 social-media romance scams the National Police Agency counted in 2025, 1,846 (32.7%) started on a matching app, more than on any other channel ([NPA](https://www.npa.go.jp/bureau/safetylife/sos47/new-topics/260605/01.html)).
 
+Japan already has a digital check: Tapple's かんたん独身証明 reads marital status through Mynaportal, but Tapple then keeps your verified identity alongside your marital status ([more](docs/technical.md#japans-digital-route)).
+
 ## How it works
 
 DAS Busters is for people on dating apps, and for apps that want checked single status without keeping family-register data.
@@ -21,8 +23,6 @@ DAS Busters is for people on dating apps, and for apps that want checked single 
 3. Your phone makes a Groth16 proof in the browser. Its nullifier is the same every time you prove in Mingle's scope and different at any other app. In the demo, each browser that opens Mingle gets its own scope, and Reset starts a new one.
 4. Mingle's server checks the proof against its request. Its relayer then records the nullifier on Ethereum Sepolia, where the registry verifies the proof again and refuses a nullifier it has seen. One certificate backs one account in that app's scope, and anyone can check.
 5. Optionally, the wallet adds a World ID proof-of-human check, so Mingle also learns that a person approved a World ID request.
-
-Japan already has a digital route: Tapple's かんたん独身証明 gets marital status through Mynaportal, and the app keeps your verified identity next to it ([more](docs/technical.md#japans-digital-route)).
 
 ```mermaid
 sequenceDiagram
@@ -43,22 +43,6 @@ sequenceDiagram
 
 The full sequence, with every API route and the server fallback, is in [docs/technical.md](docs/technical.md#how-it-fits-together).
 
-## Try it
-
-Any Google account works, and there is nothing to install.
-
-1. Open [das-busters.vercel.app](https://das-busters.vercel.app) and click **Issuing counter**.
-2. Under the QR code, click **No phone? Continue on this computer** on a laptop, or tap **Receive it on this phone** on a phone. With two devices, scan the laptop's QR code with your phone's camera and continue on the phone.
-3. Tap **Continue with Google**, then **Save certificate**.
-4. Tap **Verify single status on Mingle**. In Mingle, tap **Verify with DAS Busters**, then **Continue**.
-5. Choose what to share and tap **Share selected information**. The proof is made in your browser, then Mingle checks it and records it on Sepolia.
-6. On Mingle's profile, tap **What Mingle received ›**. It lists what Mingle got, what it did not, and links to the Sepolia transaction.
-
-- The human check is optional: **Verify with World ID** on the DAS Busters home screen. It runs on World ID staging with the World ID Simulator, so you need no World App.
-- To start over, open [/reset](https://das-busters.vercel.app/reset).
-- Every screen is in English and Japanese: use the EN / 日本語 toggle or add `?lang=ja`.
-- [docs/demo.md](docs/demo.md) has the step-by-step script and what to do when something goes wrong.
-
 ## What is real and what is a stand-in
 
 The proof, the contracts, Google sign-in and the World ID request are real. Our server plays the city office and Mingle's backend.
@@ -75,6 +59,22 @@ The proof, the contracts, Google sign-in and the World ID request are real. Our 
 
 The hub shows four badges for the parts that can run as a stand-in. On the live demo they read `Sign-in: Google via Privy`, `Proof: Groth16`, `Recorded on Sepolia` and `Human check: World ID staging`; a badge saying mock, off-chain or simulated marks a stand-in. World's Developer Portal accepts Simulator proofs only during a 24-hour staging window. The current one closes on 27 September 2026 at 23:53 JST, and after that the human check is labelled simulated. How a real deployment would split these roles: [Demo setup vs a real deployment](docs/technical.md#demo-setup-vs-a-real-deployment).
 
+## Try it
+
+Any Google account works, and there is nothing to install.
+
+1. Open [das-busters.vercel.app](https://das-busters.vercel.app) and click **Issuing counter**.
+2. Under the QR code, click **No phone? Continue on this computer** on a laptop, or tap **Receive it on this phone** on a phone. With two devices, scan the laptop's QR code with your phone's camera and continue on the phone.
+3. Tap **Continue with Google**, then **Save certificate**.
+4. Tap **Verify single status on Mingle**. In Mingle, tap **Verify with DAS Busters**, then **Continue**.
+5. Choose what to share and tap **Share selected information**. The proof is made in your browser, then Mingle checks it and records it on Sepolia.
+6. On Mingle's profile, tap **What Mingle received ›**. It lists what Mingle got, what it did not, and links to the Sepolia transaction.
+
+- The human check is optional: **Verify with World ID** on the DAS Busters home screen. It runs on World ID staging with the World ID Simulator, so you need no World App.
+- To start over, open [/reset](https://das-busters.vercel.app/reset).
+- Every screen is in English and Japanese: use the EN / 日本語 toggle or add `?lang=ja`.
+- [docs/demo.md](docs/demo.md) has the step-by-step script and what to do when something goes wrong.
+
 ## Technical highlights
 
 - The circuit ([circuits/single_proof.circom](circuits/single_proof.circom)) has 9,921 constraints. It verifies the city office's EdDSA-Poseidon signature over the certificate fields and Poseidon(holder secret), and requires the certificate to say single. It checks residence and the birth-year range only when they are shared.
@@ -83,7 +83,6 @@ The hub shows four badges for the parts that can run as a stand-in. On the live 
 - Hidden fields are forced to 0 and disclosure flags to 0 or 1, in the circuit and again in Mingle's verifier ([lib/verifier.ts](lib/verifier.ts)).
 - The registry checks the issuer key, then the nullifier, then `verifyProof`, and stores only the nullifier. The relayer simulates first and waits up to 45 s for the receipt. A revert is shown as a failure; only RPC or relayer trouble falls back to a labelled off-chain check ([lib/chain.ts](lib/chain.ts)).
 - The server picks every mode from env, and Mingle accepts only the prover the server runs, so a client cannot downgrade to the mock ([lib/modes.ts](lib/modes.ts), `verifyProof` in [lib/prover.ts](lib/prover.ts)).
-- The holder secret is the SHA-256 of a Privy embedded-wallet signature over a fixed message, cut to 31 bytes to stay below the BN254 field ([lib/privy.ts](lib/privy.ts)).
 - World ID uses IDKit 4's `proofOfHuman` preset. Our server signs each request and forwards each result to the Developer Portal's `/api/v4/verify` on staging ([World ID](docs/technical.md#world-id), [FEEDBACK.md](FEEDBACK.md)).
 
 ## Contracts on Sepolia
@@ -103,13 +102,14 @@ cast call 0xDc813EC37A689e9927A9AA35203EdACC4822c217 'used(uint256)(bool)' \
 
 ## Tests
 
-Of the 23 circuit tests, 13 show the circuit itself refusing a tampered certificate, someone else's key or values in hidden fields. There are also 24 unit tests, 13 Foundry tests against the real generated verifier and a real proof, and an end-to-end smoke test of the API. Each attack and the test that refuses it: [docs/technical.md](docs/technical.md#tests).
+| Suite | Tests | Run with |
+|---|---|---|
+| Circuit ([scripts/circuit-test.ts](scripts/circuit-test.ts)) | 23. In 13 of them the circuit itself refuses a tampered certificate, someone else's holder secret or values in hidden fields | `npm test` |
+| Unit ([scripts/unit-test.ts](scripts/unit-test.ts)) | 24 | `npm test` |
+| Foundry ([contracts/test/SingleProofRegistry.t.sol](contracts/test/SingleProofRegistry.t.sol)), against the real generated verifier and a real proof | 13 | `git submodule update --init && npm run test:contracts` |
+| API smoke test, end to end ([scripts/smoke.ts](scripts/smoke.ts)) | one script | `BASE_URL=https://das-busters.vercel.app npm run smoke` |
 
-```sh
-npm test                                              # unit and circuit tests
-git submodule update --init && npm run test:contracts # Foundry
-BASE_URL=https://das-busters.vercel.app npm run smoke # the API end to end
-```
+Each attack and the test that refuses it: [docs/technical.md](docs/technical.md#tests).
 
 ## Limits
 
@@ -117,9 +117,6 @@ BASE_URL=https://das-busters.vercel.app npm run smoke # the API end to end
 - Freshness and revocation are not checked. The issue date is signed into the certificate, but checking it needs a new circuit key and a redeploy.
 - The app chooses its scope, and the registry does not check it. In the demo, Mingle picks a random epoch per browser, so another browser or Reset gives a new epoch and so a new nullifier.
 - World ID is not bound to the certificate or the proof, and its nullifier is not checked for repeats.
-- The city office's signing key sits on the demo server, and one `TOKEN_SECRET` signs the tokens of every role.
-- The counter hands the sample certificate to anyone who scans. A real city office would check ID first.
-- A request is not single-use: within its 10 minutes the same proof verifies again off-chain. On-chain the nullifier is still recorded once.
 
 Who enforces each rule, and the rest of the demo shortcuts: [Security model and limits](docs/technical.md#security-model-and-limits).
 
