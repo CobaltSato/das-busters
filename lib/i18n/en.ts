@@ -354,6 +354,7 @@ const en = {
       zk: "Zero-knowledge (Groth16)",
       mock: "Mock proof",
       checked: "Checked",
+      checkedOnChain: "On-chain check",
       offChain: "Off-chain by Mingle",
       human: "Human check",
       humanMethod: {
@@ -363,6 +364,9 @@ const en = {
       },
       humanNone: "None",
       nullifier: "Anonymous number for Mingle",
+      // Shown only after a Sepolia record, since off-chain nothing refuses a repeat.
+      nullifierNote:
+        "This number is only for Mingle. The Sepolia registry refuses a number it has already recorded, so this certificate cannot verify a second Mingle account.",
       issuer: "Signed by",
       issuerKey: "City office (its public key)",
       issuerMock: "Mock issuer (no key)",

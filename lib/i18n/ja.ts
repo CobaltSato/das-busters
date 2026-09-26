@@ -352,6 +352,7 @@ const ja: Messages = {
       zk: "ゼロ知識証明（Groth16）",
       mock: "モック証明",
       checked: "検証",
+      checkedOnChain: "オンチェーン検証",
       offChain: "Mingle がオフチェーンで検証",
       human: "人間確認",
       humanMethod: {
@@ -361,6 +362,8 @@ const ja: Messages = {
       },
       humanNone: "なし",
       nullifier: "Mingle 用の匿名の番号",
+      nullifierNote:
+        "この番号は Mingle 専用です。Sepolia のレジストリは一度記録した番号を受け付けないので、この証明書で2つ目の Mingle アカウントは確認できません。",
       issuer: "発行元",
       issuerKey: "区役所（公開鍵）",
       issuerMock: "モックの発行元（鍵なし）",

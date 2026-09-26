@@ -189,6 +189,7 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
   const { residence, ageRange } = verification.disclosed;
   const human = humanKind(verification);
   const short = `${verification.nullifierHash.slice(0, 6)}…${verification.nullifierHash.slice(-4)}`;
+  const txHash = verification.chain === "sepolia" ? verification.txHash : null;
   return (
     <>
       <h3 className="mingle-proof-subhead">{p.received}</h3>
@@ -230,16 +231,11 @@ function ProofDetails({ verification, go }: { verification: NonNullable<Verifica
           <dd>{verification.prover === "groth16" ? p.zk : p.mock}</dd>
         </div>
         <div>
-          <dt>{p.checked}</dt>
-          <dd>
-            {verification.chain === "sepolia" && verification.txHash ? (
-              <TxStatus txHash={verification.txHash} />
-            ) : (
-              p.offChain
-            )}
-          </dd>
+          <dt>{txHash ? p.checkedOnChain : p.checked}</dt>
+          <dd>{txHash ? <TxStatus txHash={txHash} /> : p.offChain}</dd>
         </div>
       </dl>
+      {txHash && <p className="mingle-proof-note">{p.nullifierNote}</p>}
       {verification.chainNote && (
         <p className="mingle-proof-note">{lookup(t.mingle.chainNotes, verification.chainNote)}</p>
       )}
@@ -272,13 +268,6 @@ export function VerificationScreen({ error, verification, go, modes, connecting,
       <div className="mingle-proofs">
         <article>
           <div className="mingle-proof-title">
-            <h2>{c.identity}</h2>
-            <span className="mingle-status">{c.notVerified}</span>
-          </div>
-          <p>{c.identityBody}</p>
-        </article>
-        <article>
-          <div className="mingle-proof-title">
             <h2>{c.single}</h2>
             <span className={verification ? "mingle-status is-done" : "mingle-status"}>
               {verification ? c.verified : c.notVerified}
@@ -299,6 +288,13 @@ export function VerificationScreen({ error, verification, go, modes, connecting,
               )}
             </button>
           )}
+        </article>
+        <article>
+          <div className="mingle-proof-title">
+            <h2>{c.identity}</h2>
+            <span className="mingle-status">{c.notVerified}</span>
+          </div>
+          <p>{c.identityBody}</p>
         </article>
         <article>
           <div className="mingle-proof-title">
