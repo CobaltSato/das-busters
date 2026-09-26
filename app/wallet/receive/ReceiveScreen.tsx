@@ -29,6 +29,8 @@ export function ReceiveScreen({ offer, preview }: Props) {
       <div className="phone-actions">
         {/* A full page load, so it cannot race Privy's own URL cleanup. */}
         <GoogleSignIn onSignedIn={() => window.location.assign(`/wallet/save?offer=${encodeURIComponent(offer)}`)} />
+        <p className="fine-print">{t.wallet.receive.sample}</p>
+        <p className="fine-print">{t.wallet.receive.whySignIn}</p>
       </div>
     </main>
   );

@@ -23,6 +23,11 @@ export function findResident(id: string, issuedAt: string): CredentialPreview | 
   return resident ? { ...resident, issuedAt } : null;
 }
 
+// The office is in Tokyo, so the issue date follows Japan's calendar: a
+// pickup at 08:00 JST is dated that day, not the day before in UTC. Japan
+// has no daylight saving time, so a fixed offset is exact.
+const JST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
 export function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return new Date(Date.now() + JST_OFFSET_MS).toISOString().slice(0, 10);
 }

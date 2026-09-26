@@ -76,6 +76,7 @@ const en = {
     fullName: "Full name",
     dateOfBirth: "Date of birth",
     maritalStatus: "Marital status",
+    residence: "Residence",
     issuingAuthority: "Issuing authority",
     dateOfIssue: "Date of issue",
     issuedBy: (issuer: string) => `Issued by ${issuer}`,
@@ -172,6 +173,9 @@ const en = {
 
     receive: {
       title: ["Receive your", "certificate"],
+      sample: "Demo: every pickup issues the sample certificate of Ken Sato, a fictional resident.",
+      whySignIn:
+        "Signing in with Google makes a key that only you hold, so only you can use this certificate. You need no crypto and pay no fees.",
     },
 
     save: {

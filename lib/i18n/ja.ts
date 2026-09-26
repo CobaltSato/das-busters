@@ -71,6 +71,7 @@ const ja: Messages = {
     fullName: "氏名",
     dateOfBirth: "生年月日",
     maritalStatus: "婚姻状況",
+    residence: "住所",
     issuingAuthority: "発行者",
     dateOfIssue: "発行日",
     issuedBy: (issuer) => `発行者: ${issuer}`,
@@ -171,6 +172,9 @@ const ja: Messages = {
 
     receive: {
       title: ["証明書を", "受け取る"],
+      sample: "デモでは、誰が受け取っても架空の住民、佐藤 健さんの見本の証明書が発行されます。",
+      whySignIn:
+        "Google でログインすると、あなただけが持つ鍵が作られ、この証明書はあなたにしか使えなくなります。暗号資産も手数料もいりません。",
     },
 
     save: {

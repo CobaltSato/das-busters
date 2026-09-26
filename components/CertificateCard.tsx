@@ -43,6 +43,12 @@ export function CertificateCard({ certificate, variant = "detail", showTitle = f
           <dt>{labels.maritalStatus}</dt>
           <dd>{show(certificate.maritalStatus)}</dd>
         </div>
+        {/* Not on a real 独身証明書; the demo adds it, as a residence record
+            would, so the holder can also prove "lives in Tokyo". */}
+        <div className="is-wide">
+          <dt>{labels.residence}</dt>
+          <dd>{lookup(t.places, certificate.residence)}</dd>
+        </div>
         <div className="is-wide">
           <dt>{labels.issuingAuthority}</dt>
           <dd>{show(certificate.issuer)}</dd>
