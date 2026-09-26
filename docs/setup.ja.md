@@ -39,7 +39,7 @@ Google ログインは上に挙げた origin でしか動きません。`http://
 
 ## World ID の staging 窓
 
-Portal が World ID Simulator の証明を受け付けるのは、staging の窓が開いている間だけです。今の窓は **2026年9月27日 16:58 JST**（07:58 UTC）に閉じます。閉じたあとはサーバーが自動で切り替え、ハブには `人間確認: シミュレーション` と出ます。
+Portal が World ID Simulator の証明を受け付けるのは、staging の窓が開いている間だけです。今の窓は **2026年9月27日 23:53 JST**（14:53 UTC）に閉じます。閉じたあとはサーバーが自動で切り替え、ハブには `人間確認: シミュレーション` と出ます。
 
 新しい窓を開く手順です（`.env.local` に `WORLD_PORTAL_API_KEY` が要ります）。
 

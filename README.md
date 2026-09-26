@@ -96,7 +96,7 @@ The certificate proves civil status. It cannot tell whether one person is behind
 
 **Staging vs production.** This deployment runs World ID staging: our server signs each request (`/api/world-id/rp-context`) and forwards each result to the Developer Portal (`/api/world-id/verify`), and a test identity in the World ID Simulator approves it. Production would use World App and a real person. The code switches with `WORLDID_ENVIRONMENT`, but production is not set up. The screens say which one ran.
 
-**The staging window.** The Portal accepts Simulator proofs only while a 24-hour staging window is open. The current window closes on **27 September 2026 at 16:58 JST**. After that the server labels the check simulated, the hub reads `Human check: simulated`, and the human check becomes a five-second camera stand-in.
+**The staging window.** The Portal accepts Simulator proofs only while a 24-hour staging window is open. The current window closes on **27 September 2026 at 23:53 JST**. After that the server labels the check simulated, the hub reads `Human check: simulated`, and the human check becomes a five-second camera stand-in.
 
 **Current limits.** The World ID proof is not bound to the certificate or to the zero-knowledge proof (the request carries no signal), and the World ID nullifier is not checked for repeats. Today it shows that a person approved this World ID request, not that one person holds one account.
 
@@ -366,7 +366,7 @@ On the live demo, [das-busters.vercel.app](https://das-busters.vercel.app):
 - The counter issues a certificate signed with EdDSA-Poseidon, bound to a holder key derived from a Google sign-in through Privy.
 - The phone makes a Groth16 proof of single status, with Tokyo and the 30s range as optional extras, and falls back to the server only when it cannot finish.
 - Mingle verifies the proof, and its relayer records the nullifier on Sepolia; a second account in the same scope is refused on-chain.
-- The World ID human check runs on staging with the Simulator until 27 September 2026 16:58 JST, and after that as a labelled simulated check.
+- The World ID human check runs on staging with the Simulator until 27 September 2026 23:53 JST, and after that as a labelled simulated check.
 - Every screen is in English and Japanese.
 - Unit, circuit, contract and end-to-end smoke tests, listed above.
 
