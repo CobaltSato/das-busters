@@ -22,7 +22,7 @@ flowchart LR
 | Counter | A laptop or iPad on the stage screen |
 | Phone | One phone for both DAS Busters and Mingle, not in private browsing |
 | URL | https://single-proof.vercel.app, on both devices |
-| Google account | One the team added as a test user. The Google sign-in app is in testing mode, so other accounts are refused. |
+| Google account | Any Google account. The sign-in app is published, so judges can use their own. |
 
 **Language.** Everything starts in English. The `EN / 日本語` toggle is on the hub, the counter, the wallet home and Mingle's Settings. Adding `?lang=ja` to any URL also switches to Japanese. The counter's QR code carries its language to the phone, so switching the counter is enough.
 
@@ -115,7 +115,7 @@ One reset clears both apps on the phone: the certificate, the human check, the s
 - Use the live URL. A laptop IP address such as `http://192.168.x.x:3000` is not an allowed origin in Privy.
 - Back from Google on **Receive your certificate** with a **Continue as …** button: tap it.
 - **Preparing your key…** gives up after 30 seconds with "Setting up your key took too long." Tap **Save certificate** again. If it fails twice, reset the demo and start from step 1.
-- A Google account that is not a test user is refused. Switch to the team's account.
+- If Google refuses an account, try the team's account and tell us: the sign-in app is published, so this should not happen.
 
 **Sepolia is slow.** **Recording on Sepolia…** can take up to about 45 seconds. If the block has not arrived by then, Mingle shows its result with the note "Sepolia has not confirmed the transaction yet. The link shows its status." The link text changes to **Recorded on Sepolia, block …** once the block lands.
 
