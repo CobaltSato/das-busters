@@ -108,7 +108,7 @@ const en = {
         "Your certificate is handed over at the city office. Scan the QR code on the counter screen with your phone’s camera.",
       qrExpired: "This QR code has expired",
       qrInvalid: "This QR code is not valid",
-      qrRetry: "Ask the counter to show a new QR code, then scan it again.",
+      qrRetry: "The counter shows a new code every 3 minutes. Scan the one on its screen now.",
       nothingToSave: "Nothing to save yet",
       nothingToSaveBody: "Scan the QR code at the counter to receive your certificate first.",
       qrExpiredBody:
