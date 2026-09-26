@@ -1,11 +1,6 @@
-import Link from "next/link";
+import { getModes } from "@/lib/modes";
+import { WalletHome } from "./WalletHome";
 
-export default function Page() {
-  return (
-    <main className="placeholder">
-      <h1>DAS Busters</h1>
-      <p>This screen is being built.</p>
-      <Link href="/">Back to demo hub</Link>
-    </main>
-  );
+export default function WalletPage() {
+  return <WalletHome worldId={getModes().worldId} />;
 }
