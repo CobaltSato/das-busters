@@ -6,11 +6,14 @@ import { BrandLockup } from "@/components/BrandLockup";
 import { useI18n } from "@/components/I18nProvider";
 import { humanStore } from "@/lib/storage";
 
-// Simulated World ID Selfie Check: the camera opens for five seconds and
-// nothing is recorded. IDKit replaces this when WORLDID_MODE=idkit.
+// Simulated human check: the camera opens for five seconds and nothing is
+// recorded. IDKit replaces this when WORLDID_MODE=idkit. It must never hang
+// on stage, so opening the camera gives up after ten seconds and the check
+// can always be completed without the camera.
 type Phase = "ready" | "opening" | "camera" | "done";
 
 const SECONDS = 5;
+const CAMERA_TIMEOUT_MS = 10_000;
 
 export function HumanCheck({ returnTo }: { returnTo: string }) {
   const { t } = useI18n();
@@ -18,6 +21,9 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
   const router = useRouter();
   const video = useRef<HTMLVideoElement>(null);
   const stream = useRef<MediaStream | null>(null);
+  // Bumped on every camera request, timeout, skip and unmount, so a camera
+  // that answers late is closed instead of left running.
+  const attempt = useRef(0);
   const [phase, setPhase] = useState<Phase>("ready");
   const [count, setCount] = useState(SECONDS);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +46,10 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
 
   useEffect(() => {
     setCanStream(window.isSecureContext && Boolean(navigator.mediaDevices?.getUserMedia));
-    return stopCamera;
+    return () => {
+      attempt.current += 1;
+      stopCamera();
+    };
   }, [stopCamera]);
 
   useEffect(() => {
@@ -54,18 +63,37 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
   }, [phase, count, complete]);
 
   async function openCamera() {
+    const id = ++attempt.current;
     setError(null);
     setPhase("opening");
+    const timer = window.setTimeout(() => {
+      if (attempt.current !== id) return;
+      attempt.current += 1;
+      setPhase("ready");
+      setError(copy.cameraTimeout);
+    }, CAMERA_TIMEOUT_MS);
     try {
       const media = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
+      if (attempt.current !== id) {
+        media.getTracks().forEach((track) => track.stop());
+        return;
+      }
       stream.current = media;
       if (video.current) video.current.srcObject = media;
       setCount(SECONDS);
       setPhase("camera");
     } catch {
+      if (attempt.current !== id) return;
       setPhase("ready");
       setError(copy.cameraFailed);
+    } finally {
+      window.clearTimeout(timer);
     }
+  }
+
+  function completeWithoutCamera() {
+    attempt.current += 1;
+    complete();
   }
 
   const header = (
@@ -144,6 +172,11 @@ export function HumanCheck({ returnTo }: { returnTo: string }) {
               }}
             />
           </label>
+        )}
+        {phase !== "camera" && (
+          <button type="button" className="btn btn-text" onClick={completeWithoutCamera}>
+            {copy.skipCamera}
+          </button>
         )}
         <p className="fine-print">{copy.finePrint}</p>
       </div>

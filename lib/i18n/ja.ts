@@ -137,7 +137,8 @@ const ja: Messages = {
       provedOnDevice: "このスマホで証明",
       provedOnServer: "サーバーで証明",
       humanComplete: "人間確認が完了しました",
-      humanPitch: "この証明書を持っているのが実在する一人の人間だと、アプリに示せます。渡すかどうかは毎回あなたが決めます。",
+      humanPitch:
+        "World ID の確認を通ったことを、アプリに示せます。この確認はまだ証明書とは結び付いていません。渡すかどうかは毎回あなたが決めます。",
       verifyWorldId: "World ID で確認",
       account: "アカウント",
       notSignedIn: "ログインしていません",
@@ -234,10 +235,12 @@ const ja: Messages = {
     selfie: {
       storeFailed: "結果を保存できませんでした。プライベートブラウズをオフにして、もう一度お試しください。",
       cameraFailed: "カメラを使えませんでした。カメラへのアクセスを許可して、もう一度お試しください。",
+      cameraTimeout: "10 秒たってもカメラが開きませんでした。もう一度試すか、カメラを使わずに完了してください。",
+      skipCamera: "カメラを使わずに完了（シミュレーション）",
       complete: "人間確認が完了しました",
       completeBody: "デモ用のシミュレーションです。World ID による確認は行っていません。",
       title: "人間確認",
-      subtitle: "World ID セルフィーチェック · シミュレーション",
+      subtitle: "人間確認 · シミュレーション",
       lookAtCamera: "カメラを見てください",
       ready: "カメラで簡単な確認をします",
       closesSoon: "5 秒後にカメラは自動で閉じます。",
@@ -253,7 +256,7 @@ const ja: Messages = {
       title: "人間確認",
       subtitle: "World ID",
       subtitleStaging: "World ID · staging",
-      intro: "このウォレットを持っているのが実在する一人の人間だと、アプリに示せます。名前、顔、ID 番号は渡しません。",
+      intro: "World ID は、人がこのリクエストを承認したことを示します。名前、顔、ID 番号は渡しません。",
       introStaging:
         "このデモは World ID の staging 環境を使います。World App の代わりに World ID Simulator のテスト用 ID で承認します。",
       start: "World ID で確認する",
@@ -280,7 +283,7 @@ const ja: Messages = {
       tryAgain: "もう一度試す",
       cancel: "キャンセル",
       complete: "人間確認が完了しました",
-      completeBody: "実在する一人の人間がこのリクエストを承認したことを、World ID が確認しました。",
+      completeBody: "人がこのリクエストを承認したことを、World ID が確認しました。",
       completeBodyStaging:
         "World ID の staging 環境で確認しました。Simulator のテスト用 ID なので、実在の人の確認ではありません。",
       storeFailed: "結果を保存できませんでした。プライベートブラウズをオフにして、もう一度お試しください。",

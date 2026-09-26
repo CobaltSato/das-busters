@@ -138,7 +138,8 @@ const en = {
       provedOnDevice: "Proved on this phone",
       provedOnServer: "Proved on the server",
       humanComplete: "Human check complete",
-      humanPitch: "Show apps that a real, unique person holds this certificate. Sharing it is always up to you.",
+      humanPitch:
+        "Add proof that a person passed a World ID check. It is not tied to this certificate yet. You choose each time whether to share it.",
       verifyWorldId: "Verify with World ID",
       account: "Account",
       notSignedIn: "Not signed in",
@@ -235,10 +236,12 @@ const en = {
     selfie: {
       storeFailed: "Could not save the result. Turn off private browsing and try again.",
       cameraFailed: "Camera access was not available. Allow camera access and try again.",
+      cameraTimeout: "The camera did not open within 10 seconds. Try again, or complete the check without the camera.",
+      skipCamera: "Complete without camera (simulated)",
       complete: "Human check complete",
       completeBody: "Simulated for the demo. No World ID verification was performed.",
       title: "Human check",
-      subtitle: "World ID Selfie Check · simulated",
+      subtitle: "Human check · simulated",
       lookAtCamera: "Look at the camera",
       ready: "Ready for a quick camera check?",
       closesSoon: "The camera closes by itself in five seconds.",
@@ -254,7 +257,7 @@ const en = {
       title: "Human check",
       subtitle: "World ID",
       subtitleStaging: "World ID · staging",
-      intro: "Show apps that a real, unique person holds this wallet. World ID shares no name, face or ID number.",
+      intro: "World ID shows that a person approved this request. It shares no name, face or ID number.",
       introStaging:
         "This demo uses World ID staging. You approve the request in the World ID Simulator, which stands in for World App with a test identity.",
       start: "Verify with World ID",
@@ -281,7 +284,7 @@ const en = {
       tryAgain: "Try again",
       cancel: "Cancel",
       complete: "Human check complete",
-      completeBody: "World ID confirmed that a unique person approved this request.",
+      completeBody: "World ID confirmed that a person approved this request.",
       completeBodyStaging:
         "World ID staging confirmed the request. The identity came from the Simulator, so this is a test, not a real person.",
       storeFailed: "Could not save the result. Turn off private browsing and try again.",
