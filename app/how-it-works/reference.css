@@ -402,37 +402,59 @@
   font-weight: 600;
 }
 
-/* Check it yourself */
+/* Check it yourself: four links, then the recipe and the rest on demand.
+   .hiw-more is also the disclosure around the Architecture table. */
+
+.hiw-section > .hiw-links {
+  margin-top: 24px;
+}
+
+.hiw-more {
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.hiw-more + .hiw-more {
+  margin-top: 0;
+  border-top: 0;
+}
+
+.hiw-more > summary {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.hiw-more[open] {
+  padding-bottom: 24px;
+}
+
+.hiw-more > .hiw-table {
+  margin-top: 0;
+}
 
 .hiw-recipe {
-  margin-top: 28px;
-  padding: 22px 24px;
-  border-radius: var(--radius-card);
-  background: var(--ink);
-  color: #ffffff;
-}
-
-.hiw-recipe h3 {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.hiw-recipe ol {
   display: grid;
   gap: 10px;
-  margin: 14px 0 0;
+  max-width: 46em;
+  margin: 4px 0 0;
   padding-left: 22px;
   font-size: 15px;
   line-height: 1.6;
 }
 
 .hiw-recipe li::marker {
-  color: #8dbaf5;
+  color: var(--blue);
   font-weight: 700;
 }
 
 .hiw-links-group {
   margin-top: 32px;
+}
+
+.hiw-more .hiw-links-group:first-of-type {
+  margin-top: 8px;
 }
 
 .hiw-links-group h3 {

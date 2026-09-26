@@ -440,7 +440,8 @@ const storyEn = {
     } satisfies Record<Modes["worldId"], string>,
     real: {
       title: "Demo setup vs a real deployment",
-      lede: "In this demo one server plays three parties: the city office, which holds the signing key; the backup prover; and Mingle's backend. That lets the whole flow run from one link. It is a demo shortcut, not how these parties would trust each other.",
+      lede: "In this demo one server plays three parties: the city office, which holds the signing key; the backup prover; and Mingle's backend. That lets the whole flow run from one link. In a real deployment each party runs its own server with its own keys.",
+      summary: "Part by part: this demo and the intended design",
       tech: "The issuer key is the Vercel environment variable `ISSUER_PRIVATE_KEY`. All three roles sign their tokens with one shared `TOKEN_SECRET`.",
       head: { part: "Part", demo: "This demo", real: "A real deployment (intended design)" },
       rows: [
