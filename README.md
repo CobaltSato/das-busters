@@ -11,7 +11,7 @@ Built at ETHGlobal Tokyo 2026. **Live demo**: [das-busters.vercel.app](https://d
 - **The proof is made on your phone.** A zero-knowledge proof from a circom circuit (Groth16, 9,921 constraints) runs in the browser, so the certificate and your key stay on the phone ([lib/deviceProver.ts](lib/deviceProver.ts)). If a phone cannot finish, our server makes that one proof and the screen says so.
 - **One account per certificate, and no tracking across apps.** Each app gets its own anonymous number, the nullifier. A contract on Ethereum Sepolia refuses the same number twice, and another app sees a different one. Both contracts are [source verified on Sourcify](#contracts-on-sepolia) (exact match).
 - **Built on a real document.** Japan's 独身証明書, which marriage agencies and dating services already ask for today, as a photo of the whole page.
-- **Tested where it counts.** 23 circuit tests show the circuit itself refusing a tampered certificate, someone else's key and values in hidden fields. There are also 24 unit tests, 13 Foundry tests against a real proof, and an end-to-end smoke test. See [What we tested](#what-we-tested).
+- **Tested where it counts.** Of the 23 circuit tests, 13 show the circuit itself refusing a tampered certificate, someone else's key or values in hidden fields. There are also 24 unit tests, 13 Foundry tests against a real proof, and an end-to-end smoke test. See [What we tested](#what-we-tested).
 - **Clear about what is a demo.** Badges on the hub, the share screen and Mingle say which parts are real and which are stand-ins. The limits and the intended real deployment are written down: [Security model and limits](#security-model-and-limits), [Demo setup vs a real deployment](#demo-setup-vs-a-real-deployment).
 
 ## The problem
