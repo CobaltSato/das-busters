@@ -173,6 +173,8 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   const recording = step === "verifying";
   // Mingle's request is older than 10 minutes, so sharing again cannot work.
   const expired = error?.code === "token-expired";
+  // The registry refused a nullifier it already holds; sharing again would too.
+  const used = error?.code === "nullifier-used";
 
   const steps = shareSteps({
     t,
@@ -288,13 +290,13 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
             {modes.chain === "sepolia" && <p className="fine-print">{copy.waitingBlock}</p>}
           </>
         )}
-        {!busy && !expired && (
+        {!busy && !expired && !used && (
           <button type="button" className="btn btn-primary" onClick={share} disabled={!wallet}>
             {copy.submit}
           </button>
         )}
-        {error?.code === "nullifier-used" && (
-          <button type="button" className="btn btn-outline" onClick={startMingleOver}>
+        {used && (
+          <button type="button" className="btn btn-primary" onClick={startMingleOver}>
             {copy.startMingleOver}
           </button>
         )}

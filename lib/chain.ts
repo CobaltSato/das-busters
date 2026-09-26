@@ -44,7 +44,8 @@ const RECEIPT_TIMEOUT_MS = 45_000;
 const REVERTS: Record<string, { code: string; message: string }> = {
   NullifierAlreadyUsed: {
     code: "nullifier-used",
-    message: "This certificate is already linked to a Mingle account. Reset the demo to start another run.",
+    message:
+      "The registry on Sepolia refused this proof: this certificate's anonymous number for Mingle is already used. One certificate, one Mingle account.",
   },
   UntrustedIssuer: {
     code: "registry-untrusted-issuer",

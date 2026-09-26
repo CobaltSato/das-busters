@@ -485,7 +485,7 @@ const ja: Messages = {
     "not-resident": "この証明書には{place}在住であることが書かれていません",
     "not-in-age-range": "生年月日が{range}の範囲に入っていません",
     "stale-certificate": "この証明書は本物の証明に切り替える前に発行されたものです。窓口で新しく受け取ってください。",
-    "nullifier-used": "この証明書は、すでに Mingle のアカウントに連携されています。デモをやり直すには、デモをリセットしてください。",
+    "nullifier-used": "Sepolia 上のレジストリがこの証明を拒否しました。この証明書の Mingle 用の匿名の番号は、すでに使われています。証明書1枚につき、Mingle のアカウントは1つです。",
     "registry-untrusted-issuer": "この証明書に署名した区役所を、レジストリが信頼していません。",
     "invalid-proof-onchain": "オンチェーンで証明を検証できませんでした。",
     "registry-rejected": "レジストリが証明を拒否しました（{reason}）。",

@@ -109,7 +109,7 @@ Use this instead of step 5 to show that the human check is optional.
 This step needs `Recorded on Sepolia`. Off-chain, nothing stops the repeat. Do it within 10 minutes of step 6, while Mingle's request is still valid.
 
 - **Do**: on the phone, press the browser's Back button to return to **Choose what to share**, then tap **Share selected information** again.
-- **They see**: an error: "This certificate is already linked to a Mingle account. Reset the demo to start another run." with a **Start Mingle over** button.
+- **They see**: an error: "The registry on Sepolia refused this proof: this certificate's anonymous number for Mingle is already used. One certificate, one Mingle account." with a **Start Mingle over** button in place of **Share selected information**.
 - **Say**: "Same certificate, same app, same nullifier. The registry refuses it, so one certificate backs one account."
 - **Then**: tap **Start Mingle over**. It keeps the certificate, clears only Mingle's record so Mingle starts a new scope, and opens Mingle's verification screen. **Verify with DAS Busters** again, and the share works with a new nullifier.
 
