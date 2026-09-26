@@ -137,7 +137,7 @@ const storyEn = {
       title: "Hash",
       analogy: "A fingerprint for data.",
       body: "Any input becomes one fixed-size number. The same input always gives the same number, and nobody can work back from the number to the input.",
-      why: "It lets someone check or match a value without seeing it. The city office gets the fingerprint of your secret key, a number only your phone knows, and never the key itself.",
+      why: "It lets someone check or match a value without seeing it. The city office gets the fingerprint of your secret key, a number kept on your phone, and never the key itself.",
       inApp: "DAS Busters uses **Poseidon**, a hash made for zero-knowledge proofs: inside a proof it takes hundreds of steps, where the familiar SHA-256 takes tens of thousands. It makes your key's fingerprint, the message the city office signs, and your nullifier.",
       art: { input: "Certificate", machine: "Poseidon", output: "1858…9027" },
       formula: [
@@ -153,7 +153,7 @@ const storyEn = {
       analogy: "Proving you know the answer without saying it.",
       body: "Mingle learns that one statement is true: “the city office signed a certificate saying I'm single.” Nothing else.",
       why: "A copy of the certificate shows Mingle everything on it. A proof lets Mingle check the one fact it needs without seeing the rest.",
-      inApp: "Your phone makes the proof when you tap Share. Mingle's server checks it, then a contract on the blockchain checks it again.",
+      inApp: "Your phone makes the proof when you tap Share selected information. Mingle's server checks it, then a contract on the blockchain checks it again.",
       formula: ["circom circuit · 9,921 constraints · Groth16 on BN254", "proof: a few hundred bytes · checked in milliseconds"],
       diagram: {
         label: "The certificate, the signature and your secret key go into the circuit and stay there. Out come a yes and a nullifier.",
@@ -168,9 +168,9 @@ const storyEn = {
     nullifier: {
       title: "Nullifier",
       analogy: "A membership number: the same every time at one shop, different at every other shop, and nobody can trace it back to you.",
-      body: "It is a hash of your secret key and the app's name, so only your phone can work it out.",
+      body: "It is a hash of your secret key and the app's name. Your key normally never leaves your phone, so nobody else can work it out.",
       why: "The proof hides who you are, so without this number one real certificate could back any number of “verified single” accounts, say a romance scammer's. The number lets Mingle spot a reused certificate without learning who you are.",
-      inApp: "The contract refuses a number it has already stored, so a second Mingle account with the same certificate fails. Other apps get different numbers, and even the city office can't work yours out: it only ever saw your key's fingerprint.",
+      inApp: "The contract refuses a number it has already stored, so a second Mingle account with the same certificate fails. Other apps get different numbers. The city office can't work yours out either: it gets only your key's fingerprint, and the key normally stays on your phone.",
       formula: [
         "nullifier = Poseidon(holder secret, scope)",
         "scope     = Poseidon(“mingle”, epoch)",
@@ -346,7 +346,7 @@ const storyEn = {
         label: "proof + 10 numbers",
         arrow: "proof + 10 signals",
         title: "Out comes the proof",
-        body: "The result is the proof plus ten public numbers, including the nullifier. That is all that leaves the phone.",
+        body: "The result is the proof plus ten public numbers, including the nullifier. The phone sends only these, with Mingle's request and, if Ken added it, the World ID check.",
         tech: "A Groth16 proof (a, b, c) and publicSignals in a fixed order: nullifier, issuer key, two share flags, Tokyo code and birth-year range (0 when hidden), scope and request hash.",
         data: "Still on the phone: the proof and ten public numbers.",
       },
