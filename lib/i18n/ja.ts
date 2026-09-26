@@ -28,7 +28,7 @@ const ja: Messages = {
     start: "まず窓口から始めます。QR コードをスマホで読み取るか、このパソコンのまま進んでください。",
     apps: {
       counter: {
-        device: "ステップ 1 · PC、iPad、またはこのスマホ",
+        device: "ステップ 1 · PC、iPad、スマホ",
         title: "発行窓口",
         body: "区役所の窓口画面です。QR コードをスマホで読み取ると、独身証明書を受け取れます。",
       },
