@@ -131,7 +131,7 @@ One reset clears both apps on the phone: the certificate, the human check, the s
 - Once the wallet is ready, **Your key** gives up after 30 seconds with "Setting up your key took too long. Check your connection and try again." Tap **Try again**. If it fails twice, reset the demo and start from step 1.
 - If Google refuses an account, try the team's account and tell us: the sign-in app is published, so this should not happen.
 
-**The Simulator shows its card list.** Its own Cancel or × next to **Continue** was tapped, and it will not answer this request. Tap the **×** in the white bar above the Simulator; the card then says "World ID cancelled. Nothing was shared. You can still share your single status without it." Tap **Verify with World ID** again. Left alone, the request gives up after 4 minutes with "World ID did not finish (timeout). Try again."
+**The Simulator shows its card list.** Its own Cancel (next to **Continue**) or the × at the top of its sheet was tapped, and it will not answer this request. Tap the **×** in the white bar above the Simulator; the card then says "World ID cancelled. Nothing was shared. You can still share your single status without it." Tap **Verify with World ID** again. Left alone, the request gives up after 4 minutes with "World ID did not finish (timeout). Try again."
 
 **The proof is slow on the phone.** The share screen starts downloading the circuit files (7.7 MB) as soon as it opens, so open it on stage Wi-Fi a moment before tapping Share. If the phone cannot finish, the server makes the proof and the first step says so (step 8).
 
