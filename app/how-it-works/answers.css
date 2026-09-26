@@ -1,5 +1,5 @@
-/* How it works: the proof envelope, the Why comparison and the FAQ.
-   All static: the answer has to be readable at any moment. */
+/* How it works: the proof envelope, the Why comparison, the disclosures
+   and the FAQ. All static: the answer has to be readable at any moment. */
 
 /* The proof, drawn as the window envelope from the top of the page */
 
@@ -193,11 +193,58 @@
   text-align: center;
 }
 
-/* FAQ */
+/* Disclosures: a native <details> whose summary looks like something to
+   tap. The chevron turns when it opens. Used by the FAQ, the Check it
+   links and the Architecture table. */
+
+.hiw-disclosure > summary {
+  position: relative;
+  display: block;
+  padding: 14px 44px 14px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.hiw-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.hiw-disclosure > summary::after {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform 0.15s ease;
+  content: "";
+}
+
+.hiw-disclosure[open] > summary::after {
+  transform: translateY(-25%) rotate(-135deg);
+}
+
+.hiw-disclosure > summary:hover {
+  color: var(--blue);
+}
+
+.hiw-disclosure > summary:hover::after {
+  border-color: var(--blue);
+}
+
+.hiw-disclosure > summary:focus-visible {
+  border-radius: 8px;
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* FAQ: questions only until one is opened */
 
 .hiw-faq {
   display: grid;
-  gap: 48px;
+  gap: 36px;
   margin-top: 28px;
 }
 
@@ -209,17 +256,26 @@
 }
 
 .hiw-faq-item {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
-  padding: 24px 0;
   border-bottom: 1px solid var(--line);
   scroll-margin-top: calc(72px + var(--app-nav-h, 0px));
 }
 
-.hiw-faq-item.has-figure {
+.hiw-faq-item > summary {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.hiw-faq-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  padding: 2px 0 26px;
+}
+
+.hiw-faq-body.has-figure {
   grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
-  align-items: center;
+  align-items: start;
   gap: 40px;
 }
 
@@ -227,32 +283,13 @@
   max-width: 38em;
 }
 
-.hiw-faq-item h4 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.45;
-}
-
 .hiw-faq-answer {
-  margin-top: 8px;
   font-size: 16px;
   line-height: 1.7;
 }
 
-.hiw-faq-more {
+.hiw-faq-detail {
   margin-top: 10px;
-}
-
-.hiw-faq-more summary {
-  color: var(--blue);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.hiw-faq-more p {
-  margin-top: 8px;
   color: #3b404a;
   font-size: 14.5px;
   line-height: 1.7;
@@ -452,7 +489,7 @@
 /* Narrow screens */
 
 @media (max-width: 820px) {
-  .hiw-faq-item.has-figure {
+  .hiw-faq-body.has-figure {
     grid-template-columns: minmax(0, 1fr);
     gap: 16px;
   }

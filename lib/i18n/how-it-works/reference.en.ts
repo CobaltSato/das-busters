@@ -298,8 +298,7 @@ const referenceEn = {
 
   qa: {
     title: "FAQ",
-    lede: "The short answer comes first. “More detail” has the specifics and the limits.",
-    more: "More detail",
+    lede: "Open a question for the short answer, then the specifics and the limits.",
     figs: {
       onchain: {
         label: "What the blockchain keeps for one sign-up",

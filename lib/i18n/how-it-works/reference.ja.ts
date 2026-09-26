@@ -294,8 +294,7 @@ const referenceJa: ReferenceCopy = {
 
   qa: {
     title: "よくある質問",
-    lede: "先に短い答えを書いています。細かい説明と限界は「詳しく」を開くと読めます。",
-    more: "詳しく",
+    lede: "質問を開くと、短い答えのあとに細かい説明と限界が続きます。",
     figs: {
       onchain: {
         label: "登録1件でブロックチェーンに残るもの",

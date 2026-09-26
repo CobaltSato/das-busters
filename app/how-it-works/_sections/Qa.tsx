@@ -37,8 +37,10 @@ function figureFor(id: string, copy: Copy, pictures: Pictures): React.ReactNode 
   }
 }
 
-// FAQ: the question as a reader would ask it, the answer in a sentence
-// or two, a picture where it helps, and the specifics behind "More detail".
+// FAQ: one native <details> per question, closed by default, so the page
+// shows only the questions until a reader opens one. Inside: the short
+// answer, the specifics and limits, and a picture where it helps. Works
+// with the keyboard and without JavaScript.
 export function Qa({ copy, pictures, worldId }: { copy: Copy; pictures: Pictures; worldId: Modes["worldId"] }) {
   return (
     <Section id="qa" title={copy.title} lede={copy.lede} wide>
@@ -49,21 +51,20 @@ export function Qa({ copy, pictures, worldId }: { copy: Copy; pictures: Pictures
             {group.items.map((item) => {
               const figure = figureFor(item.id, copy, pictures);
               return (
-                <article key={item.id} id={`faq-${item.id}`} className={figure ? "hiw-faq-item has-figure" : "hiw-faq-item"}>
-                  <div className="hiw-faq-text">
-                    <h4>{item.q}</h4>
-                    <p className="hiw-faq-answer">
-                      <Rich text={text(item.a, worldId)} />
-                    </p>
-                    <details className="hiw-faq-more">
-                      <summary>{copy.more}</summary>
-                      <p>
+                <details key={item.id} id={`faq-${item.id}`} className="hiw-faq-item hiw-disclosure">
+                  <summary>{item.q}</summary>
+                  <div className={figure ? "hiw-faq-body has-figure" : "hiw-faq-body"}>
+                    <div className="hiw-faq-text">
+                      <p className="hiw-faq-answer">
+                        <Rich text={text(item.a, worldId)} />
+                      </p>
+                      <p className="hiw-faq-detail">
                         <Rich text={text(item.d, worldId)} />
                       </p>
-                    </details>
+                    </div>
+                    {figure && <figure className="hiw-faq-figure">{figure}</figure>}
                   </div>
-                  {figure && <figure className="hiw-faq-figure">{figure}</figure>}
-                </article>
+                </details>
               );
             })}
           </section>
