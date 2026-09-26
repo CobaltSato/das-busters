@@ -8,7 +8,7 @@ import { userStore } from "@/lib/storage";
 // nothing and always signs in the demo account.
 const DEMO_ACCOUNT = { name: "Ken Sato", email: "ken.sato@example.com" };
 
-export function GoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
+export function MockGoogleSignIn({ onSignedIn }: { onSignedIn: () => void }) {
   const [open, setOpen] = useState(false);
   const [signingIn, setSigningIn] = useState(false);
   const [error, setError] = useState<string | null>(null);

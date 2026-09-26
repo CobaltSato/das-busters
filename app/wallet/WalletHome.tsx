@@ -16,6 +16,8 @@ import {
   type UserRecord,
   type WalletRecord,
 } from "@/lib/storage";
+import { errorMessage } from "@/lib/api";
+import { useProviderSignOut } from "./_components/holderKey";
 
 function describeShare(share: ShareRecord): string {
   const extras = [share.disclosed.residence && `lives in ${share.disclosed.residence}`, share.disclosed.ageRange]
@@ -31,6 +33,8 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
   const [user, setUser] = useState<UserRecord | null>(null);
   const [human, setHuman] = useState<HumanRecord | null>(null);
   const [shares, setShares] = useState<ShareRecord[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const providerSignOut = useProviderSignOut();
 
   useEffect(() => {
     setWallet(walletStore.get());
@@ -40,7 +44,13 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
     setLoaded(true);
   }, []);
 
-  function resetDemo() {
+  async function resetDemo() {
+    try {
+      await providerSignOut();
+    } catch (e) {
+      setError(errorMessage(e));
+      return;
+    }
     walletStore.clear();
     humanStore.clear();
     sharesStore.clear();
@@ -48,7 +58,13 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
     window.location.href = "/";
   }
 
-  function signOut() {
+  async function signOut() {
+    try {
+      await providerSignOut();
+    } catch (e) {
+      setError(errorMessage(e));
+      return;
+    }
     userStore.clear();
     setUser(null);
     dialog.current?.close();
@@ -119,6 +135,7 @@ export function WalletHome({ worldId }: { worldId: Modes["worldId"] }) {
           ×
         </button>
         <h2>Account</h2>
+        {error && <p className="error-banner">{error}</p>}
         <p className="account-name">{user?.name ?? "Not signed in"}</p>
         {user && (
           <>

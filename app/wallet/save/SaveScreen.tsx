@@ -7,13 +7,15 @@ import { CertificateCard } from "@/components/CertificateCard";
 import { SuccessMark } from "@/components/SuccessMark";
 import { errorMessage, postJson } from "@/lib/api";
 import type { Credential, CredentialPreview } from "@/lib/credential";
-import { holderCommitment, randomField } from "@/lib/fields";
+import { holderCommitment } from "@/lib/fields";
 import { userStore, walletStore, type UserRecord } from "@/lib/storage";
+import { useHolderSecret } from "../_components/holderKey";
 
 type Props = { offer: string; preview: CredentialPreview };
 
 export function SaveScreen({ offer, preview }: Props) {
   const router = useRouter();
+  const holder = useHolderSecret();
   const [user, setUser] = useState<UserRecord | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +36,7 @@ export function SaveScreen({ offer, preview }: Props) {
     try {
       // The secret never leaves the phone at this step: the city office only
       // sees its commitment.
-      const holderSecret = randomField();
+      const holderSecret = await holder.create();
       const { credential } = await postJson<{ credential: Credential }>("/api/credential", {
         offer,
         holderCommitment: holderCommitment(holderSecret),
@@ -70,8 +72,13 @@ export function SaveScreen({ offer, preview }: Props) {
       </div>
       <div className="phone-actions">
         {error && <p className="error-banner">{error}</p>}
-        <button type="button" className="btn btn-primary" onClick={save} disabled={saving || !user}>
-          {saving ? (
+        <button type="button" className="btn btn-primary" onClick={save} disabled={saving || !user || !holder.ready}>
+          {!holder.ready ? (
+            <>
+              <span className="spinner" />
+              Preparing your key…
+            </>
+          ) : saving ? (
             <>
               <span className="spinner" />
               Saving…

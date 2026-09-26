@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { WalletProviders } from "./_components/WalletProviders";
 import "./wallet.css";
 
 export const metadata: Metadata = {
@@ -7,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function WalletLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <WalletProviders>{children}</WalletProviders>;
 }
