@@ -6,9 +6,9 @@ Show a dating app that you are single, and nothing else.
 
 Built at ETHGlobal Tokyo 2026.
 
-**Try it**: [single-proof.vercel.app](https://single-proof.vercel.app) · [Demo walkthrough](docs/demo.md), step by step with what to click and what to say.
+**Try it**: [das-busters.vercel.app](https://das-busters.vercel.app) · [Demo walkthrough](docs/demo.md), step by step with what to click and what to say.
 
-**How it works**: [single-proof.vercel.app/how-it-works](https://single-proof.vercel.app/how-it-works) explains the app from the basics (signatures, zero-knowledge proofs, nullifiers) to the circuit and the contracts, with animated diagrams, links to check each part, and answers to common questions.
+**How it works**: [das-busters.vercel.app/how-it-works](https://das-busters.vercel.app/how-it-works) explains the app from the basics (signatures, zero-knowledge proofs, nullifiers) to the circuit and the contracts, with animated diagrams, links to check each part, and answers to common questions.
 
 ## The problem
 
@@ -95,7 +95,7 @@ The UI is in English by default. An EN / 日本語 toggle on the hub, the counte
 
 We are building this during the hackathon. The build plan is in [docs/plan.md](docs/plan.md) (Japanese).
 
-Live demo: https://single-proof.vercel.app
+Live demo: https://das-busters.vercel.app
 
 | Piece | State |
 |---|---|

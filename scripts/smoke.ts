@@ -2,7 +2,7 @@ import { holderCommitment, randomField } from "../lib/fields";
 
 // End-to-end check of the API: counter → wallet → Mingle, plus the ways it
 // must refuse. Run against a dev server or a deployment:
-//   BASE_URL=https://single-proof.vercel.app npm run smoke
+//   BASE_URL=https://das-busters.vercel.app npm run smoke
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 let failures = 0;

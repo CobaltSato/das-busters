@@ -21,7 +21,7 @@ flowchart LR
 |---|---|
 | 窓口 | ステージの画面に映す PC か iPad |
 | スマホ | DAS Busters と Mingle の両方に使う1台。プライベートブラウズは使わない |
-| URL | https://single-proof.vercel.app を両方の端末で開く |
+| URL | https://das-busters.vercel.app を両方の端末で開く |
 | Google アカウント | どの Google アカウントでも使えます。Google ログインのアプリを公開済みなので、審査員が自分のアカウントで試せます。 |
 
 **言語**: 最初は英語で表示されます。`EN / 日本語` の切り替えは、ハブ、窓口、受け取りから共有までの DAS Busters の各画面、Mingle のプロフィールと設定画面にあります。どの URL でも `?lang=ja` を付ければ日本語になります。窓口の QR コードは言語をスマホに引き継ぐので、窓口を日本語にしておけばスマホ側も日本語で始まります。

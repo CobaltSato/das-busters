@@ -3,7 +3,7 @@ import deployment from "@/lib/chain/deployment-11155111.json";
 // Everything /how-it-works links to, so each claim on the page can be
 // checked. Contract addresses come from the deployment record, not retyped.
 
-export const SITE_HOST = "single-proof.vercel.app";
+export const SITE_HOST = "das-busters.vercel.app";
 
 const REPO = "https://github.com/CobaltSato/single-proof";
 const ETHERSCAN = "https://sepolia.etherscan.io";

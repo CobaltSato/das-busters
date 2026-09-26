@@ -6,9 +6,9 @@
 
 ETHGlobal Tokyo 2026 で作りました。審査は英語で行われるので、正本は英語版の [README.md](README.md) です。このページはその日本語訳です。
 
-**試す**: [single-proof.vercel.app](https://single-proof.vercel.app) · [デモの手順](docs/demo.ja.md)。押すボタンと話す内容を順に書いています。
+**試す**: [das-busters.vercel.app](https://das-busters.vercel.app) · [デモの手順](docs/demo.ja.md)。押すボタンと話す内容を順に書いています。
 
-**しくみ**: [single-proof.vercel.app/how-it-works](https://single-proof.vercel.app/how-it-works) で、署名、ゼロ知識証明、nullifier といった基礎から回路とコントラクトまでを、動く図で説明しています。各部分を確かめるリンクと、よく聞かれる質問への答えもあります。右上で日本語に切り替えられます。
+**しくみ**: [das-busters.vercel.app/how-it-works](https://das-busters.vercel.app/how-it-works) で、署名、ゼロ知識証明、nullifier といった基礎から回路とコントラクトまでを、動く図で説明しています。各部分を確かめるリンクと、よく聞かれる質問への答えもあります。右上で日本語に切り替えられます。
 
 ## 解決したい問題
 
@@ -95,7 +95,7 @@ UI は英語が既定です。ハブ、窓口画面、ウォレットのホー�
 
 ハッカソン期間中に作っています。実装計画は [docs/plan.md](docs/plan.md) にあります。
 
-デモ: https://single-proof.vercel.app
+デモ: https://das-busters.vercel.app
 
 | 項目 | 状態 |
 |---|---|

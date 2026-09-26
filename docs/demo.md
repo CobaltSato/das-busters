@@ -21,7 +21,7 @@ flowchart LR
 |---|---|
 | Counter | A laptop or iPad on the stage screen |
 | Phone | One phone for both DAS Busters and Mingle, not in private browsing |
-| URL | https://single-proof.vercel.app, on both devices |
+| URL | https://das-busters.vercel.app, on both devices |
 | Google account | Any Google account. The sign-in app is published, so judges can use their own. |
 
 **Language.** Everything starts in English. The `EN / 日本語` toggle is on the hub, the counter, every DAS Busters screen from pickup to sharing, and Mingle's profile and Settings. Adding `?lang=ja` to any URL also switches to Japanese. The counter's QR code carries its language to the phone, so switching the counter is enough.
