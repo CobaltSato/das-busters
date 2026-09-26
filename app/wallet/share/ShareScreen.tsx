@@ -167,6 +167,12 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
 
   const { minBirthYear, maxBirthYear } = ageRange;
   const serverProves = proveOn === "server" || fellBack;
+  // Leaving while Mingle checks and records the proof would not stop it, and
+  // its result would still open Mingle later, so the exits wait. Proving
+  // keeps Cancel: it is the way out if the circuit download stalls.
+  const recording = step === "verifying";
+  // Mingle's request is older than 10 minutes, so sharing again cannot work.
+  const expired = error?.code === "token-expired";
 
   const steps = shareSteps({
     t,
@@ -181,9 +187,13 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
   return (
     <main className="phone">
       <div className="phone-top">
-        <Link className="phone-back" href="/mingle" aria-label={t.common.backToMingle}>
-          ‹
-        </Link>
+        {recording ? (
+          <span style={{ width: 36 }} />
+        ) : (
+          <Link className="phone-back" href="/mingle" aria-label={t.common.backToMingle}>
+            ‹
+          </Link>
+        )}
         <BrandLockup small />
         <LanguageToggle />
       </div>
@@ -272,12 +282,13 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
 
       <div className="phone-actions">
         {error && <p className="error-banner">{error.message}</p>}
-        {busy ? (
+        {busy && (
           <>
             <ProgressSteps label={copy.steps.label} steps={steps} />
             {modes.chain === "sepolia" && <p className="fine-print">{copy.waitingBlock}</p>}
           </>
-        ) : (
+        )}
+        {!busy && !expired && (
           <button type="button" className="btn btn-primary" onClick={share} disabled={!wallet}>
             {copy.submit}
           </button>
@@ -287,9 +298,16 @@ export function ShareScreen({ requestToken, request, modes, proveOn }: Props) {
             {copy.startMingleOver}
           </button>
         )}
-        <Link className="btn btn-text" href="/mingle">
-          {t.common.cancel}
-        </Link>
+        {expired && (
+          <Link className="btn btn-primary" href={MINGLE_VERIFICATION}>
+            {t.common.backToMingle}
+          </Link>
+        )}
+        {!recording && (
+          <Link className="btn btn-text" href="/mingle">
+            {t.common.cancel}
+          </Link>
+        )}
         <ModeBadges modes={modes} only={["prover", "chain"]} />
       </div>
     </main>
