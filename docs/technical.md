@@ -4,6 +4,12 @@ English | [日本語](technical.ja.md)
 
 The detail behind the [README](../README.md): why the design looks the way it does, where each piece of data goes, the circuit, the registry, the security model, the tests and how to run it locally. Contract addresses are in the README under [Contracts on Sepolia](../README.md#contracts-on-sepolia).
 
+## The three screens
+
+- Issuing counter (laptop or iPad). The city office screen shows a QR code. Scanning it gives your phone a Single Status Certificate signed by the city office.
+- DAS Busters (phone). A wallet that keeps the certificate. When an app asks, you choose what to prove: that you are single (required), that you live in Tokyo (optional), and that you are in your 30s, meaning born 1987–1996 (optional). The birth year itself stays hidden.
+- Mingle (phone). A sample dating app. The member already typed a city and an age on the profile, and Mingle asks the wallet to back them up ([lib/mingle.ts](../lib/mingle.ts)). It checks the proof, shows **✓ Single status verified** on the profile, and its relayer records the nullifier on Ethereum Sepolia.
+
 ## Why zero-knowledge
 
 - A copy of the certificate hands over your name, birth date and 本籍 to show one fact.
@@ -21,59 +27,6 @@ Mingle's server checks each proof first, for a fast answer and a clear error. Th
 Since April 2025 the dating app Tapple offers かんたん独身証明. It reads the name, address and gender on your My Number Card to match your account, then gets your marital status from the family register through Mynaportal ([Digital Agency](https://digital-agency-news.digital.go.jp/articles/2025-10-17), [Tapple release](https://www.cyberagent.co.jp/news/detail/id=31851)). Every app that works this way ends up holding your verified identity next to your marital status.
 
 DAS Busters gives the app one checked fact and a number that differs per app. The issuer does not have to be a city office counter: Mynaportal could sign the certificate instead of our demo city office, and the proof side would stay the same.
-
-## World ID
-
-The certificate proves civil status. It cannot tell whether one person is behind several Google accounts: each account gets its own holder key and so its own nullifier, and in this demo the counter hands a certificate to anyone who scans. World ID is there to add "a real person approved this".
-
-How the integration went, what slowed us down and what would help: [FEEDBACK.md](../FEEDBACK.md).
-
-### Why proof of human
-
-We request IDKit's `proofOfHuman` preset ([app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)). The certificate already covers civil status, residence and age, so World ID only needs to add personhood, and proof of human adds nothing else: no name, face or ID number. World describes the selfie check as medium assurance: a device-camera check for liveness and facial similarity that returns a sybil score the app has to interpret ([World docs](https://docs.world.org/world-id/idkit/credentials)). For one person per account we wanted the Orb-backed uniqueness of proof of human. A passport or document credential would repeat what the city certificate proves and ask the user for more.
-
-### What Mingle receives
-
-After the World ID check our server signs a token, and the wallet sends it to Mingle when you include the human check in a share. Mingle's server reads it, so it sees World ID's anonymous number for this app (the World ID nullifier), but the result it keeps says only that a human check passed and which kind it was: World ID, World ID staging or simulated ([app/api/verify/route.ts](../app/api/verify/route.ts)). In this demo our server signs that token and also plays Mingle's backend.
-
-### Without World ID
-
-The check is optional. Cancel the Simulator, or skip the check, and sharing works the same way; Mingle shows single status without the Human badge. [docs/demo.md](demo.md#5b-without-world-id-optional) shows this path.
-
-### Staging and production
-
-This deployment runs World ID staging: our server signs each request (`/api/world-id/rp-context`) and forwards each result to the Developer Portal (`/api/world-id/verify`), and a test identity in the World ID Simulator approves it. Production would use World App and a real person. The code switches with `WORLDID_ENVIRONMENT`, but production is not set up. The screens say which one ran.
-
-### The staging window
-
-The Portal accepts Simulator proofs only while a 24-hour staging window is open. The current window closes on **27 September 2026 at 23:53 JST**. After that the server labels the check simulated, the hub reads `Human check: simulated`, and the human check becomes a five-second camera stand-in. Opening a new window is described in [docs/setup.md](setup.md#world-id-staging-window).
-
-### Current limits
-
-The World ID proof is not bound to the certificate or to the zero-knowledge proof (the request carries no signal), and the World ID nullifier is not checked for repeats. Today it shows that a person approved this World ID request, not that one person holds one account.
-
-```mermaid
-sequenceDiagram
-  participant W as DAS Busters (phone)
-  participant S as Our server
-  participant Sim as World ID Simulator
-  participant P as World Developer Portal
-  W->>S: POST /api/world-id/rp-context
-  S-->>W: request signed with the RP key
-  W->>Sim: IDKit request (proofOfHuman), opened over the screen
-  Sim-->>W: proof from a test identity
-  W->>S: POST /api/world-id/verify
-  S->>P: POST /api/v4/verify with the staging token
-  P-->>S: success, nullifier, environment
-  S-->>W: signed human token (7 days)
-  Note over W: sent with the next share, and Mingle's result keeps only "World ID staging"
-```
-
-## The three screens
-
-- Issuing counter (laptop or iPad). The city office screen shows a QR code. Scanning it gives your phone a Single Status Certificate signed by the city office.
-- DAS Busters (phone). A wallet that keeps the certificate. When an app asks, you choose what to prove: that you are single (required), that you live in Tokyo (optional), and that you are in your 30s, meaning born 1987–1996 (optional). The birth year itself stays hidden.
-- Mingle (phone). A sample dating app. The member already typed a city and an age on the profile, and Mingle asks the wallet to back them up ([lib/mingle.ts](../lib/mingle.ts)). It checks the proof, shows **✓ Single status verified** on the profile, and its relayer records the nullifier on Ethereum Sepolia.
 
 ## Where the data lives
 
@@ -212,6 +165,53 @@ A second record with the same nullifier reverts, so one certificate backs one ac
 A revert shows up in Mingle as a failure. Mingle falls back to an off-chain check only when recording fails for another reason, such as Sepolia being unreachable or the relayer running out of test ETH, and it says so on screen.
 
 Both contracts match the source in [contracts/src/](../contracts/src/) exactly on Sourcify. Blockscout shows the source of both contracts and decodes the registry's `record` calls and `SingleStatusVerified` events. Etherscan shows the same data as raw hex, so use Blockscout for a readable view. To check a nullifier yourself, pass the event's first indexed topic, in hex or decimal, to `used(uint256)`; the README has a [`cast call` example](../README.md#contracts-on-sepolia).
+
+## World ID
+
+The certificate proves civil status. It cannot tell whether one person is behind several Google accounts: each account gets its own holder key and so its own nullifier, and in this demo the counter hands a certificate to anyone who scans. World ID is there to add "a real person approved this".
+
+How the integration went, what slowed us down and what would help: [FEEDBACK.md](../FEEDBACK.md).
+
+### Why proof of human
+
+We request IDKit's `proofOfHuman` preset ([app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)). The certificate already covers civil status, residence and age, so World ID only needs to add personhood, and proof of human adds nothing else: no name, face or ID number. World describes the selfie check as medium assurance: a device-camera check for liveness and facial similarity that returns a sybil score the app has to interpret ([World docs](https://docs.world.org/world-id/idkit/credentials)). For one person per account we wanted the Orb-backed uniqueness of proof of human. A passport or document credential would repeat what the city certificate proves and ask the user for more.
+
+### What Mingle receives
+
+After the World ID check our server signs a token, and the wallet sends it to Mingle when you include the human check in a share. Mingle's server reads it, so it sees World ID's anonymous number for this app (the World ID nullifier), but the result it keeps says only that a human check passed and which kind it was: World ID, World ID staging or simulated ([app/api/verify/route.ts](../app/api/verify/route.ts)). In this demo our server signs that token and also plays Mingle's backend.
+
+### Without World ID
+
+The check is optional. Cancel the Simulator, or skip the check, and sharing works the same way; Mingle shows single status without the Human badge. [docs/demo.md](demo.md#5b-without-world-id-optional) shows this path.
+
+### Staging and production
+
+This deployment runs World ID staging: our server signs each request (`/api/world-id/rp-context`) and forwards each result to the Developer Portal (`/api/world-id/verify`), and a test identity in the World ID Simulator approves it. Production would use World App and a real person. The code switches with `WORLDID_ENVIRONMENT`, but production is not set up. The screens say which one ran.
+
+### The staging window
+
+The Portal accepts Simulator proofs only while a 24-hour staging window is open. The current window closes on **27 September 2026 at 23:53 JST**. After that the server labels the check simulated, the hub reads `Human check: simulated`, and the human check becomes a five-second camera stand-in. Opening a new window is described in [docs/setup.md](setup.md#world-id-staging-window).
+
+### Current limits
+
+The World ID proof is not bound to the certificate or to the zero-knowledge proof (the request carries no signal), and the World ID nullifier is not checked for repeats. Today it shows that a person approved this World ID request, not that one person holds one account.
+
+```mermaid
+sequenceDiagram
+  participant W as DAS Busters (phone)
+  participant S as Our server
+  participant Sim as World ID Simulator
+  participant P as World Developer Portal
+  W->>S: POST /api/world-id/rp-context
+  S-->>W: request signed with the RP key
+  W->>Sim: IDKit request (proofOfHuman), opened over the screen
+  Sim-->>W: proof from a test identity
+  W->>S: POST /api/world-id/verify
+  S->>P: POST /api/v4/verify with the staging token
+  P-->>S: success, nullifier, environment
+  S-->>W: signed human token (7 days)
+  Note over W: sent with the next share, and Mingle's result keeps only "World ID staging"
+```
 
 ## Security model and limits
 

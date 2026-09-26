@@ -4,6 +4,12 @@
 
 [README](../README.ja.md) に入りきらない詳しい話をまとめたページです。設計の理由、データの行き先、回路、レジストリ、セキュリティモデル、テスト、ローカルでの動かし方を書いています。英語版の [technical.md](technical.md) が正本です。コントラクトのアドレスは README の [Sepolia のコントラクト](../README.ja.md#sepolia-のコントラクト) にあります。
 
+## 3つの画面
+
+- 発行窓口（PC か iPad）。区役所の窓口画面に QR コードが出ます。読み取ると、区役所の署名が付いた独身証明書がスマホに入ります。
+- DAS Busters（スマホ）。証明書を保管するウォレットです。アプリに求められたら、何を証明するかを自分で選びます。独身であること（必須）、東京在住であること（任意）、30代であること（任意）の3つで、30代は1987〜1996年生まれという意味です。生まれ年そのものは隠れたままです。
+- Mingle（スマホ）。サンプルのマッチングアプリです。会員はプロフィールに住んでいる街と年齢を自分で書いていて、Mingle はその裏付けをウォレットに求めます（[lib/mingle.ts](../lib/mingle.ts)）。証明を検証してプロフィールに **✓ 独身証明済み** を出し、relayer が nullifier を Ethereum Sepolia に記録します。
+
 ## ゼロ知識にした理由
 
 - 証明書のコピーを送ると、1つの事実を伝えるだけのために氏名、生年月日、本籍が渡ります。
@@ -21,59 +27,6 @@
 マッチングアプリのタップルは2025年4月から「かんたん独身証明」を提供しています。マイナンバーカードの券面から氏名、住所、性別を読んでアカウントと照合し、マイナポータル経由で戸籍から婚姻関係の情報を取る仕組みです（[デジタル庁](https://digital-agency-news.digital.go.jp/articles/2025-10-17)、[タップルの発表](https://www.cyberagent.co.jp/news/detail/id=31851)）。この方式だと、使ったアプリごとに、確認済みの本人情報と婚姻状況が並んで残ります。
 
 DAS Busters がアプリに渡すのは、確認済みの事実1つと、アプリごとに違う番号だけです。発行者は区役所の窓口でなくてもかまいません。デモの区役所の代わりにマイナポータルが証明書に署名しても、証明の側はそのまま使えます。
-
-## World ID
-
-独身証明書で証明できるのは婚姻の状況です。1人が Google アカウントをいくつも使っているかどうかまではわかりません。アカウントごとに保有者鍵が変わるので nullifier も変わりますし、このデモの窓口は QR を読み取った人なら誰にでも証明書を渡します。World ID は「実在の人がこれを承認した」を足すために入れています。
-
-組み込みの経過、詰まった点、あると助かるものは [FEEDBACK.ja.md](../FEEDBACK.ja.md) に書きました。
-
-### proof of human を選んだ理由
-
-IDKit の `proofOfHuman` プリセットを使っています（[app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)）。婚姻の状況、居住地、年代は証明書が受け持つので、World ID に頼むのは「人であること」だけで済みます。proof of human はそれ以外、つまり名前も顔も ID 番号も渡しません。セルフィーチェックは、World 自身の説明では中程度の保証です。デバイスのカメラで、その場に本人がいるか（liveness）と顔の類似を確かめて sybil スコアを返し、その判断はアプリに任されます（[World のドキュメント](https://docs.world.org/world-id/idkit/credentials)）。1人1アカウントのためには、Orb に裏付けられた proof of human の一意性がほしかったのです。パスポートなどの書類系のクレデンシャルは、区役所の証明書と同じことを重ねて証明するうえに、利用者からもっと多くの情報を取ります。
-
-### Mingle が受け取るもの
-
-World ID の確認が通ると、私たちのサーバーが署名したトークンがウォレットに届き、人間確認を含めて共有するときに、ウォレットがそれを Mingle に送ります。Mingle のサーバーはこれを読むので、このアプリ用の World ID の匿名の番号（World ID の nullifier）も見えます。ただし Mingle が残す結果には、人間確認が通ったことと、その種類（World ID、World ID staging、シミュレーション）しか入りません（[app/api/verify/route.ts](../app/api/verify/route.ts)）。このデモでは、トークンに署名するサーバーが Mingle のバックエンドも兼ねています。
-
-### World ID を使わない場合
-
-人間確認は任意です。Simulator をキャンセルしても、確認自体を飛ばしても、共有は同じように動きます。Mingle には独身証明が出て、人間確認のバッジだけが付きません。この流れは [docs/demo.ja.md](demo.ja.md#5b-world-id-を使わない場合任意) にあります。
-
-### staging と本番
-
-このデプロイは World ID の staging で動いています。私たちのサーバーがリクエストに署名し（`/api/world-id/rp-context`）、結果を Developer Portal に転送します（`/api/world-id/verify`）。承認するのは World ID Simulator のテスト用 ID です。本番なら World App と実在の人になります。コードは `WORLDID_ENVIRONMENT` で切り替わりますが、本番の設定はしていません。どちらで動いたかは画面に出ます。
-
-### staging の窓
-
-Portal が Simulator の証明を受け付けるのは、24時間の staging 窓が開いているあいだだけです。いまの窓は **2026年9月27日 23:53 JST** に閉じます。そのあとはサーバーが人間確認をシミュレーションと表示し、ハブは `人間確認: シミュレーション` になり、人間確認は5秒だけカメラを開く代役に変わります。新しい窓の開き方は [docs/setup.ja.md](setup.ja.md#world-id-の-staging-窓) にあります。
-
-### いまの限界
-
-World ID の証明は、証明書にもゼロ知識証明にも結びついていません（リクエストに signal を入れていないため）。World ID の nullifier の重複も確認していません。いま言えるのは「ある人がこの World ID リクエストを承認した」までで、「1人が1アカウントを持っている」とは言えません。
-
-```mermaid
-sequenceDiagram
-  participant W as DAS Busters（スマホ）
-  participant S as 私たちのサーバー
-  participant Sim as World ID Simulator
-  participant P as World Developer Portal
-  W->>S: POST /api/world-id/rp-context
-  S-->>W: RP 鍵で署名したリクエスト
-  W->>Sim: IDKit のリクエスト（proofOfHuman）を画面の上に開く
-  Sim-->>W: テスト用 ID の証明
-  W->>S: POST /api/world-id/verify
-  S->>P: staging トークン付きで POST /api/v4/verify
-  P-->>S: 成功、nullifier、環境
-  S-->>W: 署名付きの human トークン（7日間）
-  Note over W: 次の共有で一緒に送る。Mingle の結果に残るのは「World ID staging」だけ
-```
-
-## 3つの画面
-
-- 発行窓口（PC か iPad）。区役所の窓口画面に QR コードが出ます。読み取ると、区役所の署名が付いた独身証明書がスマホに入ります。
-- DAS Busters（スマホ）。証明書を保管するウォレットです。アプリに求められたら、何を証明するかを自分で選びます。独身であること（必須）、東京在住であること（任意）、30代であること（任意）の3つで、30代は1987〜1996年生まれという意味です。生まれ年そのものは隠れたままです。
-- Mingle（スマホ）。サンプルのマッチングアプリです。会員はプロフィールに住んでいる街と年齢を自分で書いていて、Mingle はその裏付けをウォレットに求めます（[lib/mingle.ts](../lib/mingle.ts)）。証明を検証してプロフィールに **✓ 独身証明済み** を出し、relayer が nullifier を Ethereum Sepolia に記録します。
 
 ## データの置き場所
 
@@ -212,6 +165,53 @@ flowchart TD
 revert したら、Mingle は失敗として画面に出します。オフチェーンの確認に切り替えるのは、Sepolia に届かない、relayer のテスト用 ETH が尽きたなど、revert 以外の理由で記録できなかったときだけで、そのときも画面にそう書きます。
 
 どちらのコントラクトも Sourcify で [contracts/src/](../contracts/src/) のソースと完全に一致しています。Blockscout では両方のソースが見られ、レジストリの `record` の呼び出しと `SingleStatusVerified` のイベントがデコードされて表示されます。Etherscan では同じ内容が16進数のまま表示されるので、読むときは Blockscout を使ってください。nullifier を自分で確かめるときは、イベントの最初の indexed topic を16進数か10進数で `used(uint256)` に渡します。`cast call` の例は README の [Sepolia のコントラクト](../README.ja.md#sepolia-のコントラクト) にあります。
+
+## World ID
+
+独身証明書で証明できるのは婚姻の状況です。1人が Google アカウントをいくつも使っているかどうかまではわかりません。アカウントごとに保有者鍵が変わるので nullifier も変わりますし、このデモの窓口は QR を読み取った人なら誰にでも証明書を渡します。World ID は「実在の人がこれを承認した」を足すために入れています。
+
+組み込みの経過、詰まった点、あると助かるものは [FEEDBACK.ja.md](../FEEDBACK.ja.md) に書きました。
+
+### proof of human を選んだ理由
+
+IDKit の `proofOfHuman` プリセットを使っています（[app/wallet/world-id/IdkitRequest.tsx](../app/wallet/world-id/IdkitRequest.tsx)）。婚姻の状況、居住地、年代は証明書が受け持つので、World ID に頼むのは「人であること」だけで済みます。proof of human はそれ以外、つまり名前も顔も ID 番号も渡しません。セルフィーチェックは、World 自身の説明では中程度の保証です。デバイスのカメラで、その場に本人がいるか（liveness）と顔の類似を確かめて sybil スコアを返し、その判断はアプリに任されます（[World のドキュメント](https://docs.world.org/world-id/idkit/credentials)）。1人1アカウントのためには、Orb に裏付けられた proof of human の一意性がほしかったのです。パスポートなどの書類系のクレデンシャルは、区役所の証明書と同じことを重ねて証明するうえに、利用者からもっと多くの情報を取ります。
+
+### Mingle が受け取るもの
+
+World ID の確認が通ると、私たちのサーバーが署名したトークンがウォレットに届き、人間確認を含めて共有するときに、ウォレットがそれを Mingle に送ります。Mingle のサーバーはこれを読むので、このアプリ用の World ID の匿名の番号（World ID の nullifier）も見えます。ただし Mingle が残す結果には、人間確認が通ったことと、その種類（World ID、World ID staging、シミュレーション）しか入りません（[app/api/verify/route.ts](../app/api/verify/route.ts)）。このデモでは、トークンに署名するサーバーが Mingle のバックエンドも兼ねています。
+
+### World ID を使わない場合
+
+人間確認は任意です。Simulator をキャンセルしても、確認自体を飛ばしても、共有は同じように動きます。Mingle には独身証明が出て、人間確認のバッジだけが付きません。この流れは [docs/demo.ja.md](demo.ja.md#5b-world-id-を使わない場合任意) にあります。
+
+### staging と本番
+
+このデプロイは World ID の staging で動いています。私たちのサーバーがリクエストに署名し（`/api/world-id/rp-context`）、結果を Developer Portal に転送します（`/api/world-id/verify`）。承認するのは World ID Simulator のテスト用 ID です。本番なら World App と実在の人になります。コードは `WORLDID_ENVIRONMENT` で切り替わりますが、本番の設定はしていません。どちらで動いたかは画面に出ます。
+
+### staging の窓
+
+Portal が Simulator の証明を受け付けるのは、24時間の staging 窓が開いているあいだだけです。いまの窓は **2026年9月27日 23:53 JST** に閉じます。そのあとはサーバーが人間確認をシミュレーションと表示し、ハブは `人間確認: シミュレーション` になり、人間確認は5秒だけカメラを開く代役に変わります。新しい窓の開き方は [docs/setup.ja.md](setup.ja.md#world-id-の-staging-窓) にあります。
+
+### いまの限界
+
+World ID の証明は、証明書にもゼロ知識証明にも結びついていません（リクエストに signal を入れていないため）。World ID の nullifier の重複も確認していません。いま言えるのは「ある人がこの World ID リクエストを承認した」までで、「1人が1アカウントを持っている」とは言えません。
+
+```mermaid
+sequenceDiagram
+  participant W as DAS Busters（スマホ）
+  participant S as 私たちのサーバー
+  participant Sim as World ID Simulator
+  participant P as World Developer Portal
+  W->>S: POST /api/world-id/rp-context
+  S-->>W: RP 鍵で署名したリクエスト
+  W->>Sim: IDKit のリクエスト（proofOfHuman）を画面の上に開く
+  Sim-->>W: テスト用 ID の証明
+  W->>S: POST /api/world-id/verify
+  S->>P: staging トークン付きで POST /api/v4/verify
+  P-->>S: 成功、nullifier、環境
+  S-->>W: 署名付きの human トークン（7日間）
+  Note over W: 次の共有で一緒に送る。Mingle の結果に残るのは「World ID staging」だけ
+```
 
 ## セキュリティモデルと限界
 
