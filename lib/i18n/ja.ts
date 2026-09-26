@@ -44,6 +44,14 @@ const ja: Messages = {
     },
   },
 
+  appNav: {
+    label: "デモのアプリ",
+    hub: "‹ デモ",
+    counter: "窓口",
+    wallet: "DAS Busters",
+    mingle: "Mingle",
+  },
+
   modes: {
     auth: { mock: "ログイン: モック", privy: "ログイン: Google（Privy）" },
     prover: { mock: "証明: モック", groth16: "証明: Groth16" },

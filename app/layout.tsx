@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
+import { AppNav } from "@/components/AppNav";
 import { I18nProvider } from "@/components/I18nProvider";
 import { getLocale, getMessages } from "@/lib/i18n/server";
 import "./globals.css";
@@ -32,7 +33,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={manrope.variable}>
       <body>
-        <I18nProvider locale={locale}>{children}</I18nProvider>
+        <I18nProvider locale={locale}>
+          <AppNav />
+          {children}
+        </I18nProvider>
       </body>
     </html>
   );

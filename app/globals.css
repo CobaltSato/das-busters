@@ -578,3 +578,66 @@ dd {
   align-items: center;
   gap: 10px;
 }
+
+/* Demo navigation: the counter, DAS Busters and Mingle, one tap apart on
+   every screen. Screens below it give up its height. */
+
+body:has(.app-nav) {
+  --app-nav-h: calc(38px + env(safe-area-inset-top));
+}
+
+.app-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: var(--app-nav-h);
+  padding: env(safe-area-inset-top) 10px 0;
+  background: var(--ink);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.app-nav a {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.app-nav-hub {
+  padding: 6px 4px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.app-nav div {
+  display: flex;
+  gap: 2px;
+}
+
+.app-nav div a {
+  padding: 5px 10px;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.app-nav div a[aria-current="page"] {
+  background: #ffffff;
+  color: var(--ink);
+}
+
+body:has(.app-nav) .phone {
+  min-height: calc(100dvh - var(--app-nav-h));
+  padding-top: 20px;
+}
+
+body:has(.app-nav) .mingle {
+  min-height: calc(100dvh - var(--app-nav-h));
+  padding-top: 12px;
+}
+
+body:has(.app-nav) .counter {
+  min-height: calc(100vh - var(--app-nav-h));
+}

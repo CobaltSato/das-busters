@@ -48,6 +48,14 @@ const en = {
     },
   },
 
+  appNav: {
+    label: "Demo apps",
+    hub: "‹ Demo",
+    counter: "Counter",
+    wallet: "DAS Busters",
+    mingle: "Mingle",
+  },
+
   modes: {
     auth: { mock: "Sign-in: mock", privy: "Sign-in: Google via Privy" },
     prover: { mock: "Proof: mock", groth16: "Proof: Groth16" },
