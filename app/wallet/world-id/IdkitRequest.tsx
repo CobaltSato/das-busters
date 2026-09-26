@@ -26,6 +26,10 @@ type Props = {
 // a request only once, so closing it cancels, and the next try signs a new one.
 const SIMULATOR_URL = "https://simulator.worldcoin.org/";
 
+// IDKit polls for 15 minutes by default, but a request cancelled inside the
+// Simulator never answers. Give up before the signed request expires (5 min).
+const POLL_TIMEOUT_MS = 240_000;
+
 // One World ID request. Loaded only in the browser, because IDKit brings its
 // own WASM.
 export default function IdkitRequest({ signed, onResult, onFailed, onCancel }: Props) {
@@ -38,6 +42,7 @@ export default function IdkitRequest({ signed, onResult, onFailed, onCancel }: P
     environment: signed.environment,
     allow_legacy_proofs: true,
     preset: proofOfHuman(),
+    polling: { interval: 1000, timeout: POLL_TIMEOUT_MS },
   });
   const reported = useRef(false);
   const [copied, setCopied] = useState<"idle" | "done" | "failed">("idle");
