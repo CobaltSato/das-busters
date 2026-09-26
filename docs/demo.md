@@ -57,17 +57,18 @@ flowchart LR
 
 ### 5. Human check (optional)
 
-- **Do**: on the home screen, tap **Verify with World ID** in the Human check card. The World ID Simulator opens over the screen; tap **Continue** in it. When it shows Presented, it closes by itself.
+- **Do**: on the home screen, tap **Verify with World ID** in the Human check card. The World ID Simulator opens over the screen; tap **Continue** in it. It closes by itself about 10 seconds later.
 - **They see**: the Simulator, **Checking with World ID…**, then the same card turns green: **Human check complete**, "World ID staging · a Simulator identity, not a real person".
 - **Say**: "This is a real World ID request through IDKit, checked by World's Developer Portal. On staging the World ID Simulator stands in for World App, and the app says so. Mingle learns only that a World ID check passed. In this demo it is not yet tied to the certificate."
+- **If asked about repeats**: World ID shows that a real person approved. Refusing repeats is next: we would bind the World ID signal to Mingle's own nullifier from the ZK proof and store (nullifier, action) under a unique key. On staging every Simulator user is the same test identity, so the demo does not refuse repeats. Our server accepts only a Proof of Human credential.
 - **If it falls back**: the staging window lasts 24 hours. When it has closed, the hub shows `Human check: simulated`, and this step opens the camera instead, under **Human check · simulated** (five seconds, then **Continue**, or **Complete without camera (simulated)**). To reopen it, run `npx tsx --env-file=.env.local scripts/world-staging.ts` and copy `WORLDID_STAGING_TOKEN` and `WORLDID_STAGING_EXPIRES_AT` to Vercel, then redeploy. The exact commands are in [setup.md](setup.md#world-id-staging-window).
 
 ### 5b. Without World ID (optional)
 
 Use this instead of step 5 to show that the human check is optional.
 
-- **Do**: tap **Verify with World ID**. When the Simulator opens, tap **×** at its top right instead of **Continue**.
-- **They see**: the home screen again, and nothing saved: the card still offers **Verify with World ID**. In step 7 the share screen shows **Add a human check** instead of the tick box, and in step 8 Mingle shows single status without a Human badge.
+- **Do**: tap **Verify with World ID**. When the Simulator opens, tap the **×** in the white bar above the Simulator (not a × inside it) instead of **Continue**.
+- **They see**: the home screen again with "World ID cancelled. Nothing was shared. You can still share your single status without it." under **Verify with World ID**. Nothing is saved. In step 7 the share screen shows **Add a human check** instead of the tick box, and in step 8 Mingle shows single status without a Human badge.
 - **Say**: "World ID is optional. Without it, the certificate still proves single status; Mingle just doesn't get the human check."
 
 ### 6. Mingle asks
@@ -129,6 +130,8 @@ One reset clears both apps on the phone: the certificate, the human check, the s
 - **Your key** spins while the sign-in library loads, with no time limit. If it does not stop, reload the page; the save starts again by itself.
 - Once the wallet is ready, **Your key** gives up after 30 seconds with "Setting up your key took too long. Check your connection and try again." Tap **Try again**. If it fails twice, reset the demo and start from step 1.
 - If Google refuses an account, try the team's account and tell us: the sign-in app is published, so this should not happen.
+
+**The Simulator shows its card list.** Its own Cancel or × next to **Continue** was tapped, and it will not answer this request. Tap the **×** in the white bar above the Simulator; the card then says "World ID cancelled. Nothing was shared. You can still share your single status without it." Tap **Verify with World ID** again. Left alone, the request gives up after 4 minutes with "World ID did not finish (timeout). Try again."
 
 **The proof is slow on the phone.** The share screen starts downloading the circuit files (7.7 MB) as soon as it opens, so open it on stage Wi-Fi a moment before tapping Share. If the phone cannot finish, the server makes the proof and the first step says so (step 8).
 
