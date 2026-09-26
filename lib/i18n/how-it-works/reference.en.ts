@@ -1,7 +1,7 @@
 import type { Modes } from "@/lib/modes";
 
 // English copy for the second half of /how-it-works: the technical deep
-// dive, what was built, where to check it, and answers to judges' questions.
+// dive, what was built, where to check it, and the FAQ.
 // Every number here must match the code; reference.ja.ts must match the shape.
 
 type ModeText<K extends keyof Modes> = Record<Modes[K], string>;
@@ -9,14 +9,14 @@ type ModeText<K extends keyof Modes> = Record<Modes[K], string>;
 const referenceEn = {
   tech: {
     title: "Under the hood",
-    lede: "Numbers straight from the code. Engineer view adds the circuit, the contract checks, tokens and modes.",
+    lede: "Every figure here comes from the code in the repository.",
     numbers: [
-      { value: "9,921", label: "constraints in the circuit" },
-      { value: "10", label: "public numbers Mingle sees" },
-      { value: "1", label: "number stored on-chain per proof" },
-      { value: "0", label: "names or birth dates on-chain" },
-      { value: "1–4 s", label: "to make a proof" },
-      { value: "~12 s", label: "to record on Sepolia" },
+      { value: "9,921", label: "Constraints in the circuit" },
+      { value: "10", label: "Public numbers Mingle sees" },
+      { value: "1", label: "Numbers stored on-chain per proof" },
+      { value: "0", label: "Names or birth dates on-chain" },
+      { value: "1–4 s", label: "Time to make a proof" },
+      { value: "about 12 s", label: "Time to record on Sepolia" },
     ],
     plainOnly: "The circuit, the contract checks, tokens and modes are in Engineer view.",
     plainSwitch: "Show Engineer view",
@@ -257,68 +257,105 @@ const referenceEn = {
   },
 
   qa: {
-    title: "Questions judges ask",
-    lede: "Open a question for the short answer to say out loud, then the details and the limits.",
-    say: "Short answer",
-    details: "Details",
+    title: "FAQ",
+    lede: "The short answer comes first. “More detail” has the specifics and the limits.",
+    more: "More detail",
+    figs: {
+      onchain: {
+        label: "What the blockchain keeps for one sign-up",
+        stored: ["Anonymous number (nullifier)", "Scope hash", "Request hash"],
+        never: ["Name", "Birth date", "Address", "Certificate"],
+      },
+      server: {
+        label: "The certificate goes to our server for one request. Only the proof goes to Mingle.",
+        phone: "Your phone",
+        server: "Our server",
+        keeps: "saves nothing",
+        mingle: "Mingle",
+        send: "certificate + key",
+        back: "proof",
+        onward: "proof only",
+      },
+      borrow: {
+        label: "A certificate works only with its owner's key.",
+        cert: "Ken's certificate",
+        bound: "signed with a fingerprint of Ken's key",
+        own: "Ken's key",
+        other: "Someone else's key",
+        ok: "Proof made",
+        no: "No proof",
+      },
+      checks: {
+        label: "Mingle's server checks first, then the contract checks again in public.",
+        first: "Mingle's server checks",
+        firstNote: "Fast answer, clear error",
+        second: "The contract checks again",
+        secondNote: "In public. Refuses a number it already has",
+        stored: "One anonymous number stored",
+      },
+    },
     groups: [
       {
-        title: "Privacy",
+        title: "Your data",
         items: [
           {
+            id: "onchain",
+            q: "Does my name end up on the blockchain?",
+            a: "No. The blockchain keeps one anonymous number per sign-up. Your name, birth date and address are never sent there.",
+            d: "To be exact, the registry stores the nullifier, and its event adds the scope hash and the request hash. The transaction input also shows the proof's ten public numbers. Those include the city office's public key and, only if you chose to share them, the Tokyo code (13) and the birth-year range.",
+          },
+          {
+            id: "mingle",
+            q: "What does Mingle learn about me?",
+            a: "Only what you chose to prove: that you are single, and if you like, that you live in Tokyo and are in your 30s. Mingle never gets the certificate.",
+            d: "Mingle also keeps the nullifier and a link to the Sepolia transaction. “30s” means the birth year is between 1987 and 1996, so Mingle never learns the exact year. Only the birth year is signed, not the full date.",
+          },
+          {
+            id: "server",
+            q: "Does my certificate leave my phone?",
+            a: "Yes, briefly. Today our server makes the proof. The phone sends the certificate and its key for that one request, and the server saves nothing. Mingle never receives the certificate.",
+            d: "/api/prove runs snarkjs in 1–4 s, so the demo works on any phone. The app never claims the data stays on the device. Making the proof on the phone is the next step.",
+          },
+          {
+            id: "photo",
             q: "Why not just send a photo of the certificate?",
-            a: "A photo hands over your name, birth date and address, and it is easy to edit. A proof shares one fact, and it only works if the city office's signature is valid.",
-            d: "The circuit checks the signature, so an edited certificate cannot produce a proof. Mingle ends up with yes/no facts and a nullifier. The “Where your data lives” table above lists what each party holds.",
+            a: "A photo shows everything on it and is easy to edit. A proof shows one fact, and an edited certificate can't produce one.",
+            d: "The circuit checks the city office's signature, so an edited certificate fails. “Where your data lives” above shows what each party ends up with.",
           },
           {
-            q: "What exactly goes on-chain? Any personal data?",
-            a: "The registry stores one nullifier, and its event adds the scope hash and the request hash. No name, no birth date.",
-            d: "To be precise, the transaction input carries all ten public signals. That includes the city office's public key and, only if you chose to share them, the Tokyo code (13) and the birth-year range.",
-          },
-          {
-            q: "Can Mingle and another app compare notes about me?",
-            a: "No. The same person gets a different nullifier at each app, so their records don't match.",
-            d: "nullifier = Poseidon(holder secret, scope), and the scope includes the app's name. The demo has only Mingle, so this is the design rather than something you can try here.",
-          },
-          {
-            q: "Where is the proof made? Does the certificate leave the phone?",
-            a: "On our server, for now. The phone sends the certificate and secret for one request, and the prover keeps nothing.",
-            d: "/api/prove runs snarkjs in 1–4 s, so the demo works on any phone. Mingle's verifier never receives the certificate. The app never says the data stays on the device, and on-device proving is the next step.",
+            id: "tracking",
+            q: "Could two apps work out that I'm the same person?",
+            a: "No. Each app gets a different anonymous number for you, so their records don't match.",
+            d: "nullifier = Poseidon(holder secret, scope), and the scope includes the app's name. The demo has only Mingle, so this follows from the design rather than something you can try here.",
           },
         ],
       },
       {
-        title: "Security",
+        title: "Cheating",
         items: [
           {
-            q: "How does Mingle know the certificate is real?",
-            a: "The circuit checks the city office's signature, and the public key it checked against is part of the proof. Mingle's server and the contract both reject any other key.",
-            d: "The trusted key is published in lib/zk/issuer-public.json and fixed in the registry when it was deployed. A certificate signed by anyone else fails with untrusted-issuer off-chain and UntrustedIssuer on-chain.",
+            id: "fake",
+            q: "Could someone edit a certificate, or make a fake one?",
+            a: "No. The city office's signature covers every value, so an edited or home-made certificate can't produce a proof.",
+            d: "The circuit checks the signature against the city office's public key, and that key is one of the proof's public numbers. Mingle's server and the contract accept only the published key (lib/zk/issuer-public.json), which is fixed in the registry. The signed message is Poseidon(isSingle, birthYear, residenceCode, issuedAt, holderCommitment), and the circuit also requires isSingle = 1.",
           },
           {
-            q: "Could I edit my certificate to say I'm single?",
-            a: "No. The signature covers the marital status, so an edited certificate fails the signature check and no proof can be made.",
-            d: "The signed message is Poseidon(isSingle, birthYear, residenceCode, issuedAt, holderCommitment), and the circuit also requires isSingle = 1.",
+            id: "borrow",
+            q: "Could someone borrow another person's certificate?",
+            a: "No. A certificate is signed together with a fingerprint of its owner's key, and making a proof needs the key itself.",
+            d: "The key comes from a signature by the embedded wallet of the Google account that saved the certificate. Limit: in the demo the counter hands Ken's certificate to anyone who scans, so any Google account can pick one up. A real city office would check ID at the counter first.",
           },
           {
-            q: "Can someone use another person's certificate?",
-            a: "Not without that person's holder secret. The certificate is signed together with a commitment to the secret, and the proof needs the secret itself.",
-            d: "The secret comes from a signature by the embedded wallet of the Google account that saved the certificate. Limit: in the demo the counter gives Ken's certificate to anyone who scans, so any Google account can pick one up. A real city office would check ID at the counter first.",
+            id: "accounts",
+            q: "Could one person open several Mingle accounts?",
+            a: "Not with the same certificate. It produces the same anonymous number every time, and the contract refuses a number it already has.",
+            d: "Try it: go Back and share again, and the registry refuses it with NullifierAlreadyUsed. Limits: this check lives on-chain, so it needs the Sepolia mode. The scope comes from an epoch that Mingle's browser keeps, so the demo's Reset makes a new number; a real Mingle would keep one fixed scope. A different Google account makes a different key, so one account per person also needs the city office to issue one certificate per person. A unique-human check such as World ID is meant to close that gap.",
           },
           {
-            q: "Can one person make many Mingle accounts?",
-            a: "Not with the same certificate. The same holder at the same app gets the same nullifier, and the contract refuses it the second time.",
-            d: "Try it: go Back and share again, and the registry refuses it with NullifierAlreadyUsed. Limits: this check lives on-chain, so it needs the Sepolia mode. The scope comes from an epoch that Mingle's browser keeps, so the demo's Reset makes a new nullifier; a real Mingle would keep one fixed scope. A different Google account makes a different secret, so one account per person also needs the city office to issue one certificate per person. A unique-human check such as World ID is meant to close that gap.",
-          },
-          {
-            q: "What stops someone replaying a proof they saw?",
-            a: "Each proof is tied to one request by its requestHash, and a nullifier can be recorded only once.",
+            id: "replay",
+            q: "Could someone copy a proof they saw and reuse it?",
+            a: "Not for another request. Each proof is tied to the one request it answers, and its anonymous number can be recorded only once.",
             d: "Mingle's request carries a random nonce, and requestHash = Poseidon(nonce) is a public input of the proof. The result must carry the nonce Mingle saved. Limits: the server does not mark a request as used, so within its 10 minutes the same proof can be verified again; on Sepolia its nullifier is still recorded only once. record() is open to anyone, and the scope and freshness checks happen only in Mingle's off-chain verifier.",
-          },
-          {
-            q: "Is the trusted setup safe?",
-            a: "Not for production. We ran it alone on one machine; a real launch needs a multi-party ceremony.",
-            d: "Groth16's setup creates secret randomness, and whoever knows all of it could forge proofs. With many independent contributors, one honest contributor is enough. Ours had one local contribution to each phase because the public setup files were unreachable at the event.",
           },
         ],
       },
@@ -326,17 +363,32 @@ const referenceEn = {
         title: "Trust and limits",
         items: [
           {
+            id: "chain",
+            q: "Your server already checks the proof. Why use a blockchain?",
+            a: "So the final check happens in public. Anyone can re-run the contract's check and see every number it has accepted, without trusting our server.",
+            d: "Mingle's server checks first, for a fast answer and a clear error. The contract then checks the proof again and refuses a nullifier it has already stored, so a second account in the same scope fails even if someone goes around Mingle's server. Limit: the contract does not check which scope a proof was made for. In the demo Mingle's browser picks the epoch, so wiping Mingle's data gives a new nullifier; a real Mingle would keep one fixed scope.",
+          },
+          {
+            id: "married",
             q: "What if I marry after getting the certificate?",
             a: "Today the proof doesn't check how old the certificate is. That is the first thing to add.",
             d: "The issue date is already signed into the certificate, so adding a public “issued after” date to the circuit is a small change. Revocation would need the city office to publish a revocation list.",
           },
           {
-            q: "What if the city office's key leaks?",
+            id: "setup",
+            q: "Is the proof system's setup safe for real use?",
+            a: "Not yet. Groth16 needs a one-time setup, and we ran ours alone on one machine. A real launch needs a ceremony with many independent people.",
+            d: "The setup creates secret randomness, and whoever knows all of it could forge proofs. With many independent contributors, one honest contributor is enough. Ours had one local contribution to each phase because the public setup files were unreachable at the event.",
+          },
+          {
+            id: "key",
+            q: "What if the city office's signing key leaks?",
             a: "The private key lives only in the server's environment; the repository holds only the public key. A leak would mean deploying a new registry with a new key.",
             d: "The registry's issuer key is immutable, which keeps it simple to audit. Production would need key rotation, for example an issuer registry the city office controls.",
           },
           {
-            q: "Is World ID real in this demo?",
+            id: "worldid",
+            q: "Is the World ID check real?",
             a: {
               simulated: "No. In this deployment the human check is simulated, and the app labels it that way everywhere.",
               "idkit-staging": "The integration is real, the person is not. It runs on World ID staging, where the World ID Simulator stands in for World App with a test identity.",
@@ -344,7 +396,7 @@ const referenceEn = {
             } satisfies Record<Modes["worldId"], string>,
             d: {
               simulated:
-                "The camera opens for five seconds and no World ID proof is made. The World ID integration is built: it runs on World ID staging when its keys are set and the staging window is open. The point of World ID here: it adds “a unique human is behind this account”, which a certificate alone cannot prove.",
+                "The camera opens for five seconds and no World ID proof is made. The World ID integration is built: it runs on World ID staging when its keys are set and the staging window is open. World ID adds “a unique human is behind this account”, which a certificate alone cannot prove.",
               "idkit-staging":
                 "Our server signs each IDKit request and forwards the result to World's Developer Portal. Mingle counts the check only with the signed token our server issues after that. Limits: that token travels next to the ZK proof, not inside it, lasts seven days and is not yet tied to the certificate, and the World ID nullifier is not yet checked for repeats.",
               idkit:
@@ -352,11 +404,7 @@ const referenceEn = {
             } satisfies Record<Modes["worldId"], string>,
           },
           {
-            q: "Why a blockchain? Your server already checks the proof.",
-            a: "So the final check runs in public. Anyone can re-run the contract's check and see every nullifier it has accepted.",
-            d: "Mingle's server checks first, for a fast answer and a clear error. The contract then checks the proof again and refuses a nullifier it has already stored, so a second account in the same scope fails even if someone goes around Mingle's server. Limit: the contract does not check which scope a proof was made for. In the demo Mingle's browser picks the epoch, so wiping Mingle's data gives a new nullifier; a real Mingle would keep one fixed scope.",
-          },
-          {
+            id: "gov",
             q: "Is this real government data?",
             a: "No. Ken Sato is fictional, and our server plays the city office with a demo key.",
             d: "The paper certificate is real: Japanese city offices issue 独身証明書 and marriage agencies ask for it. A real launch would need the city office to issue the digital version and hold the signing key.",
@@ -364,30 +412,29 @@ const referenceEn = {
         ],
       },
       {
-        title: "Build",
+        title: "Using it",
         items: [
           {
-            q: "Who pays for the transactions? Do users need crypto?",
-            a: "Our relayer wallet pays the Sepolia fees. Users only sign in with Google.",
-            d: "The embedded wallet signs one message to make the holder secret. It never sends a transaction or needs ETH.",
+            id: "fees",
+            q: "Do I need crypto or have to pay fees?",
+            a: "No. You sign in with Google, and our server wallet pays the Sepolia fees.",
+            d: "The embedded wallet signs one message to make your key. It never sends a transaction or needs ETH.",
           },
           {
-            q: "How fast is it?",
-            a: "The proof takes 1–4 seconds. Recording on Sepolia takes about one block, around 12 seconds.",
+            id: "speed",
+            q: "How long does it take?",
+            a: "About 1–4 seconds to make the proof, and about 12 seconds to record it on Sepolia.",
             d: "The server waits up to 45 s for the receipt. After that, Mingle shows the badge with a note that the transaction is not confirmed yet, and keeps checking for about two minutes.",
           },
           {
-            q: "Why Sepolia and not mainnet or an L2?",
-            a: "It is a public test network, so the demo is free and anyone can inspect it. Moving to another chain is a small change.",
-            d: "The RPC URL and the registry address come from the environment, but the code knows only Sepolia and a local chain today, and the Etherscan link is fixed to Sepolia. Moving to an L2 such as World Chain means adding that chain, then redeploying the plain-Solidity contracts.",
+            id: "sepolia",
+            q: "Why Sepolia and not Ethereum mainnet?",
+            a: "It is a public test network, so the demo is free and anyone can inspect it.",
+            d: "The RPC URL and the registry address come from the environment, but the code knows only Sepolia and a local chain today, and the Etherscan link is fixed to Sepolia. Moving to another chain such as World Chain means adding that chain, then redeploying the plain-Solidity contracts.",
           },
           {
-            q: "What does “30s” prove exactly?",
-            a: "That the birth year falls in a range: 1987 to 1996 for the 30s in 2026. Not the exact age.",
-            d: "Mingle sends the range, and the circuit checks minBirthYear ≤ birthYear ≤ maxBirthYear. Only the birth year is signed, not the full date.",
-          },
-          {
-            q: "What did you build before the event?",
+            id: "before",
+            q: "What was made before the event?",
             a: "The idea, the pitch, Figma designs, a local circom spike and the brand assets. All the code here was written at the event.",
             d: "The README's “Made before the event” section lists it, and AI_USAGE.md records what Claude Code generated and what the team did.",
           },

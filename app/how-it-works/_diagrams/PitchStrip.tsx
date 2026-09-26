@@ -1,9 +1,10 @@
 import type { StoryCopy } from "@/lib/i18n/how-it-works/story.en";
-import { ActorIcon, LockGlyph } from "../_components/icons";
+import { ActorIcon } from "../_components/icons";
+import { ProofEnvelope } from "./ProofEnvelope";
 
 // The 30-second pitch as three frames: a copy leaks every field, a proof
-// carries one, and the chain keeps one number. Each frame is a small SVG
-// on a 160×80 grid with one looping motion.
+// (the window envelope) carries one line, and the chain keeps one number.
+// Each frame is a small SVG on a 160×80 grid.
 
 type Pitch = StoryCopy["hero"]["pitch"];
 type Strip = StoryCopy["why"]["diagram"];
@@ -50,15 +51,11 @@ function ProofArt() {
     <svg viewBox="0 0 160 80" className="hiw-strip-art" aria-hidden="true">
       <ActorIcon actor="phone" size={30} x={6} y={25} />
       <path d="M40 40h12" className="hiw-sa-wire" />
-      <rect x="56" y="18" width="44" height="44" rx="10" className="hiw-sa-seal" />
-      <g className="hiw-sa-seal-lock">
-        <LockGlyph x={69} y={31} size={18} />
-      </g>
+      <ProofEnvelope line="✓" x={54} y={24} width={48} />
       <path d="M100 40h10" className="hiw-sa-wire" />
       <rect x="112" y="8" width="42" height="64" rx="6" className="hiw-sa-paper" />
       <ActorIcon actor="mingle" size={16} x={125} y={12} />
       <circle r="3" cx="40" cy="40" className="hiw-sa-dot hiw-motion" />
-      <rect x="72" y="44" width="26" height="6" rx="3" className="hiw-sa-fly is-safe" />
       <rect x="120" y="44" width="26" height="6" rx="3" className="hiw-sa-arrive is-safe" />
     </svg>
   );

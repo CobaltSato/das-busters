@@ -7,35 +7,34 @@ import { NullifierDiagram } from "../_diagrams/NullifierDiagram";
 import { ZkDiagram } from "../_diagrams/ZkDiagram";
 
 type Copy = StoryCopy["basics"];
-type CardCopy = { title: string; analogy: string; body: string; inApp: string; formula?: string[] };
+type TermCopy = { title: string; analogy: string; body: string; inApp: string; formula?: string[] };
 
-type CardProps = {
-  card: CardCopy;
+type TermProps = {
+  term: TermCopy;
   inAppLabel: string;
-  // A small picture inside the text column.
-  art?: React.ReactNode;
-  // "feature" puts the big diagram beside the text on wide screens.
-  layout?: "wide" | "feature";
+  picture: React.ReactNode;
   children?: React.ReactNode;
 };
 
-// Plain view: title, analogy, one line, picture, where it is in the app.
-// Engineer view adds the formula.
-function Card({ card, inAppLabel, art, layout, children }: CardProps) {
+// One term per row: the picture, then the words. The analogy opens the
+// paragraph; the Engineer view adds the formula.
+function Term({ term, inAppLabel, picture, children }: TermProps) {
   return (
-    <article className={layout ? `hiw-card is-${layout}` : "hiw-card"}>
-      <div className="hiw-card-text">
-        <h3>{card.title}</h3>
-        <p className="hiw-card-analogy">{card.analogy}</p>
-        <p>{card.body}</p>
-        {art && <figure className="hiw-mini">{art}</figure>}
-        {card.formula && <pre className="hiw-formula hiw-tech">{card.formula.join("\n")}</pre>}
-        <p className="hiw-card-inapp">
-          <span>{inAppLabel}</span>
-          <Rich text={card.inApp} />
+    <article className="hiw-term">
+      <figure className="hiw-term-figure">{picture}</figure>
+      <div className="hiw-term-text">
+        <h3>{term.title}</h3>
+        <p>
+          <strong>{term.analogy}</strong> {term.body}
         </p>
+        {term.formula && <pre className="hiw-formula hiw-tech">{term.formula.join("\n")}</pre>}
+        <p className="hiw-term-inapp">
+          <span>{inAppLabel}</span>
+          {/[、。]$/.test(inAppLabel) ? "" : " "}
+          <Rich text={term.inApp} />
+        </p>
+        {children}
       </div>
-      {children}
     </article>
   );
 }
@@ -43,28 +42,20 @@ function Card({ card, inAppLabel, art, layout, children }: CardProps) {
 export function Basics({ copy, worldId }: { copy: Copy; worldId: Modes["worldId"] }) {
   return (
     <Section id="basics" title={copy.title} lede={copy.lede} wide>
-      <div className="hiw-cards">
-        <Card card={copy.signature} inAppLabel={copy.inApp} art={<StampArt copy={copy.signature.art} />} />
-        <Card card={copy.hash} inAppLabel={copy.inApp} art={<HashArt copy={copy.hash.art} />} />
-        <Card card={copy.zk} inAppLabel={copy.inApp} layout="feature">
-          <figure className="hiw-figure">
-            <ZkDiagram copy={copy.zk.diagram} />
-          </figure>
-        </Card>
-        <Card card={copy.nullifier} inAppLabel={copy.inApp} layout="feature">
-          <figure className="hiw-figure">
-            <NullifierDiagram copy={copy.nullifier.diagram} />
-          </figure>
-        </Card>
-        <Card card={copy.chain} inAppLabel={copy.inApp} art={<ChainArt copy={copy.chain.art} />} />
-        <Card card={copy.privy} inAppLabel={copy.inApp} art={<WalletArt copy={copy.privy.art} />} />
-        <Card card={copy.worldId} inAppLabel={copy.inApp} art={<HumanArt copy={copy.worldId.art} />} layout="wide">
+      <div className="hiw-terms">
+        <Term term={copy.signature} inAppLabel={copy.inApp} picture={<StampArt copy={copy.signature.art} />} />
+        <Term term={copy.hash} inAppLabel={copy.inApp} picture={<HashArt copy={copy.hash.art} />} />
+        <Term term={copy.zk} inAppLabel={copy.inApp} picture={<ZkDiagram copy={copy.zk.diagram} />} />
+        <Term term={copy.nullifier} inAppLabel={copy.inApp} picture={<NullifierDiagram copy={copy.nullifier.diagram} />} />
+        <Term term={copy.chain} inAppLabel={copy.inApp} picture={<ChainArt copy={copy.chain.art} />} />
+        <Term term={copy.privy} inAppLabel={copy.inApp} picture={<WalletArt copy={copy.privy.art} />} />
+        <Term term={copy.worldId} inAppLabel={copy.inApp} picture={<HumanArt copy={copy.worldId.art} />}>
           {/* Follows how this deployment runs the check, so a simulated
               check is never described as a real one. */}
           <p className={worldId === "idkit" ? "hiw-mode is-live" : "hiw-mode"}>
             <Rich text={copy.worldId.status[worldId]} />
           </p>
-        </Card>
+        </Term>
       </div>
     </Section>
   );

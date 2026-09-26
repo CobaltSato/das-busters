@@ -23,7 +23,7 @@ const storyEn = {
     tech: "Under the hood",
     built: "What we built",
     check: "Check it",
-    qa: "Q&A",
+    qa: "FAQ",
   },
   level: {
     label: "Detail",
@@ -33,7 +33,6 @@ const storyEn = {
   },
 
   hero: {
-    eyebrow: "How it works",
     // Phrases wrap as units, so a line never breaks inside one.
     title: ["Show one line of your certificate.", "Keep the rest sealed."],
     lede: "A dating app checks that you are single without ever seeing your Single Status Certificate.",
@@ -54,15 +53,15 @@ const storyEn = {
     pitchTitle: "The 30-second version",
     pitch: {
       problem: {
-        title: "The problem",
+        title: "A copy shows everything",
         body: "People lie about being single. The city office can certify it, but a copy of the certificate hands over your name, birth date and address too.",
       },
       proof: {
-        title: "The trick",
+        title: "A proof shows one line",
         body: "Your phone keeps the signed certificate. Mingle gets a zero-knowledge proof: maths that says “the city office signed that I'm single”, and nothing else.",
       },
       record: {
-        title: "The record",
+        title: "The chain keeps one number",
         body: "A smart contract on Ethereum Sepolia checks the proof again and stores one anonymous number, so the same certificate can't back a second account.",
       },
     },
@@ -85,6 +84,9 @@ const storyEn = {
       copyLane: "Send a copy",
       zkLane: "Use DAS Busters",
       certificate: "Certificate",
+      have: "On your phone",
+      send: "What you send",
+      copy: "Copy",
       mingleSees: "Mingle sees",
       fields: ["Name", "Birth date", "Address", "Single"],
       proof: "Proof",
@@ -94,8 +96,8 @@ const storyEn = {
   },
 
   idea: {
-    title: "Four parties, one picture",
-    lede: "The city office issues once. Your phone holds. Mingle asks. Sepolia remembers one number.",
+    title: "Who does what",
+    lede: "Your phone sits in the middle. It gets the certificate from the city office once, then answers Mingle with proofs.",
     label: "The certificate goes from the city office to your phone once. Your phone sends Mingle a proof. The proof is recorded on Sepolia, which keeps only the nullifier.",
     roles: {
       issuer: { name: "City office", role: "Issuer", body: "Signs your digital certificate." },
@@ -111,9 +113,9 @@ const storyEn = {
   },
 
   basics: {
-    title: "Seven ideas, from zero",
-    lede: "No cryptography needed. One picture each, and where it shows up in the app.",
-    inApp: "In this app",
+    title: "The building blocks",
+    lede: "Seven terms that the rest of this page uses.",
+    inApp: "In DAS Busters:",
     signature: {
       title: "Digital signature",
       analogy: "A stamp that can't be forged or moved to another page.",
@@ -125,7 +127,7 @@ const storyEn = {
     hash: {
       title: "Hash",
       analogy: "A fingerprint for data.",
-      body: "Any input becomes one fixed-size number. Same input, same number, and no way back.",
+      body: "Any input becomes one fixed-size number. The same input always gives the same number, and the number can't be turned back into the input.",
       art: { input: "Certificate", machine: "Poseidon", output: "1858…9027" },
       formula: ["Poseidon(1) → 1858…9027", "Poseidon(2) → 8645…4349"],
       inApp: "**Poseidon**, a hash made for ZK circuits. Your secret is hashed before the city office sees it.",
@@ -163,7 +165,7 @@ const storyEn = {
     chain: {
       title: "Blockchain and smart contract",
       analogy: "A public notebook nobody can erase, with rules that run themselves.",
-      body: "Anyone can read it, no company can rewrite it, and the contract runs exactly as written.",
+      body: "Anyone can read it, and no single company can rewrite it. A smart contract is a program on it that runs exactly as written.",
       art: { block: "nullifier", yours: "yours", read: "anyone can read", erase: "nobody can erase" },
       formula: ["record(proof) → verifyProof ✓ → used[nullifier] = true"],
       inApp: "Two contracts on **Ethereum Sepolia**, a public test network. A server wallet pays the fees, so you need no crypto.",
@@ -342,7 +344,7 @@ const storyEn = {
   },
 
   architecture: {
-    title: "How the pieces fit",
+    title: "Architecture",
     lede: "One Next.js app on Vercel, two outside services, two contracts.",
     browser: {
       title: "In the browser",

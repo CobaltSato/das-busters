@@ -56,15 +56,7 @@
   grid-area: text;
 }
 
-.hiw-eyebrow {
-  color: var(--blue);
-  font: 600 12px/1 var(--hiw-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
 .hiw h1 {
-  margin-top: 14px;
   font-size: clamp(32px, 5vw, 50px);
   font-weight: 700;
   line-height: 1.08;
@@ -87,17 +79,16 @@
 
 .hiw-pitch {
   grid-area: pitch;
-  padding: 22px 24px;
-  border-radius: var(--radius-card);
-  background: var(--surface);
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
 }
 
 .hiw-pitch h2,
 .hiw-status h2 {
   color: var(--muted);
-  font: 600 12px/1.2 var(--hiw-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .hiw-pitch-note {
@@ -372,78 +363,63 @@
   margin: 0 auto;
 }
 
-/* Basics */
+/* Basics: one term per row, picture then words */
 
-.hiw-cards {
+.hiw-terms {
+  margin-top: 24px;
+}
+
+.hiw-term {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: 28px;
-}
-
-.hiw-card {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 24px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
-  background: #ffffff;
-}
-
-.hiw-card.is-wide,
-.hiw-card.is-feature {
-  grid-column: 1 / -1;
-}
-
-.hiw-card.is-feature {
-  flex-direction: row;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
   align-items: center;
-  gap: 32px;
+  gap: 40px;
+  padding: 36px 0;
+  border-top: 1px solid var(--line);
 }
 
-.hiw-card.is-feature > * {
-  flex: 1 1 0;
-  min-width: 0;
+.hiw-term-figure {
+  margin: 0;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--surface);
 }
 
-.hiw-card-text {
+.hiw-term-figure > svg {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.hiw-term-text {
   display: flex;
-  flex: 1;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  max-width: 34em;
 }
 
-.hiw-card h3 {
-  font-size: 20px;
+.hiw-term h3 {
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
-.hiw-card p {
-  font-size: 15px;
+.hiw-term p {
+  font-size: 16px;
   line-height: 1.7;
 }
 
-.hiw-card .hiw-card-analogy {
-  color: var(--blue);
-  font-weight: 600;
-}
-
-.hiw-card .hiw-card-inapp {
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
-  font-size: 14px;
-}
-
-.hiw-card-inapp span {
-  display: block;
-  margin-bottom: 4px;
+.hiw-term .hiw-term-inapp {
   color: var(--muted);
-  font: 600 11px/1.3 var(--hiw-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+.hiw-term-inapp span {
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .hiw-formula {
@@ -456,7 +432,7 @@
   overflow-wrap: anywhere;
 }
 
-.hiw-card .hiw-mode {
+.hiw-term .hiw-mode {
   padding: 12px 14px;
   border-radius: 12px;
   background: var(--hiw-sim-bg);
@@ -465,7 +441,7 @@
   line-height: 1.6;
 }
 
-.hiw-card .hiw-mode.is-live {
+.hiw-term .hiw-mode.is-live {
   background: var(--green-bg);
   color: var(--green-ink);
 }
@@ -487,6 +463,12 @@ html[lang="ja"] .hiw-section > h2 {
 /* Narrow screens */
 
 @media (max-width: 820px) {
+  .hiw-term {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    padding: 28px 0;
+  }
+
   .hiw-hero {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
@@ -501,14 +483,6 @@ html[lang="ja"] .hiw-section > h2 {
     gap: 24px;
   }
 
-  .hiw-cards {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .hiw-card.is-feature {
-    flex-direction: column;
-    align-items: stretch;
-  }
 }
 
 @media (max-width: 480px) {
@@ -516,9 +490,6 @@ html[lang="ja"] .hiw-section > h2 {
     padding: 12px;
   }
 
-  .hiw-card {
-    padding: 20px;
-  }
 }
 
 /* Reduced motion: every diagram shows its finished state, and the pieces
@@ -534,9 +505,6 @@ html[lang="ja"] .hiw-section > h2 {
 
   .hiw .hiw-motion,
   .hiw-arch-pulse,
-  .hiw-p-chip,
-  .hiw-p-dot,
-  .hiw-p-out,
   .hiw-roles-token,
   .hiw-zk-glow,
   .hiw-sa-fly {
@@ -598,16 +566,12 @@ html[lang="ja"] .hiw-section > h2 {
   margin: 14px 0 0;
   padding: 0;
   list-style: none;
-  counter-reset: frame;
 }
 
 .hiw-strip-frame {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 14px;
-  border-radius: 16px;
-  background: #ffffff;
 }
 
 .hiw-strip-art {
@@ -623,14 +587,6 @@ html[lang="ja"] .hiw-section > h2 {
   font-weight: 700;
 }
 
-.hiw-strip-frame h3::before {
-  margin-right: 8px;
-  color: var(--blue);
-  font: 600 12px var(--hiw-mono);
-  content: counter(frame);
-  counter-increment: frame;
-}
-
 .hiw-strip-frame p {
   font-size: 14px;
   line-height: 1.6;
@@ -641,14 +597,6 @@ html[lang="ja"] .hiw-section > h2 {
 .hiw-figure.is-why {
   max-width: 720px;
   margin: 24px auto 0;
-}
-
-.hiw-figure figcaption {
-  margin-top: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.5;
-  text-align: center;
 }
 
 .hiw-fact {

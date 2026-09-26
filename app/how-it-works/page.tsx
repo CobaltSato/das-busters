@@ -21,6 +21,7 @@ import "./diagrams.css";
 import "./basics.css";
 import "./flow.css";
 import "./reference.css";
+import "./answers.css";
 
 // Hashes, routes and addresses read better in a monospace face.
 const mono = JetBrains_Mono({
@@ -37,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${story.meta.title} · DAS Busters`, description: story.meta.description };
 }
 
-// A standalone explainer for judges and newcomers. The server renders it in
+// A standalone explainer for newcomers and engineers. The server renders it in
 // the visitor's language and reads the live modes so the page never presents
 // a mock or a simulation as the real thing. Pictures carry the story; the
 // Engineer switch adds the routes, formulas and contract checks.
@@ -72,7 +73,11 @@ export default async function HowItWorksPage() {
       <Tech copy={reference.tech} modes={modes} />
       <Built copy={reference.built} worldId={modes.worldId} />
       <Check copy={reference.check} locale={locale} />
-      <Qa copy={reference.qa} worldId={modes.worldId} />
+      <Qa
+        copy={reference.qa}
+        pictures={{ stamp: story.basics.signature.art, nullifier: story.basics.nullifier.diagram }}
+        worldId={modes.worldId}
+      />
       <footer className="hiw-footer">
         <Link href="/" className="hiw-footer-primary">
           {reference.footer.back}

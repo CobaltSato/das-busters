@@ -20,7 +20,7 @@ const storyJa: StoryCopy = {
     tech: "内部",
     built: "作ったもの",
     check: "確かめる",
-    qa: "Q&A",
+    qa: "よくある質問",
   },
   level: {
     label: "表示",
@@ -30,7 +30,6 @@ const storyJa: StoryCopy = {
   },
 
   hero: {
-    eyebrow: "しくみ",
     title: ["証明書は封をしたまま、", "1行だけ見せる。"],
     lede: "マッチングアプリは、独身証明書を一度も見ないまま、あなたが独身だと確かめられます。",
     envelope: {
@@ -50,15 +49,15 @@ const storyJa: StoryCopy = {
     pitchTitle: "30秒で説明すると",
     pitch: {
       problem: {
-        title: "困りごと",
+        title: "コピーだと全部見える",
         body: "独身と偽る人がいます。区役所の証明書で確かめられますが、コピーを送ると氏名、生年月日、住所まで渡ってしまいます。",
       },
       proof: {
-        title: "しかけ",
+        title: "証明なら1行だけ",
         body: "署名付きの証明書はスマホに置いたまま。Mingle が受け取るのはゼロ知識証明で、「区役所が独身と署名した」ことだけが数学で伝わります。",
       },
       record: {
-        title: "記録",
+        title: "チェーンに残るのは番号1つ",
         body: "Ethereum Sepolia のスマートコントラクトが証明をもう一度確かめ、匿名の番号を1つだけ記録します。同じ証明書で2つ目のアカウントは作れません。",
       },
     },
@@ -80,6 +79,9 @@ const storyJa: StoryCopy = {
       copyLane: "コピーを送る",
       zkLane: "DAS Busters を使う",
       certificate: "証明書",
+      have: "スマホにあるもの",
+      send: "渡すもの",
+      copy: "コピー",
       mingleSees: "Mingle が見るもの",
       fields: ["氏名", "生年月日", "住所", "独身"],
       proof: "証明",
@@ -89,8 +91,8 @@ const storyJa: StoryCopy = {
   },
 
   idea: {
-    title: "登場するのは4つ",
-    lede: "区役所が1回発行し、スマホが持ち、Mingle が尋ね、Sepolia が番号を1つ覚えます。",
+    title: "登場人物",
+    lede: "真ん中にいるのはあなたのスマホです。区役所から証明書を1回受け取り、Mingle には証明で答えます。",
     label: "証明書は区役所からスマホへ1回だけ渡る。スマホは Mingle に証明を送る。証明は Sepolia に記録され、残るのは nullifier だけ。",
     roles: {
       issuer: { name: "区役所", role: "発行者", body: "デジタルの証明書に署名します。" },
@@ -106,9 +108,9 @@ const storyJa: StoryCopy = {
   },
 
   basics: {
-    title: "7つの基礎",
-    lede: "暗号の知識はいりません。1つにつき図1枚と、アプリのどこで使うかを書きます。",
-    inApp: "このアプリでは",
+    title: "基本の用語",
+    lede: "このページに出てくる用語は7つです。",
+    inApp: "DAS Busters では、",
     signature: {
       title: "デジタル署名",
       analogy: "偽造も、別の書類への押し直しもできないハンコ。",
@@ -158,7 +160,7 @@ const storyJa: StoryCopy = {
     chain: {
       title: "ブロックチェーンとスマートコントラクト",
       analogy: "誰にも消せない公開のノートと、自動で動くルール。",
-      body: "誰でも読めて、どの会社も書き換えられず、コントラクトは書かれたとおりに動きます。",
+      body: "誰でも読めて、1つの会社だけでは書き換えられません。スマートコントラクトはその上で動くプログラムで、書かれたとおりに動きます。",
       art: { block: "nullifier", yours: "あなたの分", read: "誰でも読める", erase: "誰も消せない" },
       formula: ["record(証明) → verifyProof ✓ → used[nullifier] = true"],
       inApp: "公開テストネット **Ethereum Sepolia** にコントラクトを2つ置いています。手数料はサーバーのウォレットが払うので、利用者に暗号資産はいりません。",
@@ -189,7 +191,7 @@ const storyJa: StoryCopy = {
   },
 
   flow: {
-    title: "1回の流れを順番に",
+    title: "デモ1回の流れ",
     lede: "3分のデモを、メッセージ1つずつ追います。健さんは渋谷区に住む架空の人物です。",
     label: "ステップごとの流れ",
     actors: {

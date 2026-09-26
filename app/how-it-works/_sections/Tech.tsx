@@ -22,17 +22,17 @@ function Block({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-// Six figures anyone can read, shown in both views.
+// Six figures anyone can read, shown in both views as ruled lines.
 function Numbers({ items }: { items: Copy["numbers"] }) {
   return (
-    <ul className="hiw-numbers">
+    <dl className="hiw-facts">
       {items.map((item) => (
-        <li key={item.label}>
-          <strong>{item.value}</strong>
-          <span>{item.label}</span>
-        </li>
+        <div key={item.label}>
+          <dt>{item.label}</dt>
+          <dd>{item.value}</dd>
+        </div>
       ))}
-    </ul>
+    </dl>
   );
 }
 

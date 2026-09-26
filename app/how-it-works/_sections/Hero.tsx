@@ -18,7 +18,6 @@ export function Hero({ copy, strip, modes }: HeroProps) {
   return (
     <header className="hiw-hero">
       <div className="hiw-hero-text">
-        <p className="hiw-eyebrow">{copy.eyebrow}</p>
         <h1>
           {copy.title.map((phrase, i) => (
             <Fragment key={phrase}>
