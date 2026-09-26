@@ -12,18 +12,21 @@ export function WorldIdButton({ label, className, onDone }: Props) {
   const { t } = useI18n();
   const copy = t.wallet.worldId;
   const { phase, error, notice, start, request } = useWorldIdCheck(onDone);
+  // On staging the Simulator opens over the whole screen, so the button keeps
+  // its place and spinner until then.
+  const waiting = phase.name === "request" && phase.signed.environment === "staging";
 
   return (
     <>
       {request}
-      {!request && (
+      {(!request || waiting) && (
         <button type="button" className={className} onClick={start} disabled={phase.name !== "ready"}>
           {phase.name === "ready" ? (
             error ? copy.tryAgain : label
           ) : (
             <>
               <span className="spinner is-dark" />
-              {phase.name === "preparing" ? copy.preparing : copy.verifying}
+              {phase.name === "verifying" ? copy.verifying : copy.preparing}
             </>
           )}
         </button>
