@@ -30,7 +30,16 @@ DAS Busters がアプリに渡すのは、確認済みの事実1つと、アプ�
 
 ## データの置き場所
 
-証明書と保有者鍵はスマホに残り、証明もスマホが作ります。古いブラウザやメモリ不足で作りきれなかったときだけ、その1回のために証明書と保有者鍵を `/api/prove` に送ります。ボタンにもそう出て、サーバーは何も保存しません。Mingle が受け取るのは「独身」という答え、本人が共有を選んだ項目、nullifier、区役所の公開鍵です。公開鍵からは、どの区役所が署名したかがわかります。Sepolia に保存されるのは nullifier だけで、イベントのログには nullifier、scope hash、request hash が載ります。トランザクションの入力には証明と10個の公開シグナルが入ります。中身は区役所の公開鍵と、共有を選んだときだけの東京のコード（13）と生まれ年の範囲です。氏名、生年月日、住所はチェーンに載りません。
+| 場所 | 置かれるもの |
+|---|---|
+| スマホ | 証明書と保有者鍵。証明もスマホが作る |
+| `/api/prove` | 古いブラウザやメモリ不足でスマホが作りきれなかったときだけ、その1回のための証明書と保有者鍵。ボタンにもそう出て、サーバーは何も保存しない |
+| Mingle | 「独身」という答え、本人が共有を選んだ項目、nullifier、区役所の公開鍵（どの区役所が署名したかがわかる） |
+| Sepolia のストレージ | nullifier |
+| Sepolia のイベントのログ | nullifier、scope hash、request hash |
+| Sepolia のトランザクションの入力 | 証明と10個の公開シグナル。中身は区役所の公開鍵と、共有を選んだときだけの東京のコード（13）と生まれ年の範囲 |
+
+氏名、生年月日、住所はチェーンに載りません。
 
 ```mermaid
 flowchart LR
@@ -249,25 +258,29 @@ sequenceDiagram
 
 実装を始める前に書いた計画は [docs/plan.md](plan.md) にあります。
 
-- 証明はスマホで作り、サーバーは表示付きの予備にしました。計画では、メンターの助言とイベント前のプロトタイプに合わせてサーバーで証明することにしていました。9月26日にこれをブラウザの中へ移し、証明書と保有者鍵がスマホから出ないようにしました。その分 7.7 MB のダウンロードが要り、スマホでの速さはまだ測っていません。そのため `/api/prove` を予備に残し、使ったときはボタンに出します（[lib/deviceProver.ts](../lib/deviceProver.ts)、[app/wallet/share/ShareScreen.tsx](../app/wallet/share/ShareScreen.tsx)、[lib/modes.ts](../lib/modes.ts) の `PROVE_ON`）。
-- nullifier は保有者鍵から作ります。`nullifier = Poseidon(holderSecret, scopeHash)` です。区役所が見るのは `Poseidon(holderSecret)` だけなので、区役所があなたの nullifier を計算して Mingle 上で探すことはできません。ただしこのデモでは予備の証明サーバーが同じサーバーで動くので、これが成り立つのはスマホで証明したときだけです。引き換えに、証明するたびに保有者鍵が手元に要ります（[lib/fields.ts](../lib/fields.ts)、[circuits/single_proof.circom](../circuits/single_proof.circom)）。
-- 一意性は nullifier で判定し、証明では判定しません。Groth16 の証明は、同じ内容のまま別のバイト列に作り変えられます。だからレジストリは証明のハッシュではなく `used[nullifierHash]` を記録します。一意性が保てるのは、scope が変わらない範囲だけです（[contracts/src/SingleProofRegistry.sol](../contracts/src/SingleProofRegistry.sol)）。
-- 隠した項目は 0 に固定します。回路は、フラグがオフの居住地と年代の値を 0 にするよう強制し、Mingle の検証も値の入った隠し項目を拒否します。隠した項目に、共有したように読める値を紛れ込ませられません。ただしフラグ自体は公開なので、どの事実を共有したかはトランザクションから見えます（[lib/verifier.ts](../lib/verifier.ts)）。
-- モードはサーバーが決めます。連携ごとにモックと本物があり、env で選びます。Mingle の検証はサーバーが動かしている方式の証明しか受け付けないので、クライアントが本番をモックに格下げすることはできません。イベント前のプロトタイプでは、クライアントが `bypass:true` を送れば通りました。env が抜けると黙ってモックになるので、ハブ、共有画面、Mingle にモードのバッジを出しています（[lib/modes.ts](../lib/modes.ts)、[lib/prover.ts](../lib/prover.ts) の `verifyProof`）。
-- revert は失敗として扱います。relayer は先に `record()` をシミュレーションし、revert（nullifier 使用済み、信頼していない発行者、無効な証明）はエラーとして利用者に出します。オフチェーンの確認に切り替えるのは RPC か relayer の問題のときだけで、画面にもそう出します。プロトタイプは revert を「オフチェーンで成功」に丸めていました（[lib/chain.ts](../lib/chain.ts)）。
-- receipt を待ちます。計画ではトランザクションのハッシュをすぐ返すつもりでした。コードは receipt を最大45秒待ち、あとで revert するトランザクションを「記録済み」と言わないようにしています。共有はその分、Sepolia のブロック1つぶん遅くなります（[lib/chain.ts](../lib/chain.ts)）。
-- ガス代は relayer が払います。利用者は ETH が要らず、自分でトランザクションを送ることもありません。難点は、資金を入れたデモ用の鍵1つが全員の分を払うことです（[docs/setup.ja.md](setup.ja.md#relayer-のガス代)）。
-- 保有者鍵は Privy の埋め込みウォレットの署名から作ります。固定のメッセージに1回署名すると Google アカウントに結びついた秘密ができ、シードフレーズを書き留める必要がありません。署名の SHA-256 を31バイトに切って、BN254 のスカラー体に収めています。プロトタイプでは256ビットの秘密がはみ出していました。署名が決定的でない場合に備えて、保存した値を正とします。そのかわり、鍵は Privy と Google アカウントに依存します（[lib/privy.ts](../lib/privy.ts)、[app/wallet/_components/holderKey.ts](../app/wallet/_components/holderKey.ts)）。
-- 状態を持たない署名付きトークンを使います。offer、request、結果、人間確認は、有効期間の短い HS256 のトークンで受け渡します。Vercel 上でデータベースを持たずに済みます。ただ、リクエストを使用済みにはできません（[lib/token.ts](../lib/token.ts)）。
+| 判断 | 理由 | 代償 |
+|---|---|---|
+| 証明はスマホで作り、`/api/prove` は使ったときにボタンに出る予備にする（[lib/deviceProver.ts](../lib/deviceProver.ts)、[app/wallet/share/ShareScreen.tsx](../app/wallet/share/ShareScreen.tsx)、[lib/modes.ts](../lib/modes.ts) の `PROVE_ON`） | 計画では、メンターの助言とイベント前のプロトタイプに合わせてサーバーで証明する予定だった。9月26日にブラウザの中へ移し、証明書と保有者鍵がスマホから出ないようにした | 7.7 MB のダウンロードが要る。スマホでの速さはまだ測っていない |
+| `nullifier = Poseidon(holderSecret, scopeHash)`（[lib/fields.ts](../lib/fields.ts)、[circuits/single_proof.circom](../circuits/single_proof.circom)） | 区役所が見るのは `Poseidon(holderSecret)` だけなので、区役所があなたの nullifier を計算して Mingle 上で探すことはできない。このデモでは予備の証明サーバーが同じサーバーで動くので、これが成り立つのはスマホで証明したときだけ | 証明するたびに保有者鍵が要る |
+| 一意性は `used[nullifierHash]` で判定する（[contracts/src/SingleProofRegistry.sol](../contracts/src/SingleProofRegistry.sol)） | Groth16 の証明は改変可能（malleable）なので、証明のハッシュでは一意にならない | scope が変わらない範囲でしか一意にならない |
+| 隠した項目は、回路でも Mingle の検証でも 0 に固定する（[lib/verifier.ts](../lib/verifier.ts)） | 隠した項目に、共有したように読める値を紛れ込ませられない | フラグ自体は公開なので、どの事実を共有したかはトランザクションから見える |
+| モードはすべてサーバーが env から決める（[lib/modes.ts](../lib/modes.ts)、[lib/prover.ts](../lib/prover.ts) の `verifyProof`） | Mingle の検証はサーバーが動かしている方式の証明しか受け付けないので、クライアントがモックに格下げできない | env が抜けるとモックになるので、ハブ、共有画面、Mingle にモードのバッジを出している |
+| revert は失敗として扱う（[lib/chain.ts](../lib/chain.ts)） | relayer は先に `record()` をシミュレーションし、revert（nullifier 使用済み、信頼していない発行者、無効な証明）はエラーとして利用者に出す。オフチェーンの確認に切り替えるのは RPC か relayer の問題のときだけで、画面にもそう出す | トランザクションを送る前に毎回シミュレーションを1回呼ぶ |
+| receipt を最大45秒待つ（[lib/chain.ts](../lib/chain.ts)） | 計画ではトランザクションのハッシュをすぐ返すつもりだった。待てば、あとで revert するトランザクションを「記録済み」と言わずに済む | 共有が Sepolia のブロック1つぶん遅くなる |
+| ガス代は relayer が払う（[docs/setup.ja.md](setup.ja.md#relayer-のガス代)） | 利用者は ETH が要らず、自分でトランザクションを送ることもない | 資金を入れたデモ用の鍵1つが全員の分を払う |
+| 保有者鍵は、Privy の埋め込みウォレットが固定のメッセージに署名した値の SHA-256 を31バイトに切ったもの（[lib/privy.ts](../lib/privy.ts)、[app/wallet/_components/holderKey.ts](../app/wallet/_components/holderKey.ts)） | シードフレーズを書き留める必要がなく、31バイトなら BN254 のスカラー体に収まる。署名が決定的でない場合に備えて、保存した値を正とする | 鍵が Privy と Google アカウントに依存する |
+| offer、request、結果、人間確認は、状態を持たない HS256 のトークンで受け渡す（[lib/token.ts](../lib/token.ts)） | Vercel 上でデータベースを持たずに済む | リクエストを使用済みにできない |
 
-イベント前の技術検証から得た教訓です（[docs/plan.md](plan.md) の「プロトタイプの穴を繰り返さない」）。プロトタイプには次の穴がありました。
+イベント前のプロトタイプにあった穴です（[docs/plan.md](plan.md) の「プロトタイプの穴を繰り返さない」）。
 
-- クライアントが人間確認を飛ばせた。
-- revert を成功に丸めていた。
-- 発行者の seed をコミットしていた。いまはリポジトリに公開鍵だけを置いています（[lib/zk/issuer-public.json](../lib/zk/issuer-public.json)）。
-- 結果がリクエストに結びついていなかった。いまは nonce で結びつけます。
-- 保有者鍵がスカラー体からはみ出していた。
-- サーバーで証明しているのに、UI は端末から出ないと書いていた。
+| プロトタイプ | いま |
+|---|---|
+| クライアントが `bypass:true` を送れば人間確認を飛ばせた | モードはサーバーが env から決める |
+| revert を「オフチェーンで成功」に丸めていた | revert はエラーにする。オフチェーンに切り替えるのは RPC か relayer の問題のときだけで、画面にもそう出す |
+| 発行者の seed をコミットしていた | リポジトリには公開鍵だけを置く（[lib/zk/issuer-public.json](../lib/zk/issuer-public.json)） |
+| 結果がリクエストに結びついていなかった | nonce で結びつける |
+| 256ビットの保有者鍵がスカラー体からはみ出していた | 31バイトにして BN254 のスカラー体に収める |
+| サーバーで証明しているのに、UI は端末から出ないと書いていた | 証明はスマホで作り、サーバーの予備を使ったときはボタンに出す |
 
 ## テスト
 

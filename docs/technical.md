@@ -30,7 +30,16 @@ DAS Busters gives the app one checked fact and a number that differs per app. Th
 
 ## Where the data lives
 
-The certificate and the holder secret stay on the phone, and the phone makes the proof. Only if it cannot finish (an old browser, too little memory) does it send them to `/api/prove` for that one proof; the button says so, and the server keeps nothing. Mingle gets a yes, anything you chose to share, the nullifier, and the city office's public key, which shows which office signed. Sepolia stores only the nullifier; the event log carries the nullifier, the scope hash and the request hash. The transaction input carries the proof and its 10 public signals: the city office's public key, plus the Tokyo code (13) and the birth-year range only if you chose to share them. No name, birth date or address goes on-chain.
+| Where | What it holds |
+|---|---|
+| Phone | The certificate and the holder secret. The phone makes the proof. |
+| `/api/prove` | Only if the phone cannot finish (an old browser, too little memory): the certificate and holder secret for that one proof. The button says so, and nothing is kept. |
+| Mingle | Single: yes, anything you chose to share, the nullifier, and the city office's public key (which shows which office signed) |
+| Sepolia storage | The nullifier |
+| Sepolia event log | The nullifier, the scope hash and the request hash |
+| Sepolia transaction input | The proof and its 10 public signals: the city office's public key, plus the Tokyo code (13) and the birth-year range only if shared |
+
+No name, birth date or address goes on-chain.
 
 ```mermaid
 flowchart LR
@@ -249,25 +258,29 @@ Demo shortcuts that a real deployment would not have:
 
 The build plan we wrote before building is in [docs/plan.md](plan.md) (Japanese).
 
-- Prove on the phone, with a labelled server fallback. The plan put proving on the server, following a mentor's advice and the pre-event prototype. On 26 September we moved it into the browser so the certificate and holder secret stay on the phone. The cost is a 7.7 MB download and phone speed we have not measured, so `/api/prove` stays as a fallback that the button names ([lib/deviceProver.ts](../lib/deviceProver.ts), [app/wallet/share/ShareScreen.tsx](../app/wallet/share/ShareScreen.tsx), `PROVE_ON` in [lib/modes.ts](../lib/modes.ts)).
-- Derive the nullifier from the holder secret: `nullifier = Poseidon(holderSecret, scopeHash)`. The city office only ever sees `Poseidon(holderSecret)`, so it cannot compute your nullifier and find you on Mingle. In this demo the fallback prover runs on the same server, so this holds only when the phone makes the proof. Trade-off: the secret has to be available every time you prove ([lib/fields.ts](../lib/fields.ts), [circuits/single_proof.circom](../circuits/single_proof.circom)).
-- Key uniqueness on the nullifier and never on the proof. A Groth16 proof can be changed into different bytes for the same statement, so the registry marks `used[nullifierHash]` and never a proof hash. Trade-off: uniqueness is only as stable as the scope ([contracts/src/SingleProofRegistry.sol](../contracts/src/SingleProofRegistry.sol)).
-- Force hidden values to 0. The circuit requires the residence and age values to be 0 when their flag is off, and Mingle's verifier refuses a hidden field with a value, so a hidden field cannot carry a value that could be read as shared. Trade-off: the flags themselves are public, so the transaction shows which facts were shared ([lib/verifier.ts](../lib/verifier.ts)).
-- Let the server pick the mode. Each integration has a mock and a real mode chosen from env, and Mingle's verifier accepts only the prover the server runs, so a client cannot downgrade a real deployment to the mock. The pre-event prototype let the client send `bypass:true`. Trade-off: a missing env var means mock, so the hub, the share screen and Mingle show mode badges ([lib/modes.ts](../lib/modes.ts), `verifyProof` in [lib/prover.ts](../lib/prover.ts)).
-- Treat a revert as a failure. The relayer simulates `record()` first, and a revert (nullifier used, untrusted issuer, invalid proof) reaches the user as an error. Only RPC or relayer problems fall back to an off-chain check, and the screen says so. The prototype rounded reverts into "off-chain success" ([lib/chain.ts](../lib/chain.ts)).
-- Wait for the receipt. The plan was to return the transaction hash at once. The code waits up to 45 seconds for the receipt, so a result never says "recorded" for a transaction that later reverts. Trade-off: sharing takes one Sepolia block longer ([lib/chain.ts](../lib/chain.ts)).
-- Let a relayer pay gas. Users need no ETH and never send a transaction themselves. Trade-off: one funded demo key pays for everyone ([docs/setup.md](setup.md#relayer-gas)).
-- Derive the holder key from a Privy embedded-wallet signature. Signing one fixed message gives a secret tied to the Google account, with no seed phrase to write down. The SHA-256 of the signature is cut to 31 bytes so it stays below the BN254 field; the prototype's 256-bit secret overflowed it. The stored value is treated as authoritative in case signatures are not deterministic. Trade-off: the key depends on Privy and the Google account ([lib/privy.ts](../lib/privy.ts), [app/wallet/_components/holderKey.ts](../app/wallet/_components/holderKey.ts)).
-- Use stateless signed tokens. Offers, requests, results and human checks are short-lived HS256 tokens, so the server needs no database on Vercel. Trade-off: a request is not marked used ([lib/token.ts](../lib/token.ts)).
+| Decision | Why | Cost |
+|---|---|---|
+| Prove on the phone, with `/api/prove` as a fallback the button names ([lib/deviceProver.ts](../lib/deviceProver.ts), [app/wallet/share/ShareScreen.tsx](../app/wallet/share/ShareScreen.tsx), `PROVE_ON` in [lib/modes.ts](../lib/modes.ts)) | The plan proved on the server, following a mentor's advice and the pre-event prototype. On 26 September we moved proving into the browser so the certificate and holder secret stay on the phone. | A 7.7 MB download, and phone speed not measured yet |
+| `nullifier = Poseidon(holderSecret, scopeHash)` ([lib/fields.ts](../lib/fields.ts), [circuits/single_proof.circom](../circuits/single_proof.circom)) | The city office only sees `Poseidon(holderSecret)`, so it cannot compute your nullifier and find you on Mingle. In this demo the fallback prover runs on the same server, so this holds only when the phone proves. | The secret is needed at every proof |
+| Uniqueness on `used[nullifierHash]` ([contracts/src/SingleProofRegistry.sol](../contracts/src/SingleProofRegistry.sol)) | Groth16 proofs are malleable, so a proof hash is not unique | Only as stable as the scope |
+| Hidden values forced to 0, in the circuit and in Mingle's verifier ([lib/verifier.ts](../lib/verifier.ts)) | A hidden field cannot carry a value that reads as shared | The flags are public, so the transaction shows which facts were shared |
+| The server picks every mode from env ([lib/modes.ts](../lib/modes.ts), `verifyProof` in [lib/prover.ts](../lib/prover.ts)) | Mingle's verifier accepts only the prover the server runs, so a client cannot downgrade to the mock | A missing env var means mock, so the hub, the share screen and Mingle show mode badges |
+| A revert is a failure ([lib/chain.ts](../lib/chain.ts)) | The relayer simulates `record()` first, and a revert (nullifier used, untrusted issuer, invalid proof) reaches the user as an error. Only RPC or relayer trouble falls back to an off-chain check, labelled on screen. | One simulation call before each transaction |
+| Wait up to 45 s for the receipt ([lib/chain.ts](../lib/chain.ts)) | The plan returned the transaction hash at once. Waiting means a result never says "recorded" for a transaction that later reverts. | One Sepolia block longer per share |
+| A relayer pays gas ([docs/setup.md](setup.md#relayer-gas)) | Users need no ETH and send no transaction | One funded demo key pays for everyone |
+| Holder secret = SHA-256 of a Privy embedded-wallet signature over a fixed message, cut to 31 bytes ([lib/privy.ts](../lib/privy.ts), [app/wallet/_components/holderKey.ts](../app/wallet/_components/holderKey.ts)) | No seed phrase to write down, and 31 bytes stay below the BN254 field. The stored value wins in case signatures are not deterministic. | Depends on Privy and the Google account |
+| Stateless HS256 tokens for offers, requests, results and human checks ([lib/token.ts](../lib/token.ts)) | No database on Vercel | A request is not marked used |
 
-Lessons from the pre-event spike ([docs/plan.md](plan.md), section "プロトタイプの穴を繰り返さない"). The prototype had these holes:
+Holes in the pre-event prototype ([docs/plan.md](plan.md), section "プロトタイプの穴を繰り返さない"):
 
-- The client could bypass the human check.
-- Reverts were rounded into success.
-- The issuer seed was committed. Now only the public key is in the repository ([lib/zk/issuer-public.json](../lib/zk/issuer-public.json)).
-- Results were not tied to a request. Now a nonce ties them.
-- The holder secret overflowed the field.
-- The UI said data stayed on the device while the server made the proof.
+| Prototype | Now |
+|---|---|
+| The client could send `bypass:true` to skip the human check | The server picks the mode from env |
+| Reverts were rounded into "off-chain success" | A revert is an error; only RPC or relayer trouble falls back, labelled |
+| The issuer seed was committed | Only the public key is in the repository ([lib/zk/issuer-public.json](../lib/zk/issuer-public.json)) |
+| Results were not tied to a request | A nonce ties them |
+| The 256-bit holder secret overflowed the field | 31 bytes, below the BN254 field |
+| The UI said data stayed on the device while the server proved | The phone proves, and the button names the server fallback |
 
 ## Tests
 
