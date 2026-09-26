@@ -1,0 +1,458 @@
+/* Mingle: the sample dating app */
+
+.mingle {
+  width: min(100%, 390px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: calc(12px + env(safe-area-inset-top)) 24px calc(24px + env(safe-area-inset-bottom));
+  background: #ffffff;
+  color: #25252b;
+}
+
+.mingle svg {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mingle button {
+  cursor: pointer;
+}
+
+.mingle :focus-visible {
+  outline-color: #0866ed;
+}
+
+.mingle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 48px;
+}
+
+.mingle-header h1 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mingle-header > span {
+  width: 40px;
+}
+
+.mingle-icon-button,
+.mingle-back {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 30px;
+}
+
+.mingle-wordmark {
+  color: #ed5974;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -1.3px;
+}
+
+.mingle-notice {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #e7f2ed;
+  color: #3d735c;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.mingle .error-banner {
+  margin-top: 8px;
+}
+
+.mingle-person {
+  padding: 24px 0 20px;
+  text-align: center;
+}
+
+.mingle-portrait {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.mingle-person h1 {
+  margin-top: 14px;
+  font-size: 25px;
+  line-height: 34px;
+}
+
+.mingle-person h1 span {
+  margin-left: 5px;
+  font-weight: 400;
+}
+
+.mingle-person > p {
+  margin: 4px 0 16px;
+  color: #777782;
+  font-size: 13px;
+}
+
+.mingle-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.mingle-status {
+  padding: 1px 10px;
+  border-radius: 12px;
+  background: #e8e8ed;
+  color: #767680;
+  font-size: 10px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.mingle-status.is-done {
+  background: #e7f2ed;
+  color: #3d735c;
+}
+
+.mingle-badges .mingle-status {
+  font-size: 11px;
+  line-height: 22px;
+}
+
+.mingle-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 9px 18px;
+  border: 1px solid #e0e1e5;
+  border-radius: 24px;
+  background: #ffffff;
+  font-size: 12px;
+}
+
+.mingle-edit svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mingle-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 17px 0;
+  border-radius: 16px;
+  background: #f7f7f9;
+}
+
+.mingle-stats > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.mingle-stats > div + div {
+  border-left: 1px solid #e3e3e9;
+}
+
+.mingle-stats strong {
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.mingle-stats span {
+  color: #73737f;
+  font-size: 11px;
+}
+
+.mingle-menu {
+  margin-top: 22px;
+}
+
+.mingle-menu button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid #eeeef2;
+  background: #ffffff;
+  font-size: 13px;
+  text-align: left;
+}
+
+.mingle-menu button > span {
+  flex: 1;
+}
+
+.mingle-menu small {
+  color: #85858f;
+  font-size: 10px;
+}
+
+.mingle-menu b {
+  color: #9a9aa3;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.mingle-tabs {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #eeeef2;
+}
+
+.mingle-tabs > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: #92929c;
+  font-size: 9px;
+}
+
+.mingle-tabs [aria-current] {
+  color: #ed5974;
+}
+
+/* Identity & verification */
+
+.mingle-proofs {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.mingle-proofs article {
+  padding: 20px 16px;
+  border-radius: 14px;
+  background: #f7f7f9;
+}
+
+.mingle-proof-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mingle-proof-title h2 {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mingle-proofs article > p {
+  margin-top: 12px;
+  color: #73737f;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.mingle-connect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 18px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 9px;
+  background: #0866ed;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.mingle-connect img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.mingle-connect b {
+  margin-left: auto;
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.mingle-proof-details {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.mingle-proof-details > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.mingle-proof-details dt {
+  flex: none;
+  color: #73737f;
+}
+
+.mingle-proof-details dd {
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.mingle-proof-details a {
+  color: #0866ed;
+}
+
+.mingle-proof-details code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+}
+
+.mingle-proof-note {
+  margin-top: 12px;
+  color: #73737f;
+  font-size: 11px;
+  line-height: 17px;
+}
+
+.mingle-view {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 14px;
+  border: 1px solid #e0e1e5;
+  border-radius: 9px;
+  background: #ffffff;
+  font-size: 13px;
+}
+
+.mingle .mode-row {
+  margin-top: 24px;
+}
+
+/* Dialog */
+
+.mingle-dialog {
+  width: calc(100% - 48px);
+  max-width: 330px;
+  padding: 24px 20px;
+  border: 0;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #25252b;
+}
+
+.mingle-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.mingle-dialog h2 {
+  font-size: 16px;
+  line-height: 25px;
+  text-align: center;
+}
+
+.mingle-dialog p {
+  margin: 12px 0 22px;
+  color: #73737f;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.mingle-dialog > div {
+  display: flex;
+  gap: 10px;
+}
+
+.mingle-dialog button {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: #f0f0f3;
+  color: #676774;
+  font-size: 12px;
+}
+
+.mingle-dialog button:last-child {
+  background: #0866ed;
+  color: #ffffff;
+}
+
+.mingle-dialog button:disabled {
+  opacity: 0.7;
+}
+
+/* Settings, help, edit */
+
+.mingle-secondary {
+  display: grid;
+  gap: 14px;
+  padding: 32px 0;
+}
+
+.mingle-secondary p {
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.mingle-secondary .muted {
+  color: #73737f;
+  font-size: 12px;
+}
+
+.mingle-outline {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid #d7d9df;
+  border-radius: 24px;
+  background: #ffffff;
+  font-size: 14px;
+  text-align: center;
+}
+
+a.mingle-outline {
+  display: grid;
+  place-items: center;
+}
+
+.mingle-reset {
+  min-height: 36px;
+  border: 0;
+  background: none;
+  color: #90959e;
+  font-size: 12px;
+}

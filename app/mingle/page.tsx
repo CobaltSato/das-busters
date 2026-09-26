@@ -1,11 +1,22 @@
-import Link from "next/link";
+import { getModes } from "@/lib/modes";
+import { TokenError } from "@/lib/token";
+import { readResult } from "@/lib/tokens";
+import { MingleApp, type Incoming } from "./MingleApp";
 
-export default function Page() {
-  return (
-    <main className="placeholder">
-      <h1>Mingle</h1>
-      <p>This screen is being built.</p>
-      <Link href="/">Back to demo hub</Link>
-    </main>
-  );
+type Props = { searchParams: Promise<{ result?: string | string[] }> };
+
+// A result token comes back from the wallet in the URL. Mingle checks its
+// signature here, on the server, before the page trusts it.
+export default async function MinglePage({ searchParams }: Props) {
+  const { result } = await searchParams;
+  let incoming: Incoming = null;
+  if (typeof result === "string" && result) {
+    try {
+      incoming = { result: await readResult(result), token: result };
+    } catch (error) {
+      if (!(error instanceof TokenError)) throw error;
+      incoming = { error: "The verification result could not be checked. Start the verification again." };
+    }
+  }
+  return <MingleApp incoming={incoming} modes={getModes()} />;
 }
