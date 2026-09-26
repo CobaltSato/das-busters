@@ -46,7 +46,7 @@ This deployment runs World ID staging: our server signs each request (`/api/worl
 
 ### The staging window
 
-The Portal accepts Simulator proofs only while a 24-hour staging window is open. The current window closes on **27 September 2026 at 16:58 JST**. After that the server labels the check simulated, the hub reads `Human check: simulated`, and the human check becomes a five-second camera stand-in. Opening a new window is described in [docs/setup.md](setup.md#world-id-staging-window).
+The Portal accepts Simulator proofs only while a 24-hour staging window is open. The current window closes on **27 September 2026 at 23:53 JST**. After that the server labels the check simulated, the hub reads `Human check: simulated`, and the human check becomes a five-second camera stand-in. Opening a new window is described in [docs/setup.md](setup.md#world-id-staging-window).
 
 ### Current limits
 
