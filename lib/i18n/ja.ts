@@ -338,6 +338,8 @@ const ja: Messages = {
     },
     chainNotes: {
       "rpc-unreachable": "Sepolia に接続できなかったため、Mingle はオフチェーンでのみ証明を検証しました。",
+      "relayer-unfunded":
+        "Sepolia の手数料を払う Mingle の relayer がテスト用 ETH を使い切ったため、Mingle はオフチェーンでのみ証明を検証しました。",
       unconfirmed: "Sepolia でトランザクションがまだ確定していません。リンク先で状況を確認できます。",
     },
   },

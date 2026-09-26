@@ -341,6 +341,8 @@ const en = {
     // Keyed by the code lib/chain.ts puts in the result.
     chainNotes: {
       "rpc-unreachable": "Sepolia could not be reached, so Mingle checked the proof off-chain only.",
+      "relayer-unfunded":
+        "Mingle's relayer, which pays the Sepolia fee, ran out of test ETH, so Mingle checked the proof off-chain only.",
       unconfirmed: "Sepolia has not confirmed the transaction yet. The link shows its status.",
     } as Lookup,
   },
