@@ -1,5 +1,7 @@
 # AI usage
 
+English | [日本語](AI_USAGE.ja.md)
+
 ETHGlobal asks teams to say where and how they used AI tools. We keep this file current as we build.
 
 ## Tools
@@ -35,7 +37,9 @@ About the skills:
 | On-chain recording | `lib/chain.ts`, `app/api/tx/`, `app/mingle/TxStatus.tsx` | Generated |
 | Google sign-in and holder key | `app/wallet/_components/`, `lib/privy.ts` | Generated; the team set up Privy and Google OAuth and found the stuck-button bug by signing in on production |
 | Smoke test | `scripts/smoke.ts` | Generated, including the refusal cases |
-| Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md` | Drafted; we edited |
+| Internationalisation (English/Japanese) | `lib/i18n/`, `components/LanguageToggle.tsx`, `middleware.ts`, `README.ja.md`, `AI_USAGE.ja.md` | Generated; the team asked for English-first with Japanese as an option |
+| One-step demo reset | `app/reset/`, `lib/storage.ts` | Generated |
+| Docs | `README.md`, `AI_USAGE.md`, `AGENTS.md`, `docs/demo.md` | Drafted, including the Mermaid diagrams in the README (checked against the circuit, the contract and the API routes); we edited |
 
 ## What the team did
 
