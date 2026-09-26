@@ -2,7 +2,7 @@
 
 English | [日本語](README.ja.md)
 
-DAS stands for Dating App Scam. DAS Busters lets you show a dating app that you are single, and nothing else: not your name, not your birth date, not your 本籍 (registered domicile).
+DAS stands for Dating App Scam. DAS Busters lets you prove to a dating app that you are single without showing your name, birth date or 本籍 (registered domicile).
 
 Built at ETHGlobal Tokyo 2026. [Live demo](https://das-busters.vercel.app) · [Explainer with diagrams](https://das-busters.vercel.app/how-it-works) · [Demo script](docs/demo.md) · [Technical details](docs/technical.md)
 
@@ -16,8 +16,8 @@ Users want the check: in a 2024 Tapple survey of 5,429 users, 83.8% of men and 9
 
 DAS Busters is for people on dating apps, and for apps that want checked single status without keeping family-register data.
 
-1. At the issuing counter, the city office signs a certificate bound to a commitment to your holder key. The key comes from one signature by your Google-linked Privy wallet, and the certificate and key stay on your phone.
-2. A dating app (Mingle, our sample) asks for proof. You pick what to share: single (required), and optionally lives in Tokyo and in your 30s, meaning born 1987–1996. The birth year itself stays hidden.
+1. At the issuing counter, the city office signs a certificate bound to Poseidon(holder secret). The holder secret (the app calls it your holder key) comes from one signature by your Google-linked Privy wallet, and the certificate and secret stay on your phone.
+2. A dating app (Mingle, our sample) asks for proof. Single status is required; living in Tokyo and being in your 30s (born 1987–1996) are optional, and you choose which to share. The birth year itself stays hidden.
 3. Your phone makes a Groth16 proof in the browser. Its nullifier is the same every time you prove in Mingle's scope and different at any other app. In the demo, each browser that opens Mingle gets its own scope, and Reset starts a new one.
 4. Mingle's server checks the proof against its request. Its relayer then records the nullifier on Ethereum Sepolia, where the registry verifies the proof again and refuses a nullifier it has seen. One certificate backs one account in that app's scope, and anyone can check.
 5. Optionally, the wallet adds a World ID proof-of-human check, so Mingle also learns that a person approved a World ID request.
@@ -54,7 +54,10 @@ Any Google account works, and there is nothing to install.
 5. Choose what to share and tap **Share selected information**. The proof is made in your browser, then Mingle checks it and records it on Sepolia.
 6. On Mingle's profile, tap **What Mingle received ›**. It lists what Mingle got, what it did not, and links to the Sepolia transaction.
 
-The human check is optional: **Verify with World ID** on the DAS Busters home screen runs on World ID staging with the World ID Simulator, so you need no World App. To start over, open [/reset](https://das-busters.vercel.app/reset). Every screen is in English and Japanese (the EN / 日本語 toggle, or `?lang=ja`). [docs/demo.md](docs/demo.md) is the step-by-step script, with what to do when something goes wrong.
+- The human check is optional: **Verify with World ID** on the DAS Busters home screen. It runs on World ID staging with the World ID Simulator, so you need no World App.
+- To start over, open [/reset](https://das-busters.vercel.app/reset).
+- Every screen is in English and Japanese: use the EN / 日本語 toggle or add `?lang=ja`.
+- [docs/demo.md](docs/demo.md) has the step-by-step script and what to do when something goes wrong.
 
 ## What is real and what is a stand-in
 
@@ -63,24 +66,24 @@ The proof, the contracts, Google sign-in and the World ID request are real. Our 
 | Part | In this demo |
 |---|---|
 | Zero-knowledge proof | Real. A circom circuit, Groth16 on BN254, proved in your browser. The server proves only if the phone cannot finish, and the button says so. |
-| Blockchain | Real contracts on Ethereum Sepolia, a public testnet, source verified on Sourcify. |
-| Google sign-in | Real, through Privy. The embedded wallet signs one message to derive your holder key and never sends a transaction. |
-| Human check | A real World ID request (IDKit 4), checked by World's Developer Portal on staging and approved with a test identity in the World ID Simulator. |
+| Blockchain | Real contracts on Ethereum Sepolia, source verified on Sourcify (exact match). |
+| Google sign-in | Real, through Privy. The embedded wallet signs one message to derive your holder secret and never sends a transaction. |
+| Human check | Real request, test identity. IDKit 4, verified by World's Developer Portal on staging and approved by a test identity in the World ID Simulator. |
 | City office | Stand-in. Our server signs with a demo EdDSA key kept in a Vercel environment variable, for the demo only. |
-| Certificate | Stand-in data, real signature. Every pickup issues fictional Shibuya resident Ken Sato's certificate, bound to your own holder key. |
+| Certificate | Stand-in data, real signature. Every pickup issues fictional Shibuya resident Ken Sato's certificate, bound to your own holder secret. |
 | Mingle | Stand-in app. Our server plays its backend: the verifier and the relayer. |
 
-The hub shows four badges for the parts that can run as a stand-in. On the live demo they read `Sign-in: Google via Privy`, `Proof: Groth16`, `Recorded on Sepolia` and `Human check: World ID staging`; a badge saying mock, off-chain or simulated marks a stand-in. The World ID staging window closes on 27 September 2026 at 23:53 JST, and after that the human check is labelled simulated. How a real deployment would split these roles: [Demo setup vs a real deployment](docs/technical.md#demo-setup-vs-a-real-deployment).
+The hub shows four badges for the parts that can run as a stand-in. On the live demo they read `Sign-in: Google via Privy`, `Proof: Groth16`, `Recorded on Sepolia` and `Human check: World ID staging`; a badge saying mock, off-chain or simulated marks a stand-in. World's Developer Portal accepts Simulator proofs only during a 24-hour staging window. The current one closes on 27 September 2026 at 23:53 JST, and after that the human check is labelled simulated. How a real deployment would split these roles: [Demo setup vs a real deployment](docs/technical.md#demo-setup-vs-a-real-deployment).
 
 ## Technical highlights
 
-- The circuit ([circuits/single_proof.circom](circuits/single_proof.circom)) has 9,921 constraints. It checks the city office's EdDSA-Poseidon signature over the certificate fields and Poseidon(holder secret), that the certificate says single, and the residence and birth-year range only when shared.
+- The circuit ([circuits/single_proof.circom](circuits/single_proof.circom)) has 9,921 constraints. It verifies the city office's EdDSA-Poseidon signature over the certificate fields and Poseidon(holder secret), and requires the certificate to say single. It checks residence and the birth-year range only when they are shared.
 - The nullifier is `Poseidon(holderSecret, scopeHash)`. The city office only sees `Poseidon(holderSecret)`, so when the phone makes the proof, the office cannot compute your nullifier and find you on Mingle ([lib/fields.ts](lib/fields.ts)).
 - Proving runs on the phone with snarkjs (2.7 MB wasm and 5.0 MB zkey, fetched when the share screen opens). `/api/prove` is a fallback, and the button names it ([lib/deviceProver.ts](lib/deviceProver.ts)).
 - Hidden fields are forced to 0 and disclosure flags to 0 or 1, in the circuit and again in Mingle's verifier ([lib/verifier.ts](lib/verifier.ts)).
 - The registry checks the issuer key, then the nullifier, then `verifyProof`, and stores only the nullifier. The relayer simulates first and waits up to 45 s for the receipt. A revert is shown as a failure; only RPC or relayer trouble falls back to a labelled off-chain check ([lib/chain.ts](lib/chain.ts)).
 - The server picks every mode from env, and Mingle accepts only the prover the server runs, so a client cannot downgrade to the mock ([lib/modes.ts](lib/modes.ts), `verifyProof` in [lib/prover.ts](lib/prover.ts)).
-- The holder key is the SHA-256 of a Privy embedded-wallet signature over a fixed message, cut to 31 bytes to stay below the BN254 field ([lib/privy.ts](lib/privy.ts)).
+- The holder secret is the SHA-256 of a Privy embedded-wallet signature over a fixed message, cut to 31 bytes to stay below the BN254 field ([lib/privy.ts](lib/privy.ts)).
 - World ID uses IDKit 4's `proofOfHuman` preset. Our server signs each request and forwards each result to the Developer Portal's `/api/v4/verify` on staging ([World ID](docs/technical.md#world-id), [FEEDBACK.md](FEEDBACK.md)).
 
 ## Contracts on Sepolia
