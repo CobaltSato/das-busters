@@ -23,11 +23,13 @@ The proof is a zero-knowledge proof (circom, Groth16). Ethereum stores only the 
 
 We are building this during the hackathon. The build plan is in [docs/plan.md](docs/plan.md) (Japanese).
 
+Live demo: https://single-proof.vercel.app
+
 | Piece | State |
 |---|---|
 | Demo hub and routes | done |
-| Screens with mocked services | in progress |
-| Zero-knowledge proof | planned |
+| Screens and full flow with a mock prover | done |
+| Zero-knowledge proof | in progress |
 | On-chain verification on Sepolia | planned |
 | Google sign-in through Privy | planned |
 | World ID | planned |
