@@ -12,14 +12,25 @@ type HeroProps = {
   proveOn: ProvingLocation;
 };
 
+// The notices for whatever this deployment runs as a mock, off-chain or on
+// the server, so a page that describes Groth16 or Sepolia never reads as
+// live when it is not. /how-it-works and /how-it-works/basics both show them.
+export function modeNotices(
+  notice: StoryCopy["hero"]["notice"],
+  modes: Modes,
+  proveOn: ProvingLocation,
+): string[] {
+  return [
+    modes.prover !== "groth16" ? notice.mockProver : null,
+    modes.prover === "groth16" && proveOn === "server" ? notice.serverProver : null,
+    modes.chain !== "sepolia" ? notice.offChain : null,
+  ].filter((text): text is string => text !== null);
+}
+
 // The thesis, the pitch in three frames, and what this deployment actually
 // runs, so nothing below reads as live when it is a mock.
 export function Hero({ copy, strip, modes, proveOn }: HeroProps) {
-  const notices = [
-    modes.prover !== "groth16" ? copy.notice.mockProver : null,
-    modes.prover === "groth16" && proveOn === "server" ? copy.notice.serverProver : null,
-    modes.chain !== "sepolia" ? copy.notice.offChain : null,
-  ].filter((notice): notice is string => notice !== null);
+  const notices = modeNotices(copy.notice, modes, proveOn);
 
   return (
     <header className="hiw-hero">

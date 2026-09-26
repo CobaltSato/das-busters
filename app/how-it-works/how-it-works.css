@@ -66,6 +66,11 @@
   margin-top: 20px;
 }
 
+.hiw-page-head .hiw-notice {
+  max-width: 44em;
+  margin-top: 12px;
+}
+
 /* The one-line pointer to the basics page on /how-it-works */
 
 .hiw-pointer {
