@@ -36,7 +36,7 @@ const storyEn = {
   hero: {
     // Phrases wrap as units, so a line never breaks inside one.
     title: ["Show one line of your certificate.", "Keep the rest sealed."],
-    lede: "A dating app checks that you are single without ever seeing your Single Status Certificate.",
+    lede: "DAS stands for Dating App Scam. A dating app checks that you are single without ever seeing your Single Status Certificate.",
     envelope: {
       label: "A certificate sliding into a window envelope. Only the marital status line shows through the window.",
       heading: "Single Status Certificate",
