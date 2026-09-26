@@ -278,7 +278,7 @@ const referenceEn = {
       tapple: { label: "Tapple: かんたん独身証明", note: "CyberAgent runs Tapple, a dating app. This is its release for the My Number Card check, available since 30 April 2025." },
       npa: {
         label: "National Police Agency: 2025 figures",
-        note: "Romance scams that start on social media: 5,645 cases, ¥54.64 billion. A matching app was the first contact in 1,846 cases (32.7%), more than any other channel.",
+        note: "Romance scams that begin online (the NPA's “SNS-type” category): 5,645 cases, ¥54.64 billion. A matching app was the first contact in 1,846 cases (32.7%), more than any other channel.",
       },
     },
     docsTitle: "Docs",
